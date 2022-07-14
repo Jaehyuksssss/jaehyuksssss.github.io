@@ -1,4 +1,5 @@
 import React, { createRef, FunctionComponent, useEffect } from 'react'
+import styled from '@emotion/styled'
 
 const src = 'https://utteranc.es/client.js'
 const repo = 'Jaehyuksssss/my-Gatsby-blog'
@@ -13,6 +14,11 @@ type UtterancesAttributesType = {
     async: string
   };
   
+  const UtterancesWrapper = styled.div`
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
+`
   const CommentWidget: FunctionComponent = function () {
     const element = createRef<HTMLDivElement>()
   
@@ -38,7 +44,7 @@ type UtterancesAttributesType = {
       element.current.appendChild(utterances)
     }, [])
   
-    return <div ref={element} />
+    return <UtterancesWrapper ref={element} />
   }
   
   export default CommentWidget
