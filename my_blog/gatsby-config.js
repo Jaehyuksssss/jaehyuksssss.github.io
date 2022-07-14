@@ -6,6 +6,12 @@ module.exports = {
     siteUrl: "https://my-website-link.com",
   },
   plugins: [
+    {
+      resolve: "gatsby-plugin-robots-txt",
+      options: {
+        policy: [{ userAgent: "*", allow: "/" }],
+      },
+    },
     "gatsby-plugin-sitemap",
     {
       resolve: "gatsby-plugin-canonical-urls",
