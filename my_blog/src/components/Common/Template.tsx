@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import Footer from 'components/Common/Footer'
 
 
-type PostTemplateProps ={
+type TemplateProps ={
     children: ReactNode
 }
 
