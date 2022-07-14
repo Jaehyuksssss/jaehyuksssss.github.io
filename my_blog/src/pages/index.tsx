@@ -1,25 +1,22 @@
-import React, { FunctionComponent,useMemo } from 'react'
+import React, { FunctionComponent, useMemo } from 'react'
 import Introduction from 'components/Main/Introduction'
 import CategoryList, { CategoryListProps } from 'components/Main/CategoryList'
 import PostList, { PostType } from 'components/Main/PostList'
 import { graphql } from 'gatsby'
 import { PostListItemType } from 'types/PostItem.types'
 import { IGatsbyImageData } from 'gatsby-plugin-image'
-import queryString , {ParsedQuery} from 'query-string'
+import queryString, { ParsedQuery } from 'query-string'
 import Template from 'components/Common/Template'
 
-
-
-
 type IndexPageProps = {
-  location:{
-    search : string
+  location: {
+    search: string
   }
   data: {
     site: {
-      siteMetaData:{
-        title:string
-        description:string
+      siteMetadata: {
+        title: string
+        description: string
         siteUrl: string
       }
     }
@@ -30,18 +27,16 @@ type IndexPageProps = {
       childImageSharp: {
         gatsbyImageData: IGatsbyImageData
       }
-      publicURL:string
+      publicURL: string
     }
   }
 }
 
-
-
 const IndexPage: FunctionComponent<IndexPageProps> = function ({
-  location: {search},
+  location: { search },
   data: {
     site: {
-      siteMetaData: { title, description, siteUrl },
+      siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges },
     file: {
@@ -50,33 +45,35 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
     },
   },
 }) {
-   const parsed : ParsedQuery<string> = queryString.parse(search)
-   const selectedCategory:string =
-   typeof parsed.category !=='string' || !parsed.category
-   ? 'All'
-   :parsed.category
+  const parsed: ParsedQuery<string> = queryString.parse(search)
+  const selectedCategory: string =
+    typeof parsed.category !== 'string' || !parsed.category
+      ? 'All'
+      : parsed.category
+
   const categoryList = useMemo(
     () =>
-  edges.reduce(
-    (
-      list: CategoryListProps['categoryList'],
-      {
-        node: {
-          frontmatter: {categories},
-        },
-      }:PostType,
-    ) => {
-      categories.forEach(category =>{
-        if (list[category]===undefined)list[category] =1;
-        else list [category]++;
-      });
+      edges.reduce(
+        (
+          list: CategoryListProps['categoryList'],
+          {
+            node: {
+              frontmatter: { categories },
+            },
+          }: PostType,
+        ) => {
+          categories.forEach(category => {
+            if (list[category] === undefined) list[category] = 1
+            else list[category]++
+          })
 
-      list ['All'] ++;
-      return list;
-    },
-    {All : 0},
-     ),
-   [],
+          list['All']++
+
+          return list
+        },
+        { All: 0 },
+      ),
+    [],
   )
   return (
     <Template
@@ -100,7 +97,7 @@ export default IndexPage
 export const getPostList = graphql`
   query getPostList {
     site {
-      siteMetaDAta {
+      siteMetadata {
         title
         description
         siteUrl
@@ -133,6 +130,7 @@ export const getPostList = graphql`
       childImageSharp {
         gatsbyImageData(width: 120, height: 120)
       }
+      publicURL
     }
   }
 `
