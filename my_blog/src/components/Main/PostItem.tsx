@@ -53,7 +53,7 @@ const Date = styled.div`
 const Category = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 15px;
   margin: 10px -5px;
 `
 
