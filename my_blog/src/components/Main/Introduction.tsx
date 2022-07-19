@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { IGatsbyImageData } from 'gatsby-plugin-image'
 import ProfileImage from 'components/Main/ProfileImage'
 
+
 type IntroductionProps={
   profileImage:IGatsbyImageData
 }

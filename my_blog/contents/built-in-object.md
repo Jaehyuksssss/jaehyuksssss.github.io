@@ -1,7 +1,7 @@
 ---
 date: '2022-06-06'
 title: 'JavaScript'
-categories: ['TIL','Deep Dive']
+categories: ['TIL','Deep_Dive']
 summary: '21장 빌트인 객체'
 thumbnail: './deep-dive.png'
 ---
