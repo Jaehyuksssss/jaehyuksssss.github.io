@@ -1,7 +1,7 @@
 ---
 date: '2022-06-02'
 title: 'JavaScript'
-categories: ['TIL','Deep Dive']
+categories: ['TIL','Deep_Dive']
 summary: '3장 변수'
 thumbnail: './deep-dive.png'
 ---
