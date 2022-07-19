@@ -1,7 +1,6 @@
 ---
-date: '2022-07-19'
-title: '자기소개'
-categories: [Introduction]
+title: '프론트엔드 개발자 임재혁입니다.'
+categories: ['Introduction']
 summary: 'Introduce myself'
 thumbnail: './test.png'
 ---
