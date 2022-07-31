@@ -3,20 +3,21 @@ module.exports = {
     title: `재혁이의 개발 블로그`,
     description: `한걸음씩 성장해 가는 개발자가 되고자 하는 포부가 담긴 블로그입니다.`,
     author: `Jaehyuksssss`,
-    siteUrl: "https://my-website-link.com",
+    siteUrl: "https://Jaehyuksssss.github.io",
   },
   plugins: [
     {
       resolve: "gatsby-plugin-robots-txt",
       options: {
-        policy: [{ userAgent: "*", allow: "/" }],
+        isTSX: true,
+        allExtensions: true,
       },
     },
     "gatsby-plugin-sitemap",
     {
       resolve: "gatsby-plugin-canonical-urls",
       options: {
-        siteUrl: "https://my-website.com/",
+        siteUrl: "https://Jaehyuksssss.github.io/",
         stripQueryString: true,
       },
     },
