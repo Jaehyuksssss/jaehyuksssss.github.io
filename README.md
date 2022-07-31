@@ -5,7 +5,6 @@
 ---
 
 ## Technologies
-
 * Git, github
 * 기술 스택 : TypeScript , React , Gatsby , GraphQL, @emotion 
 ---
