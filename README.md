@@ -10,7 +10,6 @@
 ---
 
 ### 구현 기능
-
 1. 반응형 디자인, 인피니티 스크롤 구현, 404 페이지 커스텀
 
 - **반응형 디자인** : 각각 profile Image, Introduction 컴포넌트, CategoryList 컴포넌트, PostList 컴포넌트, Footer 컴포넌트에 일반적으로 사용되는 태블릿 너비인 768px에 맞춰서
