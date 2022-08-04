@@ -34,6 +34,5 @@
 <img src = "my_blog/contents/Image/comment.png">
 
 <img src = "./my_blog/contents/Image/issue.png">
-
 ---
 
