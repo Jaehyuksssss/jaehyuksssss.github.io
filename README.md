@@ -30,7 +30,6 @@
 - 상단 배경 안에 게시글 제목, 카테고리, 날짜가 보이도록 구현
 <img src = "./my_blog/contents/Image/post.png"> 
 
-
 - github Utterances 위젯을 통해 댓글을 달면 해당 repo issue에 댓글이 달릴 수 있게 함
 <img src = "my_blog/contents/Image/comment.png">
 
