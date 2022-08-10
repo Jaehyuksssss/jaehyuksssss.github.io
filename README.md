@@ -32,7 +32,6 @@
 
 - github Utterances 위젯을 통해 댓글을 달면 해당 repo issue에 댓글이 달릴 수 있게 함
 <img src = "my_blog/contents/Image/comment.png">
-
 <img src = "./my_blog/contents/Image/issue.png">
 ---
 
