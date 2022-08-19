@@ -25,6 +25,7 @@
 - 필터 기능을 통해서 원하는 카테고리의 포스트에 들어 갈 수 있음
 <img src = './my_blog/contents/Image/main.png'>
 
+
 ### 3. 포스트 
 - GraphQL을 통해 Markdown 정보 쿼리하기
 - 상단 배경 안에 게시글 제목, 카테고리, 날짜가 보이도록 구현
