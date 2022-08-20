@@ -9,6 +9,7 @@
 * 기술 스택 : TypeScript , React , Gatsby , GraphQL, @emotion 
 ---
 
+
 ### 구현 기능
 1. 반응형 디자인, 인피니티 스크롤 구현, 404 페이지 커스텀
 
