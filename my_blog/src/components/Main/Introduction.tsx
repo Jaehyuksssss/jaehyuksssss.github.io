@@ -1,16 +1,17 @@
-import React, { FunctionComponent } from 'react'
-import styled from '@emotion/styled'
-import { IGatsbyImageData } from 'gatsby-plugin-image'
-import ProfileImage from 'components/Main/ProfileImage'
+import React, { FunctionComponent } from "react"
+import styled from "@emotion/styled"
+import { IGatsbyImageData } from "gatsby-plugin-image"
+import ProfileImage from "components/Main/ProfileImage"
+import Menu from "components/Common/Menu"
 
-
-type IntroductionProps={
-  profileImage:IGatsbyImageData
+type IntroductionProps = {
+  profileImage: IGatsbyImageData
 }
 
 const Background = styled.div`
   width: 100%;
-  background: #2E8B57;
+  height: 420px;
+  background: #9bb8d5;
   color: #ffffff;
 `
 
@@ -47,7 +48,7 @@ const Title = styled.div`
   @media (max-width: 768px) {
     font-size: 25px;
   }
-  `
+`
 
 const Introduction: FunctionComponent<IntroductionProps> = function ({
   profileImage,
@@ -55,8 +56,7 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
   return (
     <Background>
       <Wrapper>
-        <ProfileImage profileImage={profileImage}/>
-
+        <ProfileImage profileImage={profileImage} />
         <div>
           <SubTitle>Hello,</SubTitle>
           <Title>I'm a Frontend Developer Jaehyuk LIm.</Title>

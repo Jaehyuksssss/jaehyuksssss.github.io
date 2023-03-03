@@ -1,8 +1,10 @@
-import React, { FunctionComponent } from 'react'
-import styled from '@emotion/styled'
-import PostItem from 'components/Main/PostItem'
-import { PostListItemType } from 'types/PostItem.types'
-import useInfiniteScroll, { useInfiniteScrollType } from 'hooks/useInfiniteScroll'
+import React, { FunctionComponent } from "react"
+import styled from "@emotion/styled"
+import PostItem from "components/Main/PostItem"
+import { PostListItemType } from "types/PostItem.types"
+import useInfiniteScroll, {
+  useInfiniteScrollType,
+} from "hooks/useInfiniteScroll"
 
 export type PostType = {
   node: {
@@ -45,7 +47,7 @@ const PostList: FunctionComponent<PostListProps> = function ({
 }) {
   const { containerRef, postList }: useInfiniteScrollType = useInfiniteScroll(
     selectedCategory,
-    posts,
+    posts
   )
 
   return (
@@ -59,7 +61,7 @@ const PostList: FunctionComponent<PostListProps> = function ({
           },
         }: PostListItemType) => (
           <PostItem {...frontmatter} link={slug} key={id} />
-        ),
+        )
       )}
     </PostListWrapper>
   )
