@@ -1,8 +1,9 @@
-import React, { FunctionComponent, ReactNode } from 'react'
-import styled from '@emotion/styled'
-import GlobalStyle from 'components/Common/GlobalStyle'
-import Footer from 'components/Common/Footer'
-import { Helmet } from 'react-helmet'
+import React, { FunctionComponent, ReactNode } from "react"
+import styled from "@emotion/styled"
+import GlobalStyle from "components/Common/GlobalStyle"
+import Footer from "components/Common/Footer"
+import { Helmet } from "react-helmet"
+import Menu from "./Menu"
 
 type TemplateProps = {
   title: string
@@ -47,10 +48,10 @@ const Template: FunctionComponent<TemplateProps> = function ({
         <meta name="twitter:image" content={image} />
         <meta name="twitter:site" content="@사용자이름" />
         <meta name="twitter:creator" content="@사용자이름" />
-        
-        <html lang = "ko" />
-      </Helmet>
 
+        <html lang="ko" />
+      </Helmet>
+      <Menu />
       <GlobalStyle />
       {children}
       <Footer />
