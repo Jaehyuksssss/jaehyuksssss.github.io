@@ -25,7 +25,7 @@ type IndexPageProps = {
       edges: PostListItemType[]
     }
     file: {
-      childImageSharp: {
+      childImageSharp?: {
         gatsbyImageData: IGatsbyImageData
       }
       publicURL: string
@@ -40,10 +40,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges },
-    file: {
-      childImageSharp: { gatsbyImageData },
-      publicURL,
-    },
+    file,
   },
 }) {
   const parsed: ParsedQuery<string> = queryString.parse(search)
@@ -76,6 +73,10 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       ),
     []
   )
+
+  const gatsbyImageData = file?.childImageSharp?.gatsbyImageData
+  const publicURL = file?.publicURL
+
   return (
     <RecoilRoot>
       <Template
@@ -124,6 +125,7 @@ export const getPostList = graphql`
               childImageSharp {
                 gatsbyImageData(width: 768, height: 400)
               }
+              publicURL
             }
           }
         }
