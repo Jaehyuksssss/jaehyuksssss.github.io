@@ -4,7 +4,7 @@ import { IGatsbyImageData } from "gatsby-plugin-image"
 import ProfileImage from "components/Main/ProfileImage"
 
 type IntroductionProps = {
-  profileImage: IGatsbyImageData
+  profileImage?: IGatsbyImageData
 }
 
 const Background = styled.div`
@@ -55,7 +55,7 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
   return (
     <Background>
       <Wrapper>
-        <ProfileImage profileImage={profileImage} />
+        {profileImage && <ProfileImage profileImage={profileImage} />}
         <div>
           <SubTitle>Hello,</SubTitle>
           <Title>I'm a Frontend Developer Jaehyuk LIm.</Title>
