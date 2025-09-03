@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd my_blog
-          npm ci
+          npm ci --legacy-peer-deps
 
       - name: Build
         run: |
