@@ -43,8 +43,10 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
     },
   } = edges[0]
 
-  const gatsbyImageData = thumbnail?.childImageSharp?.gatsbyImageData;
-  const publicURL = thumbnail?.publicURL;
+  // thumbnail이 문자열인 경우 처리
+  const isThumbnailString = typeof thumbnail === 'string';
+  const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
+  const publicURL = !isThumbnailString ? thumbnail?.publicURL : thumbnail;
 
   return (
     <Template title={title} description={summary} url={href} image={publicURL}>
@@ -52,7 +54,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
         title={title}
         date={date}
         categories={categories}
-        thumbnail={gatsbyImageData}
+        thumbnail={gatsbyImageData || thumbnail}
       />
       <PostContent html={html} />
       <CommentWidget />
@@ -73,12 +75,7 @@ export const queryMarkdownDataBySlug = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail {
-              childImageSharp {
-                gatsbyImageData
-              }
-              publicURL
-            }
+            thumbnail
           }
         }
       }
