@@ -58,10 +58,18 @@ const PostHead: FunctionComponent<PostHeadProps> = function ({
 }) {
   const isThumbnailString = typeof thumbnail === 'string';
   
+  // Ensure thumbnail path includes pathPrefix
+  const getThumbnailSrc = (thumb: string) => {
+    if (thumb.startsWith('/') && !thumb.startsWith('/blog/')) {
+      return `/blog${thumb}`;
+    }
+    return thumb;
+  };
+  
   return (
     <PostHeadWrapper>
       {isThumbnailString ? (
-        <BackgroundImageString src={thumbnail} alt="thumbnail" />
+        <BackgroundImageString src={getThumbnailSrc(thumbnail)} alt="thumbnail" />
       ) : (
         <BackgroundImage image={thumbnail} alt="thumbnail" />
       )}
