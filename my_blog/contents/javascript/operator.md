@@ -3,7 +3,7 @@ date: '2022-06-03'
 title: 'JavaScript'
 categories: ['TIL','Deep_Dive']
 summary: '7장 연산자'
-thumbnail: '/my-Gatsby-blog/deep-dive.png'
+thumbnail: '/blog/deep-dive.png'
 ---
 
 ## 1.연산자
