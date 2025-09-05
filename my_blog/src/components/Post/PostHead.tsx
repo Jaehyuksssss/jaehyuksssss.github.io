@@ -60,7 +60,7 @@ const PostHead: FunctionComponent<PostHeadProps> = function ({
   
   // Ensure thumbnail path includes pathPrefix
   const getThumbnailSrc = (thumb: string) => {
-    if (thumb.startsWith('/') && !thumb.startsWith('/blog/')) {
+    if (thumb && thumb.startsWith('/') && !thumb.startsWith('/blog/')) {
       return `/blog${thumb}`;
     }
     return thumb;
@@ -68,11 +68,11 @@ const PostHead: FunctionComponent<PostHeadProps> = function ({
   
   return (
     <PostHeadWrapper>
-      {isThumbnailString ? (
+      {isThumbnailString && thumbnail ? (
         <BackgroundImageString src={getThumbnailSrc(thumbnail)} alt="thumbnail" />
-      ) : (
+      ) : !isThumbnailString && thumbnail ? (
         <BackgroundImage image={thumbnail} alt="thumbnail" />
-      )}
+      ) : null}
       <PostHeadInfo title ={title} date={date} categories={categories} />
     </PostHeadWrapper>
   )
