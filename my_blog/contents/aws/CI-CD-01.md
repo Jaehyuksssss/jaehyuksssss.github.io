@@ -3,7 +3,7 @@ date: '2025-09-05'
 title: '프론트엔드 ci/cd 마이그레이션'
 categories: ['cloudfront','S3','github actions', 'AWS']
 summary: '리눅스 공부'
-thumbnail: '/my-Gatsby-blog/aws.png'
+thumbnail: '/blog/aws.png'
 ---
 # 개요
 
@@ -11,7 +11,7 @@ thumbnail: '/my-Gatsby-blog/aws.png'
 
 ## 1. Architecture
 
-![아키텍쳐](/my-Gatsby-blog/images/ci-cd-01.png)
+![아키텍쳐](/blog/images/ci-cd-01.png)
 
 ### 아키텍쳐 설명
 
