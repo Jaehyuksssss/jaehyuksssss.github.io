@@ -3,7 +3,7 @@ date: '2025-09-03'
 title: '리눅스 공부'
 categories: ['Linux', 'AWS']
 summary: '리눅스 공부'
-thumbnail: '/aws.png'
+thumbnail: '/blog/aws.png'
 ---
 # AWS SSH 키 등록 및 EC2 접속 방법
 
