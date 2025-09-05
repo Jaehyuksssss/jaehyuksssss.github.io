@@ -3,7 +3,7 @@ date: '2022-06-05'
 title: 'JavaScript'
 categories: ['TIL','Deep_Dive']
 summary: '11장 let,const 키워드와 블록 레벨 스코프 '
-thumbnail: '/deep-dive.png'
+thumbnail: '/blog/deep-dive.png'
 ---
 
 

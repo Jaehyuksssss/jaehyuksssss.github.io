@@ -54,7 +54,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
         title={title}
         date={date}
         categories={categories}
-        thumbnail={gatsbyImageData || thumbnail}
+        thumbnail={gatsbyImageData || (isThumbnailString ? thumbnail : '')}
       />
       <PostContent html={html} />
       <CommentWidget />
