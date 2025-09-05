@@ -3,7 +3,7 @@ date: '2022-06-08'
 title: 'WEB'
 categories: ['TIL','WEB']
 summary: 'WEB'
-thumbnail: '/blog/web.png'
+thumbnail: '/web.png'
 ---
 
 # HTTP의 GET과 POST 비교
