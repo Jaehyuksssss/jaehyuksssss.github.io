@@ -3,7 +3,7 @@ date: '2022-06-08'
 title: 'WEB'
 categories: ['TIL','WEB']
 summary: 'WEB'
-thumbnail: '/my-Gatsby-blog/web.png'
+thumbnail: '/blog/web.png'
 ---
 
 # HTTP의 GET과 POST 비교

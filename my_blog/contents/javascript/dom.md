@@ -3,7 +3,7 @@ date: '2022-06-08'
 title: 'JavaScript'
 categories: ['TIL','Deep_Dive']
 summary: '39장 Dom '
-thumbnail: '/my-Gatsby-blog/deep-dive.png'
+thumbnail: '/blog/deep-dive.png'
 ---
 
 # 39. DOM

@@ -3,7 +3,7 @@ date: '2025-09-02'
 title: 'AWS 접근 관리: IAM User vs Identity Center'
 categories: ['TIL', 'AWS', 'Security']
 summary: 'IAM User와 Identity Center(SSO)의 차이와 보안 관점에서 왜 SSO가 권장되는지 정리'
-thumbnail: '/my-Gatsby-blog/aws.png'
+thumbnail: '/blog/aws.png'
 ---
 
 # AWS 접근 관리, IAM User로 충분할까? Identity Center가 답일까?

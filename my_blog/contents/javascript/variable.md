@@ -3,7 +3,7 @@ date: '2022-06-02'
 title: 'JavaScript'
 categories: ['TIL','Deep_Dive']
 summary: '3장 변수'
-thumbnail: '/my-Gatsby-blog/deep-dive.png'
+thumbnail: '/blog/deep-dive.png'
 ---
 
 
