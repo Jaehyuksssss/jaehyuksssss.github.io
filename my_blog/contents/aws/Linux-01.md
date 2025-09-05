@@ -3,7 +3,7 @@ date: '2025-09-03'
 title: '리눅스 공부'
 categories: ['Linux', 'AWS']
 summary: '리눅스 공부'
-thumbnail: '/aws.png'
+thumbnail: '/my-Gatsby-blog/aws.png'
 ---
 # AWS SSH 키 등록 및 EC2 접속 방법
 
@@ -18,7 +18,7 @@ AWS 콘솔에서 키페어를 다운받을 수 있지만, 직접 SSH 키를 생�
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/my-aws-key
 ```
 
-![SSH 키 생성 결과](./images/pemkey.png)
+![SSH 키 생성 결과](/my-Gatsby-blog/images/pemkey.png)
 
 ### 생성된 키 파일 확인
 ```bash
