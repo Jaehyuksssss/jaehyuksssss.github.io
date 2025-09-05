@@ -41,7 +41,7 @@ jobs:
       - name: Build
         run: |
           cd my_blog
-          npm run build
+          GATSBY_PATH_PREFIX=/blog npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

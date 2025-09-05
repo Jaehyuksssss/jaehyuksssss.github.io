@@ -2,5 +2,5 @@
 
 ````jsx
 //Link
-https://jaehyuksssss.github.io/
+https://jaehyuksssss.github.io/blog
 ````
