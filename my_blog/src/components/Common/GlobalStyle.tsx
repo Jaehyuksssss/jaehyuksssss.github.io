@@ -17,6 +17,10 @@ const defaultStyle = css`
     height: 100%;
   }
 
+  body {
+    transition: opacity 0.3s ease-in-out;
+  }
+
   a,
   a:hover {
     color: inherit;
