@@ -3,7 +3,7 @@ date: '2022-08-01'
 title: 'Without CRA'
 categories: ['TIL','React']
 summary: 'React'
-thumbnail: '/blog/deep-dive.png'
+thumbnail: '/deep-dive.png'
 ---
 
 # CRA 없이 초기셋팅하고 API 연동하기
