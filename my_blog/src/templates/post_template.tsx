@@ -1,10 +1,22 @@
-import React, { FunctionComponent } from 'react'
-import { graphql } from 'gatsby'
-import Template from 'components/Common/Template'
-import PostHead from 'components/Post/PostHead'
-import { PostFrontmatterType } from 'types/PostItem.types'
-import PostContent from 'components/Post/PostContent'
-import CommentWidget from 'components/Post/CommentWidget'
+import React, { FunctionComponent } from "react"
+import { graphql } from "gatsby"
+import Template from "components/Common/Template"
+import PostHead from "components/Post/PostHead"
+import PostContent from "components/Post/PostContent"
+import CommentWidget from "components/Post/CommentWidget"
+
+export type PostPageItemType = {
+  node: {
+    html: string
+    frontmatter: {
+      title: string
+      summary: string
+      date: string
+      categories: string[]
+      thumbnail: any
+    }
+  }
+}
 
 type PostTemplateProps = {
   data: {
@@ -12,15 +24,8 @@ type PostTemplateProps = {
       edges: PostPageItemType[]
     }
   }
-  location :{
-    href :string
-  }
-}
-
-export type PostPageItemType = {
-  node: {
-    html: string
-    frontmatter: PostFrontmatterType
+  location: {
+    href: string
   }
 }
 
@@ -28,7 +33,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
   data: {
     allMarkdownRemark: { edges },
   },
-  location:{href}
+  location: { href }
 }) {
   const {
     node: {
@@ -48,6 +53,9 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
   const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
   const publicURL = !isThumbnailString ? thumbnail?.publicURL : thumbnail;
 
+  // postSlug 추출 (href에서)
+  const postSlug = href.split('/').pop() || ''
+
   return (
     <Template title={title} description={summary} url={href} image={publicURL}>
       <PostHead
@@ -55,6 +63,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
         date={date}
         categories={categories}
         thumbnail={gatsbyImageData || (isThumbnailString ? thumbnail : '')}
+        postSlug={postSlug}
       />
       <PostContent html={html} />
       <CommentWidget />
@@ -75,7 +84,12 @@ export const queryMarkdownDataBySlug = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail
+            thumbnail {
+              childImageSharp {
+                gatsbyImageData
+              }
+              publicURL
+            }
           }
         }
       }
