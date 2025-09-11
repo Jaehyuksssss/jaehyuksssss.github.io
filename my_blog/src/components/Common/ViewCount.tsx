@@ -12,8 +12,8 @@ interface ViewCountProps {
 const ViewCountWrapper = styled.div<{ size: 'small' | 'medium' | 'large' }>`
   display: flex;
   align-items: center;
-  gap: 4px;
-  color: ${props => props.size === 'small' ? '#666' : '#333'};
+  gap: 6px;
+  color: #ffffff;
   font-size: ${props => {
     switch (props.size) {
       case 'small': return '12px'
@@ -22,16 +22,19 @@ const ViewCountWrapper = styled.div<{ size: 'small' | 'medium' | 'large' }>`
       default: return '14px'
     }
   }};
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 `
 
 const Icon = styled(FontAwesomeIcon)`
-  color: ${props => props.color || '#666'};
+  color: #ffffff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 `
 
 const Count = styled.span<{ loading: boolean }>`
-  opacity: ${props => props.loading ? 0.5 : 1};
+  opacity: ${props => props.loading ? 0.7 : 1};
   transition: opacity 0.2s ease;
+  font-weight: 700;
 `
 
 const ViewCount: React.FC<ViewCountProps> = ({ 

@@ -20,6 +20,8 @@ const PostHeadInfoWrapper = styled.div`
   margin: 0 auto;
   padding: 60px 0;
   color: #ffffff;
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -38,6 +40,8 @@ const PrevPageIcon = styled.div`
   font-size: 22px;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 768px) {
     width: 30px;
@@ -57,6 +61,8 @@ const Title = styled.div`
   -webkit-box-orient: vertical;
   font-size: 36px;
   font-weight: 800;
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 768px) {
     font-size: 30px;
@@ -70,6 +76,8 @@ const PostData = styled.div`
   margin-top: 10px;
   font-size: 18px;
   font-weight: 700;
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -79,11 +87,22 @@ const PostData = styled.div`
   }
 `
 
+const ViewCountWrapper = styled.div`
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+`
+
 const CategoryList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
+  position: relative;
+  z-index: 10;
 `
 
 const Category = styled.div`
@@ -110,7 +129,9 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
       <Title>{title}</Title>
       <PostData>
         <div>{date}</div>
-        <ViewCount count={viewCount} loading={loading} size="medium" />
+        <ViewCountWrapper>
+          <ViewCount count={viewCount} loading={loading} size="medium" />
+        </ViewCountWrapper>
       </PostData>
       <CategoryList>
         {categories.map(category => (
