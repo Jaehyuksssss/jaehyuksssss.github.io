@@ -1,47 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
-interface GTMViewCountData {
-  [key: string]: number
-}
-
-// GTM을 통한 조회수 추적 (각 게시물별)
+// GTM을 통한 조회수 추적 (GA4에서만 관리)
 export const useGTMViewCount = (postSlug: string) => {
-  const [viewCount, setViewCount] = useState<number>(0)
-  const [loading, setLoading] = useState<boolean>(true)
-
   useEffect(() => {
-    const getViewCount = () => {
-      // 실제 페이지 URL을 기준으로 조회수 관리
-      const pageUrl = typeof window !== 'undefined' ? window.location.pathname : postSlug
+    // GTM dataLayer에 페이지 뷰 이벤트 전송
+    if (typeof window !== 'undefined' && window.dataLayer) {
+      const pageUrl = window.location.pathname
       
-      // GTM dataLayer에 페이지 뷰 이벤트 전송
-      if (typeof window !== 'undefined' && window.dataLayer) {
-        window.dataLayer.push({
-          event: 'page_view',
-          page_title: document.title,
-          page_location: window.location.href,
-          page_path: pageUrl,
-        })
-      }
-      
-      // 각 게시물별 조회수 저장 (페이지 URL 기준)
-      const stored = localStorage.getItem('gtm_view_counts')
-      const viewCounts: GTMViewCountData = stored ? JSON.parse(stored) : {}
-      const currentCount = viewCounts[pageUrl] || 0
-      
-      // 조회수 증가
-      const newCount = currentCount + 1
-      viewCounts[pageUrl] = newCount
-      localStorage.setItem('gtm_view_counts', JSON.stringify(viewCounts))
-      
-      setViewCount(newCount)
-      setLoading(false)
+      window.dataLayer.push({
+        event: 'page_view',
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: pageUrl,
+        post_slug: postSlug,
+      })
     }
-
-    getViewCount()
   }, [postSlug])
 
-  return { viewCount, loading }
+  // 조회수는 GA4에서만 관리하므로 UI에서는 표시하지 않음
+  return { viewCount: 0, loading: false }
 }
 
 // dataLayer 타입 선언

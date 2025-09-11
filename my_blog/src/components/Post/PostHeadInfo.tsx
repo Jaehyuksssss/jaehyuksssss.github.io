@@ -3,7 +3,6 @@ import styled from "@emotion/styled"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 import useGTMViewCount from "hooks/useGTMViewCount"
-import ViewCount from "components/Common/ViewCount"
 
 export type PostHeadInfoProps = {
   title: string
@@ -87,15 +86,6 @@ const PostData = styled.div`
   }
 `
 
-const ViewCountWrapper = styled.div`
-  background: rgba(0, 0, 0, 0.7);
-  padding: 8px 12px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-`
-
 const CategoryList = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -119,7 +109,8 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   categories,
   postSlug,
 }) {
-  const { viewCount, loading } = useGTMViewCount(postSlug || '')
+  // GA4 이벤트 전송 (조회수 표시는 하지 않음)
+  useGTMViewCount(postSlug || '')
 
   return (
     <PostHeadInfoWrapper>
@@ -129,9 +120,6 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
       <Title>{title}</Title>
       <PostData>
         <div>{date}</div>
-        <ViewCountWrapper>
-          <ViewCount count={viewCount} loading={loading} size="medium" />
-        </ViewCountWrapper>
       </PostData>
       <CategoryList>
         {categories.map(category => (
