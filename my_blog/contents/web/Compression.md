@@ -3,11 +3,14 @@ date: '2025-09-11'
 title: '압축(Compression)의 개념과 활용'
 categories: ['TIL', 'WEB']
 summary: '데이터 압축의 기본 원리와 가역/비가역 압축 방식, 그리고 실제 시스템에서의 활용 사례를 정리합니다.'
-thumbnail: '/blog/web.png'
+thumbnail: '/blog/compression.png'
 ---
+
+![압축 개념](/images/compression.png)
+
 # intro
 elastic beanstalk에 zip 파일을 올리다가 '압축'이라는 개념에 대해서 궁금해졌다.
- 
+
 # 압축(Compression)의 개념과 활용
 
 디지털 데이터가 폭발적으로 증가하면서 **저장 공간 최적화**와 **전송 효율성 확보**는 시스템 설계에서 필수적인 요소가 되었습니다. 이러한 요구를 충족시키는 대표적인 기술이 바로 **데이터 압축(Compression)** 입니다. 압축은 데이터 내부의 불필요한 중복을 제거하거나, 사람이 인지하기 어려운 정보를 과감히 생략하여 데이터 크기를 줄이는 방식으로 동작합니다.  
