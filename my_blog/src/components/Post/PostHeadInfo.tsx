@@ -2,11 +2,14 @@ import React, { FunctionComponent } from "react"
 import styled from "@emotion/styled"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
+import useGTMViewCount from "hooks/useGTMViewCount"
+import ViewCount from "components/Common/ViewCount"
 
 export type PostHeadInfoProps = {
   title: string
   date: string
   categories: string[]
+  postSlug?: string
 }
 
 const PostHeadInfoWrapper = styled.div`
@@ -18,7 +21,7 @@ const PostHeadInfoWrapper = styled.div`
   padding: 60px 0;
   color: #ffffff;
 
-  @media (max-width: 768px;) {
+  @media (max-width: 768px) {
     width: 100%;
     padding: 40px 20px;
   }
@@ -52,7 +55,7 @@ const Title = styled.div`
   white-space: normal;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  font-size: 45px;
+  font-size: 36px;
   font-weight: 800;
 
   @media (max-width: 768px) {
@@ -72,27 +75,48 @@ const PostData = styled.div`
     flex-direction: column;
     align-items: flex-start;
     font-size: 15px;
-    font-weight: 400;
+    line-height: 1.5;
   }
+`
+
+const CategoryList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+`
+
+const Category = styled.div`
+  padding: 3px 5px;
+  border-radius: 3px;
+  background: #7c7c7c;
+  font-size: 12px;
+  font-weight: 700;
 `
 
 const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   title,
   date,
   categories,
+  postSlug,
 }) {
-  const goBackPage = () => window.history.back()
+  const { viewCount, loading } = useGTMViewCount(postSlug || '')
 
   return (
     <PostHeadInfoWrapper>
-      <PrevPageIcon onClick={goBackPage}>
+      <PrevPageIcon onClick={() => window.history.back()}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </PrevPageIcon>
       <Title>{title}</Title>
       <PostData>
-        <div>{categories.join(" / ")}</div>
         <div>{date}</div>
+        <ViewCount count={viewCount} loading={loading} size="medium" />
       </PostData>
+      <CategoryList>
+        {categories.map(category => (
+          <Category key={category}>{category}</Category>
+        ))}
+      </CategoryList>
     </PostHeadInfoWrapper>
   )
 }

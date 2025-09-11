@@ -2,6 +2,7 @@ import React, { FunctionComponent, ReactNode } from "react"
 import styled from "@emotion/styled"
 import GlobalStyle from "components/Common/GlobalStyle"
 import Footer from "components/Common/Footer"
+import GoogleTagManager, { GoogleTagManagerBody } from "components/Common/GoogleTagManager"
 import { Helmet } from "react-helmet"
 // import Menu from "./Menu"
 
@@ -26,6 +27,9 @@ const Template: FunctionComponent<TemplateProps> = function ({
   image,
   children,
 }) {
+  // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
+  const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || 'GTM-TSGR8WXK'
+
   return (
     <Container>
       <Helmet>
@@ -51,6 +55,8 @@ const Template: FunctionComponent<TemplateProps> = function ({
 
         <html lang="ko" />
       </Helmet>
+      <GoogleTagManager containerId={GTM_CONTAINER_ID} />
+      <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
       {/* <Menu /> */}
       <GlobalStyle />
       {children}
