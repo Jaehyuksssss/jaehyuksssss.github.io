@@ -53,8 +53,8 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
   const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
   const publicURL = !isThumbnailString ? thumbnail?.publicURL : thumbnail;
 
-  // postSlug 추출 (href에서)
-  const postSlug = href.split('/').pop() || ''
+  // postSlug 추출 (href에서) - 안전하게 처리
+  const postSlug = href ? href.split('/').pop() || '' : ''
 
   return (
     <Template title={title} description={summary} url={href} image={publicURL}>
@@ -84,12 +84,7 @@ export const queryMarkdownDataBySlug = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail {
-              childImageSharp {
-                gatsbyImageData
-              }
-              publicURL
-            }
+            thumbnail
           }
         }
       }
