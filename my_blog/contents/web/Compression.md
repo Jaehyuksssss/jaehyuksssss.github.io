@@ -3,10 +3,10 @@ date: '2025-09-11'
 title: '압축(Compression)의 개념과 활용'
 categories: ['TIL', 'WEB']
 summary: '데이터 압축의 기본 원리와 가역/비가역 압축 방식, 그리고 실제 시스템에서의 활용 사례를 정리합니다.'
-thumbnail: '/blog/compression.png'
+thumbnail: '/compression.png'
 ---
 
-![압축 개념](/images/compression.png)
+![압축 개념](/compression.png)
 
 # intro
 elastic beanstalk에 zip 파일을 올리다가 '압축'이라는 개념에 대해서 궁금해졌다.
