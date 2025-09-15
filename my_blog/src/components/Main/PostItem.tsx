@@ -92,12 +92,20 @@ const PostItem: FunctionComponent<PostItemProps> = function ({
   const isThumbnailString = typeof thumbnail === 'string';
   const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
   
+  // Ensure thumbnail path includes pathPrefix
+  const getThumbnailSrc = (thumb: string) => {
+    if (thumb && thumb.startsWith('/') && !thumb.startsWith('/blog/')) {
+      return `/blog${thumb}`;
+    }
+    return thumb;
+  };
+  
   return (
     <PostItemWrapper to={link}>
       {gatsbyImageData ? (
         <ThumbnailImage image={gatsbyImageData} alt="Post Item Image" />
       ) : isThumbnailString && thumbnail ? (
-        <img src={thumbnail} alt="Post Item Image" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+        <img src={getThumbnailSrc(thumbnail)} alt="Post Item Image" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
       ) : null}
       <PostItemContent>
         <Title>{title}</Title>
