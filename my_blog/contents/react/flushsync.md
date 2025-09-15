@@ -1,5 +1,5 @@
 ---
-date: '2024-12-19'
+date: '2025-09-16'
 title: '리액트에서 flushSync로 포커스 관리 마스터하기'
 categories: ['TIL', 'REACT']
 summary: 'React의 flushSync를 활용한 완벽한 포커스 관리와 접근성 개선, 그리고 실제 프로젝트에서 바로 사용할 수 있는 패턴들을 소개합니다.'
