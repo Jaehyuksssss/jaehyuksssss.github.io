@@ -1,7 +1,7 @@
 ---
 date: '2025-09-05'
 title: '프론트엔드 ci/cd 마이그레이션'
-categories: ['cloudfront','S3','github actions', 'AWS']
+categories: ['TIL','cloudfront','S3','github actions', 'AWS']
 summary: '리눅스 공부'
 thumbnail: '/blog/aws.png'
 ---
