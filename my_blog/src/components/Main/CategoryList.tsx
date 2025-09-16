@@ -20,7 +20,7 @@ export type CategoryListProps = {
       }
     }
   }>
-  hasSearchResults?: boolean // 이 prop 추가
+  hasSearchResults?: boolean 
 }
 
 type CategoryItemProps = {
@@ -54,7 +54,7 @@ const CategoryListWrapper = styled.div<{ isOpen: boolean; hasSearchResults: bool
   max-width: calc(100vw - 40px);
   overflow: hidden; // 항상 hidden으로 유지
   width: 100%;
-  height: ${({ isOpen }) => isOpen ? 'auto' : 'fit-content'}; // 접었을 때는 헤더 높이만
+  height: ${({ isOpen }) => isOpen ? 'auto' : 'fit-content'}; 
   transition: all 0.2s ease-out;
   opacity: 1;
 
@@ -255,7 +255,7 @@ const CategoryContainer = styled.div<{ isOpen: boolean }>`
   padding: ${({ isOpen }) => isOpen ? '0 20px 15px 20px' : '0'};
   pointer-events: ${({ isOpen }) => isOpen ? 'auto' : 'none'};
   max-height: ${({ isOpen }) => isOpen ? 'none' : '0'}; // 접었을 때 높이 0
-  overflow: hidden; // 접었을 때 내용 숨김
+  overflow: hidden; 
 
   @media (max-width: 768px) {
     padding: ${({ isOpen }) => isOpen ? '0 16px 12px 16px' : '0'};
