@@ -6,8 +6,6 @@ summary: 'React의 flushSync를 활용한 완벽한 포커스 관리와 접근�
 thumbnail: '/react.png'
 ---
 
-![React flushSync 포커스 관리](/my_blog/contents/react/images)
-
 # intro
 포커스 관리는 문제가 생기기 전까지는 잘 인지하지 못하는 부분입니다. 하지만 한 번이라도 문제가 발생하면 앱이 어색하게 동작하거나, 접근성이 떨어지거나, 혹은 아예 잘못된 것처럼 느껴질 수 있습니다. 오늘은 포커스 관리를 제대로 할 수 있게 도와주지만, 잘 알려지지 않은 리액트 API인 flushSync에 대해 말씀드리겠습니다.
 
