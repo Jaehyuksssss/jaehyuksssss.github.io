@@ -6,8 +6,6 @@ summary: '데이터 압축의 기본 원리와 가역/비가역 압축 방식, �
 thumbnail: '/compression.png'
 ---
 
-![압축 개념](/my_blog/contents/web/images/compression.png)
-
 # intro
 elastic beanstalk에 zip 파일을 올리다가 '압축'이라는 개념에 대해서 궁금해졌다.
 
