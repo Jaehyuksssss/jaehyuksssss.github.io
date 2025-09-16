@@ -10,7 +10,7 @@ thumbnail: '/blog/aws.png'
 
 # 개요
 
-기존 닷넷 코드를 cli로 수동으로 publish 파일로 만들고 ZIP을 업로드해 **Elastic Beanstalk(EB)** 에 배포를 했고, 업무 효율적인 기술 부채가 있었다.
+기존 닷넷 코드를 cli로 수동으로 publish 파일로 만들고 ZIP을 업로드해 **Elastic Beanstalk(EB)** 에 배포를 했고, 시간적으로나 실수를 할 가능성 등의 기술 부채가 있었다.
 
 ## 목표
 
@@ -18,8 +18,7 @@ thumbnail: '/blog/aws.png'
 * 액세스 키 없이 **GitHub OIDC → AssumeRole** 로 인증
 * **최소 권한** 으로 운영
 
-아래는 실제로 구축하면서 정리한 내용이고 
-모든 값들은 **플레이스홀더**로 표기했다.
+아래는 실제로 구축하면서 정리한 내용이고 모든 값들은 **플레이스홀더**로 표기했다.
 
 ---
 
@@ -142,7 +141,7 @@ EB는 Application Version ZIP을 **계정 전용 EB 버킷**에 올린다:
 
 ---
 
-# 3) GitHub Actions 워크플로 (복붙용)
+# 3) GitHub Actions 워크플로
 
 > 파일 경로 예: `.github/workflows/eb-deploy.yml`
 
