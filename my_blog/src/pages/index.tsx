@@ -58,7 +58,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
             node: {
               frontmatter: { categories },
             },
-          }: PostType
+          }: PostListItemType
         ) => {
           categories.forEach(category => {
             if (list[category] === undefined) list[category] = 1
@@ -71,7 +71,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
         },
         { All: 0 }
       ),
-    []
+    [edges]
   )
 
   const gatsbyImageData = file?.childImageSharp?.gatsbyImageData
@@ -89,6 +89,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
         <CategoryList
           selectedCategory={selectedCategory}
           categoryList={categoryList}
+          posts={edges}
         />
         <PostList selectedCategory={selectedCategory} posts={edges} />
       </Template>
