@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 import useGTMViewCount from "hooks/useGTMViewCount"
+import { navigate } from "gatsby"
 
 export type PostHeadInfoProps = {
   title: string
@@ -114,7 +115,7 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
 
   return (
     <PostHeadInfoWrapper>
-      <PrevPageIcon onClick={() => window.history.back()}>
+   <PrevPageIcon onClick={() => navigate('/')}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </PrevPageIcon>
       <Title>{title}</Title>
