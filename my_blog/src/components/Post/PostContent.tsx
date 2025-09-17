@@ -83,6 +83,28 @@ const MarkdownRenderer = styled.div`
     text-decoration: underline;
   }
 
+  // Table Style
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    table-layout: fixed;
+  }
+
+  th, td {
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    vertical-align: top;
+    word-break: break-word;
+  }
+
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+  }
+
   // Adjust Code Style
   pre[class*='language-'] {
     margin: 30px 0;
@@ -125,6 +147,21 @@ const MarkdownRenderer = styled.div`
 
     hr {
       margin: 50px 0;
+    }
+
+    // Mobile Table Style
+    table {
+      font-size: 12px;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      white-space: nowrap;
+    }
+
+    th, td {
+      padding: 6px 8px;
+      min-width: 80px;
+      white-space: normal;
     }
   }
 `
