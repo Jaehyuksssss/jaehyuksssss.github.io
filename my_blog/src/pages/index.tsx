@@ -8,6 +8,7 @@ import { PostListItemType } from "types/PostItem.types"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import queryString, { ParsedQuery } from "query-string"
 import Template from "components/Common/Template"
+import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 
 type IndexPageProps = {
   location: {
@@ -76,6 +77,9 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
 
   const gatsbyImageData = file?.childImageSharp?.gatsbyImageData
   const publicURL = file?.publicURL
+
+  // Count a homepage visit with a 5-minute cool-down (cookie-based)
+  useSupabaseViewCount('__home__', { coolDownMinutes: 5 })
 
   return (
     <RecoilRoot>

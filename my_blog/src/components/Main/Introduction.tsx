@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react"
 import styled from "@emotion/styled"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import ProfileImage from "components/Main/ProfileImage"
+import useSupabaseTotalViews from "hooks/useSupabaseTotalViews"
 
 type IntroductionProps = {
   profileImage?: IGatsbyImageData
@@ -54,9 +55,21 @@ const Title = styled.div`
   }
 `
 
+const Stats = styled.div`
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.95;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`
+
 const Introduction: FunctionComponent<IntroductionProps> = function ({
   profileImage,
 }) {
+  const { total, loading } = useSupabaseTotalViews()
   return (
     <Background>
       <Wrapper>
@@ -64,6 +77,9 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
         <div>
           <SubTitle>안녕하세요,</SubTitle>
           <Title>개발자 임재혁입니다.</Title>
+          <Stats>
+            {loading ? '전체 조회수 불러오는 중…' : `전체 조회수 ${total?.toLocaleString() ?? '-'}`}
+          </Stats>
         </div>
       </Wrapper>
     </Background>
