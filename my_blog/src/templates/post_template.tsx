@@ -45,6 +45,8 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
         categories,
         thumbnail,
       },
+      // bring in GraphQL slug field for reliable keying
+      fields,
     },
   } = edges[0]
 
@@ -53,8 +55,8 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
   const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
   const publicURL = !isThumbnailString ? thumbnail?.publicURL : thumbnail;
 
-  // postSlug 추출 (href에서) - 안전하게 처리
-  const postSlug = href ? href.split('/').pop() || '' : ''
+  // postSlug는 GraphQL의 fields.slug를 사용해 안정적으로 키를 생성
+  const postSlug = fields?.slug || ''
 
   return (
     <Template title={title} description={summary} url={href} image={publicURL}>
@@ -86,6 +88,7 @@ export const queryMarkdownDataBySlug = graphql`
             categories
             thumbnail
           }
+          fields { slug }
         }
       }
     }

@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 import useGTMViewCount from "hooks/useGTMViewCount"
+import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 import { navigate } from "gatsby"
 
 export type PostHeadInfoProps = {
@@ -104,6 +105,15 @@ const Category = styled.div`
   font-weight: 700;
 `
 
+const ViewCount = styled.span`
+  opacity: 0.9;
+  font-weight: 700;
+  font-size: 16px;
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`
+
 const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   title,
   date,
@@ -113,6 +123,9 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   // GA4 이벤트 전송 (조회수 표시는 하지 않음)
   useGTMViewCount(postSlug || '')
 
+  // Supabase counter (client → RPC). No localStorage used.
+  const { count, loading } = useSupabaseViewCount(postSlug, { oncePerSession: true })
+
   return (
     <PostHeadInfoWrapper>
    <PrevPageIcon onClick={() => navigate('/')}>
@@ -121,6 +134,9 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
       <Title>{title}</Title>
       <PostData>
         <div>{date}</div>
+        <ViewCount>
+          {loading ? '조회수 …' : `조회수 ${typeof count === 'number' ? count.toLocaleString() : '-'}`}
+        </ViewCount>
       </PostData>
       <CategoryList>
         {categories.map(category => (

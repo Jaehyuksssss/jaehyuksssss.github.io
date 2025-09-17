@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 const path = require("path")
 const { createFilePath } = require(`gatsby-source-filesystem`)
 
@@ -12,6 +13,7 @@ exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
         components: path.resolve(__dirname, "src/components"),
         utils: path.resolve(__dirname, "src/utils"),
         hooks: path.resolve(__dirname, "src/hooks"),
+        lib: path.resolve(__dirname, "src/lib"),
       },
     },
   })
