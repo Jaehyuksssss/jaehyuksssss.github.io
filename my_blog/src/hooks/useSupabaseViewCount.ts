@@ -4,6 +4,9 @@ import { supabase } from '../lib/supabaseClient'
 type Options = {
   oncePerSession?: boolean
   coolDownMinutes?: number // cookie-based cool-down per slug
+  // When true, use a single global cool-down key across the whole site
+  // so only one increment occurs per coolDown window regardless of slug.
+  globalCoolDown?: boolean
 }
 
 export default function useSupabaseViewCount(slug?: string, options: Options = {}) {
@@ -18,10 +21,12 @@ export default function useSupabaseViewCount(slug?: string, options: Options = {
 
     let cancelled = false
     async function run() {
-      // Cookie-based cool-down per slug
+      // Cookie-based cool-down (per slug by default, or global when enabled)
       if (coolDownMinutes && coolDownMinutes > 0) {
         try {
-          const cookieKey = `views_cd_${encodeURIComponent(slug)}`
+          const cookieKey = options.globalCoolDown
+            ? `views_cd___global__`
+            : `views_cd_${encodeURIComponent(slug)}`
           const match = document.cookie.match(new RegExp(`(?:^|; )${cookieKey}=([^;]*)`))
           const until = match ? parseInt(decodeURIComponent(match[1]), 10) : 0
           const now = Date.now()
@@ -72,7 +77,7 @@ export default function useSupabaseViewCount(slug?: string, options: Options = {
     }
     run()
     return () => { cancelled = true }
-  }, [slug, options.oncePerSession, options.coolDownMinutes])
+  }, [slug, options.oncePerSession, options.coolDownMinutes, options.globalCoolDown])
 
   return { count, loading, error }
 }

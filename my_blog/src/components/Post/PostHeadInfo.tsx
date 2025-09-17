@@ -123,8 +123,8 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   // GA4 이벤트 전송 (조회수 표시는 하지 않음)
   useGTMViewCount(postSlug || '')
 
-  // Supabase counter (client → RPC). No localStorage used.
-  const { count, loading } = useSupabaseViewCount(postSlug, { oncePerSession: true })
+  // Supabase counter (client → RPC). Global daily cool-down across site.
+  const { count, loading } = useSupabaseViewCount(postSlug, { coolDownMinutes: 60 * 24, globalCoolDown: true })
 
   return (
     <PostHeadInfoWrapper>

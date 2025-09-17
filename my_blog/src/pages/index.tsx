@@ -78,8 +78,8 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
   const gatsbyImageData = file?.childImageSharp?.gatsbyImageData
   const publicURL = file?.publicURL
 
-  // Count a homepage visit with a 5-minute cool-down (cookie-based)
-  useSupabaseViewCount('__home__', { coolDownMinutes: 5 })
+  // Count a homepage visit at most once per day (global across site)
+  useSupabaseViewCount('__home__', { coolDownMinutes: 60 * 24, globalCoolDown: true })
 
   return (
     <RecoilRoot>
