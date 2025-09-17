@@ -15,6 +15,9 @@ export type PostPageItemType = {
       categories: string[]
       thumbnail: any
     }
+    fields: {
+      slug: string
+    }
   }
 }
 
