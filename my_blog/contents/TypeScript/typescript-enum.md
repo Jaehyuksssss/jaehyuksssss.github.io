@@ -1,6 +1,6 @@
 ---
 date: '2024-12-19'
-title: 'JavaScript'
+title: 'TypeScript'
 categories: ['TIL','Deep_Dive']
 summary: 'TypeScript에서 enum을 지양하는 이유와 대안'
 thumbnail: '/blog/typescript.png'
