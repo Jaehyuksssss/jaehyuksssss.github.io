@@ -105,14 +105,7 @@ const Category = styled.div`
   font-weight: 700;
 `
 
-const ViewCount = styled.span`
-  opacity: 0.9;
-  font-weight: 700;
-  font-size: 16px;
-  @media (max-width: 768px) {
-    font-size: 14px;
-  }
-`
+// View count is tracked but not displayed in UI
 
 const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   title,
@@ -124,7 +117,8 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
   useGTMViewCount(postSlug || '')
 
   // Supabase counter (client → RPC). Global daily cool-down across site.
-  const { count, loading } = useSupabaseViewCount(postSlug, { coolDownMinutes: 60 * 24, globalCoolDown: true })
+  // We call the hook to increment, but do not display the count.
+  useSupabaseViewCount(postSlug, { coolDownMinutes: 60 * 24, globalCoolDown: true })
 
   return (
     <PostHeadInfoWrapper>
@@ -134,9 +128,6 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
       <Title>{title}</Title>
       <PostData>
         <div>{date}</div>
-        <ViewCount>
-          {loading ? '조회수 …' : `조회수 ${typeof count === 'number' ? count.toLocaleString() : '-'}`}
-        </ViewCount>
       </PostData>
       <CategoryList>
         {categories.map(category => (
