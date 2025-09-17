@@ -3,8 +3,8 @@ require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 module.exports = {
   pathPrefix: "/blog",
   siteMetadata: {
-    title: `재혁 개발 블로그`,
-    description: `한걸음씩 성장해 가는 개발자가 되고자 하는 포부가 담긴 블로그입니다.`,
+    title: `재혁의 개발 블로그`,
+    description: `개발자 임재혁 입니다.`,
     author: `Jaehyuksssss`,
     siteUrl: "https://Jaehyuksssss.github.io/blog",
   },
