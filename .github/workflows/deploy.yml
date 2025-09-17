@@ -2,7 +2,7 @@ name: Deploy Gatsby to GitHub Pages
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   workflow_dispatch:
 
 permissions:
@@ -38,7 +38,15 @@ jobs:
           cd my_blog
           npm ci --legacy-peer-deps
 
+      - name: Clean Gatsby cache
+        run: |
+          cd my_blog
+          npm run clean
+
       - name: Build
+        env:
+          GATSBY_SUPABASE_URL: ${{ secrets.GATSBY_SUPABASE_URL }}
+          GATSBY_SUPABASE_ANON_KEY: ${{ secrets.GATSBY_SUPABASE_ANON_KEY }}
         run: |
           cd my_blog
           GATSBY_PATH_PREFIX=/blog npm run build
