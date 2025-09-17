@@ -50,8 +50,8 @@ const Template: FunctionComponent<TemplateProps> = function ({
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={image} />
-        <meta name="twitter:site" content="@사용자이름" />
-        <meta name="twitter:creator" content="@사용자이름" />
+        <meta name="twitter:site" content="재혁" />
+        <meta name="twitter:creator" content="재혁" />
 
         <html lang="ko" />
       </Helmet>
