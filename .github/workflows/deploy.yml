@@ -47,6 +47,7 @@ jobs:
         env:
           GATSBY_SUPABASE_URL: ${{ secrets.GATSBY_SUPABASE_URL }}
           GATSBY_SUPABASE_ANON_KEY: ${{ secrets.GATSBY_SUPABASE_ANON_KEY }}
+          GATSBY_UTTERANCES_REPO: ${{ secrets.GATSBY_UTTERANCES_REPO }}
         run: |
           cd my_blog
           GATSBY_PATH_PREFIX=/blog npm run build
