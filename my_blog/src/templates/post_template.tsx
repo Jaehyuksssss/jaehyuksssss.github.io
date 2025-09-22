@@ -4,6 +4,7 @@ import Template from "components/Common/Template"
 import PostHead from "components/Post/PostHead"
 import PostContent from "components/Post/PostContent"
 import CommentWidget from "components/Post/CommentWidget"
+import LikeButton from "components/Post/LikeButton"
 
 export type PostPageItemType = {
   node: {
@@ -71,6 +72,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
         postSlug={postSlug}
       />
       <PostContent html={html} />
+      <LikeButton postSlug={postSlug} />
       <CommentWidget />
     </Template>
   )
