@@ -1,19 +1,27 @@
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
+const SITE_URL = "https://Jaehyuksssss.github.io/blog"
+
 module.exports = {
   pathPrefix: "/blog",
   siteMetadata: {
     title: `재혁의 개발 블로그`,
     description: `개발자 임재혁 입니다.`,
     author: `Jaehyuksssss`,
-    siteUrl: "https://Jaehyuksssss.github.io/blog",
+    siteUrl: SITE_URL,
   },
   plugins: [
-    "gatsby-plugin-sitemap",
+    {
+      resolve: "gatsby-plugin-sitemap",
+      options: {
+        output: "/sitemap-index.xml",
+        resolveSiteUrl: () => SITE_URL,
+      },
+    },
     {
       resolve: "gatsby-plugin-canonical-urls",
       options: {
-        siteUrl: "https://Jaehyuksssss.github.io/blog",
+        siteUrl: SITE_URL,
         stripQueryString: true,
       },
     },
