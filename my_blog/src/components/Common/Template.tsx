@@ -5,7 +5,6 @@ import { Helmet } from "react-helmet"
 import GlobalStyle from "components/Common/GlobalStyle"
 import Footer from "components/Common/Footer"
 import GoogleTagManager, { GoogleTagManagerBody } from "components/Common/GoogleTagManager"
-// import Menu from "./Menu"
 
 type TemplateProps = {
   title?: string
