@@ -3,7 +3,7 @@ date: '2025-09-17'
 title: 'TypeScript'
 categories: ['TIL','typescript']
 summary: 'TypeScript에서 enum을 지양하는 이유와 대안'
-thumbnail: '/blog/typescript.png'
+thumbnail: '/typescript.png'
 ---
 
 # TypeScript에서 enum을 지양하는 이유와 대안

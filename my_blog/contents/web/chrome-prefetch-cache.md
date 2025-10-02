@@ -3,7 +3,7 @@ date: '2025-10-01'
 title: 'DevTools에 뜨는 (disk cache), (prefetch cache)는 뭘까?'
 categories: ['TIL','Deep_Dive']
 summary: 'Chrome DevTools Network 패널에 표시되는 disk cache/prefetch cache의 의미와 Gatsby가 데이터를 미리 불러오는 방식 정리'
-thumbnail: '/blog/disk.png'
+thumbnail: '/disk.png'
 ---
 
 # DevTools에 뜨는 `(disk cache)`, `(prefetch cache)`는 뭘까?

@@ -1,9 +1,8 @@
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
-const SITE_URL = "https://Jaehyuksssss.github.io/blog"
+const SITE_URL = "https://Jaehyuksssss.github.io/"
 
 module.exports = {
-  pathPrefix: "/blog",
   siteMetadata: {
     title: `재혁의 개발 블로그`,
     description: `개발자 임재혁 입니다.`,

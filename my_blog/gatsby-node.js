@@ -28,11 +28,11 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
 
     createNodeField({ node, name: "slug", value: slug })
 
-    // Fix thumbnail path to include pathPrefix
-    if (node.frontmatter && node.frontmatter.thumbnail) {
+    // Normalize legacy thumbnail paths that included the old /blog prefix
+    if (node.frontmatter && typeof node.frontmatter.thumbnail === 'string') {
       const thumbnail = node.frontmatter.thumbnail
-      if (thumbnail.startsWith('/') && !thumbnail.startsWith('/blog/')) {
-        node.frontmatter.thumbnail = `/blog${thumbnail}`
+      if (thumbnail.startsWith('/blog/')) {
+        node.frontmatter.thumbnail = thumbnail.replace(/^\/blog/, '') || '/' // ensure leading slash remains
       }
     }
   }

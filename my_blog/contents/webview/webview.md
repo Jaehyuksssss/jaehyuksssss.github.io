@@ -3,7 +3,7 @@ date: '2025-09-17'
 title: 'WebView 트러블 슈팅'
 categories: ['TIL', 'webview', 'mobile']
 summary: 'WebView 개발 시 고려해야 할 사항들 정리'
-thumbnail: '/blog/webview-thumbnail.png'
+thumbnail: '/webview-thumbnail.png'
 ---
 
 

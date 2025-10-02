@@ -3,7 +3,7 @@ date: '2022-07-22'
 title: 'JavaScript'
 categories: ['TIL','Deep_Dive']
 summary: '16장 프로퍼티 어트리뷰트'
-thumbnail: '/blog/deep-dive.png'
+thumbnail: '/deep-dive.png'
 ---
 # 16장 프로퍼티 어트리뷰트
 ## 프로퍼티어트리뷰트
