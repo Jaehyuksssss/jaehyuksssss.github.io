@@ -57,10 +57,10 @@ const PostHead: FunctionComponent<PostHeadProps> = function ({
 }) {
   const isThumbnailString = typeof thumbnail === 'string';
   
-  // Ensure thumbnail path includes pathPrefix
+  // Drop legacy /blog prefix that was used when the site lived under a subdirectory
   const getThumbnailSrc = (thumb: string) => {
-    if (thumb && thumb.startsWith('/') && !thumb.startsWith('/blog/')) {
-      return `/blog${thumb}`;
+    if (thumb?.startsWith('/blog/')) {
+      return thumb.replace(/^\/blog/, '') || '/';
     }
     return thumb;
   };

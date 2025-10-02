@@ -3,7 +3,7 @@ date: '2025-09-16'
 title: 'Elastic Beanstalk × GitHub Actions로 .NET 8 CI/CD 구축기 (OIDC, 최소 권한)'
 categories: ['TIL','AWS','Elastic Beanstalk','GitHub Actions','CI/CD','.NET']
 summary: 'AL2023(.NET 8) Elastic Beanstalk에 액세스 키 없이(OIDC) 배포 파이프라인 구축. 권한 설계/워크플로까지.'
-thumbnail: '/blog/aws.png'
+thumbnail: '/aws.png'
 ---
 
 ![아키텍쳐](/images/eb.png)

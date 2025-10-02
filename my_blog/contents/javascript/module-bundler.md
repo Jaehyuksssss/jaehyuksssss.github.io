@@ -3,7 +3,7 @@ date: '2025-09-18'
 title: 'javascript'
 categories: ['TIL','Deep_Dive']
 summary: '대규모 웹 애플리케이션 개발의 기초: 모듈화와 번들러'
-thumbnail: '/blog/deep-dive.png'
+thumbnail: '/deep-dive.png'
 ---
 
 # 대규모 웹 애플리케이션 개발의 기초: 모듈화와 번들러

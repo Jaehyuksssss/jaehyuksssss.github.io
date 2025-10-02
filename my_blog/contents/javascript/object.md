@@ -3,7 +3,7 @@ date: '2022-06-04'
 title: 'JavaScript'
 categories: ['TIL','Deep_Dive']
 summary: '10장 객체 리터럴'
-thumbnail: '/blog/deep-dive.png'
+thumbnail: '/deep-dive.png'
 ---
 
 # 10장 객체 리터럴

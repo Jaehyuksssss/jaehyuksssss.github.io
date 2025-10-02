@@ -3,7 +3,7 @@ date: '2025-10-01'
 title: 'Google Search Console은 왜 바로 반영되지 않을까?'
 categories: ['TIL','Deep_Dive']
 summary: 'Google Search Console이 크롤링·색인을 처리하는 방식 정리'
-thumbnail: '/blog/search-console.png'
+thumbnail: '/search-console.png'
 ---
 
 # Google Search Console은 왜 바로 반영되지 않을까?
@@ -41,7 +41,7 @@ Search Console의 상태 카드 역시 주기적으로 배치 업데이트가 �
 ### 1. HTTP 응답 직접 확인
 
 ```bash
-curl -I https://jaehyuksssss.github.io/blog/sitemap/sitemap-index.xml
+curl -I https://jaehyuksssss.github.io/sitemap/sitemap-index.xml
 ```
 
 200 OK가 내려오면 서버에 파일은 제대로 배포된 것이다. 404, 500 같은 에러라면 배포 단계에서 파일이 누락된 것이므로 수정 후 다시 제출해야 한다.

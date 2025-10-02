@@ -92,10 +92,10 @@ const PostItem: FunctionComponent<PostItemProps> = function ({
   const isThumbnailString = typeof thumbnail === 'string';
   const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
   
-  // Ensure thumbnail path includes pathPrefix
+  // Drop legacy /blog prefix left over from the old subdirectory deployment
   const getThumbnailSrc = (thumb: string) => {
-    if (thumb && thumb.startsWith('/') && !thumb.startsWith('/blog/')) {
-      return `/blog${thumb}`;
+    if (thumb?.startsWith('/blog/')) {
+      return thumb.replace(/^\/blog/, '') || '/';
     }
     return thumb;
   };

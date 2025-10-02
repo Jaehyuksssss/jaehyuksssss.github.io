@@ -3,7 +3,7 @@ date: '2025-09-22'
 title: 'GitHub Actions + AWS SES로 배포 알림 메일 받기'
 categories: ['TIL', 'AWS', 'email']
 summary: '외주 협업 환경에서 Slack/Teams 대신 이메일 기반 알림을 선택한 이유와 SES 통합 방법'
-thumbnail: '/blog/aws.png'
+thumbnail: '/aws.png'
 ---
 
 ## 1. 문제 정의 (인트로)

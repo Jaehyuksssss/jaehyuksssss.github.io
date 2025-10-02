@@ -3,7 +3,7 @@ date: '2025-09-30'
 title: 'WEB'
 categories: ['TIL','Deep_Dive']
 summary: '왜 어떤 건 드래그가 되고, 어떤 건 안 될까? - 웹에서 텍스트 선택의 원리'
-thumbnail: '/blog/copy.png'
+thumbnail: '/copy.png'
 ---
 
 
