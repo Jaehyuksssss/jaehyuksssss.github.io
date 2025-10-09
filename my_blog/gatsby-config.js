@@ -1,6 +1,6 @@
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
-const SITE_URL = "https://Jaehyuksssss.github.io/"
+const SITE_URL = "https://jaehyuksssss.github.io"
 
 module.exports = {
   siteMetadata: {
@@ -13,6 +13,7 @@ module.exports = {
     {
       resolve: "gatsby-plugin-sitemap",
       options: {
+        output: "/",
         resolveSiteUrl: () => SITE_URL,
       },
     },
