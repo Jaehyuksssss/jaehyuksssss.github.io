@@ -111,7 +111,6 @@ const Template: FunctionComponent<TemplateProps> = function ({
           <meta name="keywords" content={keywords.join(", ")} />
         )}
         <meta name="google-site-verification" content="2XGKoH473RZiKP8024Go5wI4pAFPVu6DcfXHLtnr5VI" />
-
         <meta property="og:type" content="website" />
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDescription} />
