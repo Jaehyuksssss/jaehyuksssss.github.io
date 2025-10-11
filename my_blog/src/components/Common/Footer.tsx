@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react'
-import styled from '@emotion/styled'
+import React, { FunctionComponent } from "react"
+import styled from "@emotion/styled"
 
 const FooterWrapper = styled.footer`
   display: grid;
@@ -18,7 +18,7 @@ const FooterWrapper = styled.footer`
 const Footer: FunctionComponent = function () {
   return (
     <FooterWrapper>
-      Thank You for Visiting My Blog.
+      Thank You for Visiting My Blog 😎.
       <br />© 2022 Developer Jae Hyuk, Powered By Gatsby.
     </FooterWrapper>
   )
