@@ -1,9 +1,9 @@
 ---
-date: '2025-10-01'
-title: 'DevTools에 뜨는 (disk cache), (prefetch cache)는 뭘까?'
-categories: ['TIL','Deep_Dive']
-summary: 'Chrome DevTools Network 패널에 표시되는 disk cache/prefetch cache의 의미와 Gatsby가 데이터를 미리 불러오는 방식 정리'
-thumbnail: '/disk.png'
+date: "2025-10-01"
+title: "DevTools에 뜨는 (disk cache), (prefetch cache)는 뭘까?"
+categories: ["TIL", "Deep_Dive"]
+summary: "Chrome DevTools Network 패널에 표시되는 disk cache/prefetch cache의 의미와 Gatsby가 데이터를 미리 불러오는 방식 정리"
+thumbnail: "/disk.png"
 ---
 
 # DevTools에 뜨는 `(disk cache)`, `(prefetch cache)`는 뭘까?
@@ -14,12 +14,12 @@ Gatsby를 비롯한 SPA 프로젝트에서 DevTools의 Network 패널을 열어�
 
 Chrome은 리소스를 재사용하기 위해 여러 층의 캐시를 두고 있습니다. Network 패널의 Size 열은 해당 요청이 어느 층에서 응답을 가져왔는지 보여줍니다.
 
-| 표기 | 의미 | 특징 |
-| --- | --- | --- |
-| `(from memory cache)` | 탭이 열려 있는 동안 RAM에 저장된 리소스 | JS 번들처럼 같은 세션 내에서 바로 재사용되는 파일 |
-| `(disk cache)` | 브라우저 프로필의 HTTP 캐시 디렉터리에서 읽음 | 브라우저를 껐다 켜도 남아 있으며 조건이 맞으면 즉시 반환 |
-| `(prefetch cache)` | 사전에 `prefetch`로 받아둔 응답을 사용 | 사용자가 이동할 가능성이 높은 리소스를 미리 내려 받음 |
-| `(service worker)` | 등록된 서비스 워커가 반환 | PWA에서 많이 사용하는 방식 |
+| 표기                  | 의미                                          | 특징                                                     |
+| --------------------- | --------------------------------------------- | -------------------------------------------------------- |
+| `(from memory cache)` | 탭이 열려 있는 동안 RAM에 저장된 리소스       | JS 번들처럼 같은 세션 내에서 바로 재사용되는 파일        |
+| `(disk cache)`        | 브라우저 프로필의 HTTP 캐시 디렉터리에서 읽음 | 브라우저를 껐다 켜도 남아 있으며 조건이 맞으면 즉시 반환 |
+| `(prefetch cache)`    | 사전에 `prefetch`로 받아둔 응답을 사용        | 사용자가 이동할 가능성이 높은 리소스를 미리 내려 받음    |
+| `(service worker)`    | 등록된 서비스 워커가 반환                     | PWA에서 많이 사용하는 방식                               |
 
 표기 자체는 Chrome이 정해 놓은 문자열이라 서버 설정과는 무관합니다.
 

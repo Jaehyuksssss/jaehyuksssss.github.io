@@ -1,9 +1,9 @@
 # my-Gatsby-blog
 
-````jsx
+```jsx
 //Link
-https://jaehyuksssss.github.io/blog
-````
+https://jaehyuksssss.github.io
+```
 
 ## View Counter (Supabase)
 
@@ -12,9 +12,9 @@ https://jaehyuksssss.github.io/blog
 
 ### Setup
 
-1) Create a Supabase project and note your Project URL and anon key.
+1. Create a Supabase project and note your Project URL and anon key.
 
-2) In Supabase SQL editor, run:
+2. In Supabase SQL editor, run:
 
 ```
 create table if not exists public.post_views (
@@ -67,7 +67,7 @@ revoke all on function public.get_total_views() from public;
 grant execute on function public.get_total_views() to anon, authenticated;
 ```
 
-3) Add env vars for Gatsby (client-side):
+3. Add env vars for Gatsby (client-side):
 
 - `.env.development` and CI build env:
 
@@ -76,7 +76,7 @@ GATSBY_SUPABASE_URL=your-project-url
 GATSBY_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-4) Install dependency:
+4. Install dependency:
 
 ```
 npm i @supabase/supabase-js
