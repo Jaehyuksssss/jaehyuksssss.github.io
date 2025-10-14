@@ -13,7 +13,7 @@ module.exports = {
     {
       resolve: "gatsby-plugin-sitemap",
       options: {
-        output: "/",
+        output: "/sitemap",
         resolveSiteUrl: () => SITE_URL,
       },
     },
