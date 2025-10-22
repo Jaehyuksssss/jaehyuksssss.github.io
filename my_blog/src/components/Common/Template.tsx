@@ -65,6 +65,19 @@ const MobileAdContainer = styled.div`
   @media (max-width: 768px) {
     display: block;
     margin-top: 90px; /* 모바일 메뉴바 높이만큼 여백 추가 */
+
+    /* 모바일 광고 크기 제한 */
+    .adsbygoogle {
+      max-width: 100% !important;
+      max-height: 100px !important;
+      overflow: hidden !important;
+    }
+
+    /* Google AdSense iframe 크기 제한 */
+    iframe {
+      max-width: 100% !important;
+      max-height: 100px !important;
+    }
   }
 `
 

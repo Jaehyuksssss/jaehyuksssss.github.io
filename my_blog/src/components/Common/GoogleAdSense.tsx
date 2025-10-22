@@ -81,10 +81,11 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
     <ins
       ref={adRef}
       className="adsbygoogle"
-      style={{ 
+      style={{
         display: "block",
         minWidth: "160px",
-        minHeight: "100px"
+        minHeight: "100px",
+        maxWidth: "100%",
       }}
       data-ad-client={adClient}
       data-ad-slot={adSlot}
