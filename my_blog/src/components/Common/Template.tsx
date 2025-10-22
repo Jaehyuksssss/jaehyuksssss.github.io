@@ -203,81 +203,33 @@ const Template: FunctionComponent<TemplateProps> = function ({
       <GlobalStyle />
 
       <MobileAdContainer>
-        {/* 임시로 광고 비활성화 - Google AdSense 승인 후 활성화 */}
-        <div
-          style={{
-            width: "100%",
-            height: "50px",
-            backgroundColor: "#f0f0f0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            border: "1px dashed #ccc",
-          }}
-        >
-          모바일 광고 영역 (승인 후 활성화)
-        </div>
-        {/* <GoogleAdSense
+        <GoogleAdSense
           adClient="ca-pub-3398641306673607"
           adSlot="2123128311"
           adFormat="auto"
           fullWidthResponsive={true}
-        /> */}
+        />
       </MobileAdContainer>
 
       <MainLayout>
         <Sidebar>
-          {/* 임시로 광고 비활성화 - Google AdSense 승인 후 활성화 */}
-          <div
-            style={{
-              width: "100%",
-              height: "250px",
-              backgroundColor: "#f0f0f0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px dashed #ccc",
-              marginBottom: "20px",
-            }}
-          >
-            데스크톱 광고 영역
-            <br />
-            (승인 후 활성화)
-          </div>
-          {/* <GoogleAdSense
+          <GoogleAdSense
             adClient="ca-pub-3398641306673607"
             adSlot="2197868679"
             adFormat="auto"
             fullWidthResponsive={true}
-          /> */}
+          />
         </Sidebar>
 
         <ContentArea>{children}</ContentArea>
 
         <Sidebar>
-          {/* 임시로 광고 비활성화 - Google AdSense 승인 후 활성화 */}
-          <div
-            style={{
-              width: "100%",
-              height: "250px",
-              backgroundColor: "#f0f0f0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px dashed #ccc",
-              marginBottom: "20px",
-            }}
-          >
-            데스크톱 광고 영역
-            <br />
-            (승인 후 활성화)
-          </div>
-          {/* <GoogleAdSense
+          <GoogleAdSense
             adClient="ca-pub-3398641306673607"
             adSlot="2197868679"
             adFormat="auto"
             fullWidthResponsive={true}
-          /> */}
+          />
         </Sidebar>
       </MainLayout>
 
