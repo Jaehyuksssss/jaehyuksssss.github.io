@@ -50,7 +50,7 @@ const Sidebar = styled.aside`
 
 const ContentArea = styled.div`
   flex: 1;
-  padding: 20px;
+  margin-top: 100px;
 
   @media (max-width: 768px) {
     padding: 10px;
@@ -215,15 +215,6 @@ const Template: FunctionComponent<TemplateProps> = function ({
       {/* <Menu /> */}
       <GlobalStyle />
 
-      <MobileAdContainer>
-        <GoogleAdSense
-          adClient="ca-pub-3398641306673607"
-          adSlot="2123128311"
-          adFormat="auto"
-          fullWidthResponsive={true}
-        />
-      </MobileAdContainer>
-
       <MainLayout>
         <Sidebar>
           <GoogleAdSense
@@ -245,6 +236,15 @@ const Template: FunctionComponent<TemplateProps> = function ({
           />
         </Sidebar>
       </MainLayout>
+
+      <MobileAdContainer>
+        <GoogleAdSense
+          adClient="ca-pub-3398641306673607"
+          adSlot="2123128311"
+          adFormat="auto"
+          fullWidthResponsive={true}
+        />
+      </MobileAdContainer>
 
       <Footer />
     </Container>
