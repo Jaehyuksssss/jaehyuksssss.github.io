@@ -83,3 +83,33 @@ npm i @supabase/supabase-js
 ```
 
 Done. Per-post counts appear on post pages; total appears on the home hero.
+
+## Google AdSense (optional)
+
+- Requirements: Approved AdSense account and site approval.
+- Auto Ads support is built in and disabled by default. Enable by setting the env var and rebuilding.
+
+### Enable Auto Ads
+
+1. Add your AdSense publisher id to production env:
+
+```
+# .env.production
+GATSBY_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX
+```
+
+2. Deploy/build. The blog injects the AdSense script in `<head>` only in production.
+
+### Manual ad units (optional)
+
+- A helper component is available at `my_blog/src/components/Common/GoogleAdSlot.tsx`.
+- Use your unit’s slot id from AdSense UI:
+
+```tsx
+import GoogleAdSlot from 'components/Common/GoogleAdSlot'
+
+// Example placement inside a page/template
+<GoogleAdSlot slot="1234567890" />
+```
+
+Note: Ensure `GATSBY_ADSENSE_CLIENT` is set so the head script loads; without it, ad slots won’t render.

@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet"
 import GlobalStyle from "components/Common/GlobalStyle"
 import Footer from "components/Common/Footer"
 import GoogleTagManager, { GoogleTagManagerBody } from "components/Common/GoogleTagManager"
+import GoogleAdSense from "components/Common/GoogleAdSense"
 
 type TemplateProps = {
   title?: string
@@ -134,6 +135,9 @@ const Template: FunctionComponent<TemplateProps> = function ({
           </script>
         ))}
       </Helmet>
+      {process.env.GATSBY_ADSENSE_CLIENT && (
+        <GoogleAdSense client={process.env.GATSBY_ADSENSE_CLIENT} />
+      )}
       <GoogleTagManager containerId={GTM_CONTAINER_ID} />
       <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
       {/* <Menu /> */}
