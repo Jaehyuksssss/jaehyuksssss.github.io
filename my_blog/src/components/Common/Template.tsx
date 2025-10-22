@@ -25,6 +25,48 @@ const Container = styled.main`
   height: 100%;
 `
 
+const MainLayout = styled.div`
+  display: flex;
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`
+
+const Sidebar = styled.aside`
+  width: 180px;
+  padding: 20px;
+  padding-top: 120px; /* 메뉴바 높이만큼 여백 추가 */
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`
+
+const ContentArea = styled.div`
+  flex: 1;
+  padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+`
+
+const MobileAdContainer = styled.div`
+  display: none;
+  padding: 10px 20px;
+  margin-top: 80px; /* 메뉴바 높이만큼 여백 추가 */
+
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 90px; /* 모바일 메뉴바 높이만큼 여백 추가 */
+  }
+`
+
 const Template: FunctionComponent<TemplateProps> = function ({
   title,
   description,
@@ -158,15 +200,44 @@ const Template: FunctionComponent<TemplateProps> = function ({
       <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
       {/* <Menu /> */}
       <GlobalStyle />
-      {children}
-      <KakaoAdFit
-        desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
-        desktopWidth={160}
-        desktopHeight={600}
-        mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
-        mobileWidth={320}
-        mobileHeight={50}
-      />
+
+      <MobileAdContainer>
+        <KakaoAdFit
+          desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
+          desktopWidth={160}
+          desktopHeight={600}
+          mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
+          mobileWidth={320}
+          mobileHeight={50}
+        />
+      </MobileAdContainer>
+
+      <MainLayout>
+        <Sidebar>
+          <KakaoAdFit
+            desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
+            desktopWidth={160}
+            desktopHeight={600}
+            mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
+            mobileWidth={320}
+            mobileHeight={50}
+          />
+        </Sidebar>
+
+        <ContentArea>{children}</ContentArea>
+
+        <Sidebar>
+          <KakaoAdFit
+            desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
+            desktopWidth={160}
+            desktopHeight={600}
+            mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
+            mobileWidth={320}
+            mobileHeight={50}
+          />
+        </Sidebar>
+      </MainLayout>
+
       <Footer />
     </Container>
   )
