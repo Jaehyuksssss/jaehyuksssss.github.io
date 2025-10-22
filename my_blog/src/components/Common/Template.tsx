@@ -7,7 +7,7 @@ import Footer from "components/Common/Footer"
 import GoogleTagManager, {
   GoogleTagManagerBody,
 } from "components/Common/GoogleTagManager"
-import KakaoAdFit from "components/Common/KakaoAdFit"
+import GoogleAdSense from "components/Common/GoogleAdSense"
 
 type TemplateProps = {
   title?: string
@@ -38,7 +38,8 @@ const MainLayout = styled.div`
 `
 
 const Sidebar = styled.aside`
-  width: 180px;
+  width: 200px;
+  min-width: 200px;
   padding: 20px;
   padding-top: 120px; /* 메뉴바 높이만큼 여백 추가 */
 
@@ -202,39 +203,81 @@ const Template: FunctionComponent<TemplateProps> = function ({
       <GlobalStyle />
 
       <MobileAdContainer>
-        <KakaoAdFit
-          desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
-          desktopWidth={160}
-          desktopHeight={600}
-          mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
-          mobileWidth={320}
-          mobileHeight={50}
-        />
+        {/* 임시로 광고 비활성화 - Google AdSense 승인 후 활성화 */}
+        <div
+          style={{
+            width: "100%",
+            height: "50px",
+            backgroundColor: "#f0f0f0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px dashed #ccc",
+          }}
+        >
+          모바일 광고 영역 (승인 후 활성화)
+        </div>
+        {/* <GoogleAdSense
+          adClient="ca-pub-3398641306673607"
+          adSlot="2123128311"
+          adFormat="auto"
+          fullWidthResponsive={true}
+        /> */}
       </MobileAdContainer>
 
       <MainLayout>
         <Sidebar>
-          <KakaoAdFit
-            desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
-            desktopWidth={160}
-            desktopHeight={600}
-            mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
-            mobileWidth={320}
-            mobileHeight={50}
-          />
+          {/* 임시로 광고 비활성화 - Google AdSense 승인 후 활성화 */}
+          <div
+            style={{
+              width: "100%",
+              height: "250px",
+              backgroundColor: "#f0f0f0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px dashed #ccc",
+              marginBottom: "20px",
+            }}
+          >
+            데스크톱 광고 영역
+            <br />
+            (승인 후 활성화)
+          </div>
+          {/* <GoogleAdSense
+            adClient="ca-pub-3398641306673607"
+            adSlot="2197868679"
+            adFormat="auto"
+            fullWidthResponsive={true}
+          /> */}
         </Sidebar>
 
         <ContentArea>{children}</ContentArea>
 
         <Sidebar>
-          <KakaoAdFit
-            desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
-            desktopWidth={160}
-            desktopHeight={600}
-            mobileAdUnit="DAN-lL65i3O6fy5Tq86M"
-            mobileWidth={320}
-            mobileHeight={50}
-          />
+          {/* 임시로 광고 비활성화 - Google AdSense 승인 후 활성화 */}
+          <div
+            style={{
+              width: "100%",
+              height: "250px",
+              backgroundColor: "#f0f0f0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px dashed #ccc",
+              marginBottom: "20px",
+            }}
+          >
+            데스크톱 광고 영역
+            <br />
+            (승인 후 활성화)
+          </div>
+          {/* <GoogleAdSense
+            adClient="ca-pub-3398641306673607"
+            adSlot="2197868679"
+            adFormat="auto"
+            fullWidthResponsive={true}
+          /> */}
         </Sidebar>
       </MainLayout>
 
