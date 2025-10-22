@@ -237,15 +237,6 @@ const Template: FunctionComponent<TemplateProps> = function ({
         </Sidebar>
       </MainLayout>
 
-      <MobileAdContainer>
-        <GoogleAdSense
-          adClient="ca-pub-3398641306673607"
-          adSlot="2123128311"
-          adFormat="auto"
-          fullWidthResponsive={true}
-        />
-      </MobileAdContainer>
-
       <Footer />
     </Container>
   )

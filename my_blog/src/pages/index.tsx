@@ -2,6 +2,7 @@ import React, { FunctionComponent, useMemo } from "react"
 import Introduction from "components/Main/Introduction"
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList"
 import PostList, { PostType } from "components/Main/PostList"
+import GoogleAdSense from "components/Common/GoogleAdSense"
 import { graphql } from "gatsby"
 import { RecoilRoot } from "recoil"
 import { PostListItemType } from "types/PostItem.types"
@@ -9,6 +10,29 @@ import { IGatsbyImageData } from "gatsby-plugin-image"
 import queryString, { ParsedQuery } from "query-string"
 import Template from "components/Common/Template"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
+import styled from "@emotion/styled"
+
+const MobileAdContainer = styled.div`
+  display: none;
+  padding: 20px;
+
+  @media (max-width: 768px) {
+    display: block;
+
+    /* 모바일 광고 크기 제한 */
+    .adsbygoogle {
+      max-width: 100% !important;
+      max-height: 100px !important;
+      overflow: hidden !important;
+    }
+
+    /* Google AdSense iframe 크기 제한 */
+    iframe {
+      max-width: 100% !important;
+      max-height: 100px !important;
+    }
+  }
+`
 
 type IndexPageProps = {
   location: {
@@ -79,7 +103,10 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
   const publicURL = file?.publicURL
 
   // Count a homepage visit at most once per day (global across site)
-  useSupabaseViewCount('__home__', { coolDownMinutes: 60 * 24, globalCoolDown: true })
+  useSupabaseViewCount("__home__", {
+    coolDownMinutes: 60 * 24,
+    globalCoolDown: true,
+  })
 
   return (
     <RecoilRoot>
@@ -95,6 +122,14 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
           categoryList={categoryList}
           posts={edges}
         />
+        <MobileAdContainer>
+          <GoogleAdSense
+            adClient="ca-pub-3398641306673607"
+            adSlot="2123128311"
+            adFormat="auto"
+            fullWidthResponsive={true}
+          />
+        </MobileAdContainer>
         <PostList selectedCategory={selectedCategory} posts={edges} />
       </Template>
     </RecoilRoot>
