@@ -4,8 +4,10 @@ import { graphql, useStaticQuery } from "gatsby"
 import { Helmet } from "react-helmet"
 import GlobalStyle from "components/Common/GlobalStyle"
 import Footer from "components/Common/Footer"
-import GoogleTagManager, { GoogleTagManagerBody } from "components/Common/GoogleTagManager"
-import GoogleAdSense from "components/Common/GoogleAdSense"
+import GoogleTagManager, {
+  GoogleTagManagerBody,
+} from "components/Common/GoogleTagManager"
+import KakaoAdFit from "components/Common/KakaoAdFit"
 
 type TemplateProps = {
   title?: string
@@ -34,7 +36,12 @@ const Template: FunctionComponent<TemplateProps> = function ({
 }) {
   const {
     site: {
-      siteMetadata: { title: siteTitle = "", description: siteDescription = "", author = "", siteUrl = "" } = {},
+      siteMetadata: {
+        title: siteTitle = "",
+        description: siteDescription = "",
+        author = "",
+        siteUrl = "",
+      } = {},
     } = {},
   } = useStaticQuery(graphql`
     query TemplateSiteMetadata {
@@ -50,7 +57,7 @@ const Template: FunctionComponent<TemplateProps> = function ({
   `)
 
   // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
-  const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || 'GTM-TSGR8WXK'
+  const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || "GTM-TSGR8WXK"
 
   const normalizedBaseUrl = siteUrl ? siteUrl.replace(/\/$/, "") : ""
   const normalizeUrl = (value?: string) => {
@@ -94,9 +101,16 @@ const Template: FunctionComponent<TemplateProps> = function ({
     }
   }
 
-  const combinedStructuredData = [websiteStructuredData, ...(structuredData || [])].filter(Boolean)
+  const combinedStructuredData = [
+    websiteStructuredData,
+    ...(structuredData || []),
+  ].filter(Boolean)
 
-  const twitterHandle = author.startsWith("@") ? author : author ? `@${author}` : undefined
+  const twitterHandle = author.startsWith("@")
+    ? author
+    : author
+    ? `@${author}`
+    : undefined
 
   return (
     <Container>
@@ -111,7 +125,10 @@ const Template: FunctionComponent<TemplateProps> = function ({
         {keywords && keywords.length > 0 && (
           <meta name="keywords" content={keywords.join(", ")} />
         )}
-        <meta name="google-site-verification" content="2XGKoH473RZiKP8024Go5wI4pAFPVu6DcfXHLtnr5VI" />
+        <meta
+          name="google-site-verification"
+          content="2XGKoH473RZiKP8024Go5wI4pAFPVu6DcfXHLtnr5VI"
+        />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDescription} />
@@ -125,7 +142,9 @@ const Template: FunctionComponent<TemplateProps> = function ({
         <meta name="twitter:description" content={metaDescription} />
         {metaImage && <meta name="twitter:image" content={metaImage} />}
         {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
-        {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
+        {twitterHandle && (
+          <meta name="twitter:creator" content={twitterHandle} />
+        )}
 
         <link rel="canonical" href={canonicalUrl} />
 
@@ -135,9 +154,7 @@ const Template: FunctionComponent<TemplateProps> = function ({
           </script>
         ))}
       </Helmet>
-      {process.env.GATSBY_ADSENSE_CLIENT && (
-        <GoogleAdSense client={process.env.GATSBY_ADSENSE_CLIENT} />
-      )}
+      <KakaoAdFit adUnit="DAN-c4CEUcZSst2F4CX5" width={300} height={250} />
       <GoogleTagManager containerId={GTM_CONTAINER_ID} />
       <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
       {/* <Menu /> */}
