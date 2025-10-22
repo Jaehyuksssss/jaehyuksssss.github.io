@@ -4,4 +4,18 @@
  * See: https://www.gatsbyjs.com/docs/ssr-apis/
  */
 
-// You can delete this file if you're not using it
+const React = require('react')
+
+// Inject the AdSense account verification meta tag on every page
+exports.onRenderBody = ({ setHeadComponents }) => {
+  const adsenseClient = process.env.GATSBY_ADSENSE_CLIENT || 'ca-pub-3398641306673607'
+  if (!adsenseClient) return
+
+  setHeadComponents([
+    React.createElement('meta', {
+      key: 'google-adsense-account',
+      name: 'google-adsense-account',
+      content: adsenseClient,
+    }),
+  ])
+}
