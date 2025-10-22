@@ -10,7 +10,6 @@ type IntroductionProps = {
 
 const Background = styled.div`
   width: 100%;
-  height: 420px;
   background: #9bb8d5;
   color: #ffffff;
   padding-top: 80px; /* 카테고리 메뉴 공간 확보 */
@@ -78,7 +77,9 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
           <SubTitle>안녕하세요,</SubTitle>
           <Title>개발자 임재혁입니다.</Title>
           <Stats>
-            {loading ? '전체 조회수 불러오는 중…' : `전체 조회수 ${total?.toLocaleString() ?? '-'}`}
+            {loading
+              ? "전체 조회수 불러오는 중…"
+              : `전체 조회수 ${total?.toLocaleString() ?? "-"}`}
           </Stats>
         </div>
       </Wrapper>
