@@ -154,6 +154,10 @@ const Template: FunctionComponent<TemplateProps> = function ({
           </script>
         ))}
       </Helmet>
+      <GoogleTagManager containerId={GTM_CONTAINER_ID} />
+      <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
+      {/* <Menu /> */}
+      <GlobalStyle />
       <KakaoAdFit
         desktopAdUnit="DAN-qd2Zqldrfb5gWCyl"
         desktopWidth={160}
@@ -162,10 +166,6 @@ const Template: FunctionComponent<TemplateProps> = function ({
         mobileWidth={320}
         mobileHeight={50}
       />
-      <GoogleTagManager containerId={GTM_CONTAINER_ID} />
-      <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
-      {/* <Menu /> */}
-      <GlobalStyle />
       {children}
       <Footer />
     </Container>
