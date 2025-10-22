@@ -1,12 +1,34 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 
 interface KakaoAdFitProps {
-  adUnit: string
-  width: number
-  height: number
+  desktopAdUnit: string
+  desktopWidth: number
+  desktopHeight: number
+  mobileAdUnit: string
+  mobileWidth: number
+  mobileHeight: number
 }
 
-const KakaoAdFit: React.FC<KakaoAdFitProps> = ({ adUnit, width, height }) => {
+const KakaoAdFit: React.FC<KakaoAdFitProps> = ({
+  desktopAdUnit,
+  desktopWidth,
+  desktopHeight,
+  mobileAdUnit,
+  mobileWidth,
+  mobileHeight,
+}) => {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
   useEffect(() => {
     // Kakao AdFit 스크립트 동적 로드
     const script = document.createElement("script")
@@ -25,13 +47,17 @@ const KakaoAdFit: React.FC<KakaoAdFitProps> = ({ adUnit, width, height }) => {
     }
   }, [])
 
+  const currentAdUnit = isMobile ? mobileAdUnit : desktopAdUnit
+  const currentWidth = isMobile ? mobileWidth : desktopWidth
+  const currentHeight = isMobile ? mobileHeight : desktopHeight
+
   return (
     <ins
       className="kakao_ad_area"
       style={{ display: "none", width: "100%" }}
-      data-ad-unit={adUnit}
-      data-ad-width={width}
-      data-ad-height={height}
+      data-ad-unit={currentAdUnit}
+      data-ad-width={currentWidth}
+      data-ad-height={currentHeight}
     />
   )
 }
