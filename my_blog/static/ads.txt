@@ -1,0 +1,5 @@
+google.com, pub-3398641306673607, DIRECT, f08c47fec0942fa0
+
+# Add additional authorized sellers below as needed.
+# Example for a reseller (replace with actual values from the network):
+# example-ad-network.com, <account-id>, RESELLER, <cert-authority-id>
