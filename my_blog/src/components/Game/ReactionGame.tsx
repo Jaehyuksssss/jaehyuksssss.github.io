@@ -231,7 +231,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
 
   return (
     <Wrapper>
-      <h1 style={{ color: '#fff', margin: 0 }}>머리 식히기 위한 반응속도 테스트</h1>
+      <h1 style={{ color: '#1b1b1b', margin: 0 }}>머리 식히기 위한 반응속도 테스트</h1>
       <Panel>
         <span>남은 시간: <Stat>{Math.ceil(clamp(remainingMs, 0, timeLimitSec * 1000) / 1000)}s</Stat></span>
         <span>라운드: <Stat>{running ? round : '대기 중'}</Stat></span>
@@ -257,7 +257,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
       {!running ? (
         <PrimaryBtn onClick={() => setShowDifficultyPicker(true)} aria-label="게임 시작">게임 시작</PrimaryBtn>
       ) : (
-        <span style={{ color: '#e6e6e6' }}>다른 색 타일을 빠르게 터치하세요!</span>
+        <span style={{ color: '#1b1b1b' }}>다른 색 타일을 빠르게 터치하세요!</span>
       )}
 
       {showDifficultyPicker && !running ? (
