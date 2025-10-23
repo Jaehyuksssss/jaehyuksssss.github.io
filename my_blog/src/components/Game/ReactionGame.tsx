@@ -235,7 +235,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
       <Panel>
         <span>남은 시간: <Stat>{Math.ceil(clamp(remainingMs, 0, timeLimitSec * 1000) / 1000)}s</Stat></span>
         <span>라운드: <Stat>{running ? round : '대기 중'}</Stat></span>
-        <span>난이도: <Stat>{difficulty === 'easy' ? '하수' : difficulty === 'medium' ? '중수' : '고수'}</Stat></span>
+        <span>난이도: <Stat>{difficulty === 'easy' ? '하수' : difficulty === 'medium' ? '중수' : '시력4.0'}</Stat></span>
         <span>이번 평균: <Stat>{formatMs(avg)}</Stat></span>
         {bestRounds ? <span>최고 라운드: <Stat>{bestRounds}</Stat></span> : null}
         {bestAvgMs ? <span>최고 평균: <Stat>{formatMs(bestAvgMs)}</Stat></span> : null}
@@ -283,7 +283,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 10 }}>
               <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('easy') }} aria-label="하수 난이도로 시작">하수</PrimaryBtn>
               <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('medium') }} aria-label="중수 난이도로 시작">중수</PrimaryBtn>
-              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('hard') }} aria-label="고수 난이도로 시작">고수</PrimaryBtn>
+              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('hard') }} aria-label="시력 4.0 난이도로 시작">시력 4.0</PrimaryBtn>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
               <SecondaryBtn onClick={() => setShowDifficultyPicker(false)} aria-label="취소">취소</SecondaryBtn>
@@ -311,8 +311,8 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
             onClick={e => e.stopPropagation()}
           >
             <h2 id="result-title" style={{ margin: '0 0 10px', color: '#fff' }}>결과</h2>
-            <div style={{ display: 'grid', gap: 8, marginBottom: 16, fontWeight: 700 }}>
-              <div>난이도: <span style={{ color: '#ffd561' }}>{result.difficulty === 'easy' ? '하수' : result.difficulty === 'medium' ? '중수' : '고수'}</span></div>
+            <div style={{ display: 'grid', gap: 8, marginBottom: 16, fontWeight: 700 }}>고수
+              <div>난이도: <span style={{ color: '#ffd561' }}>{result.difficulty === 'easy' ? '하수' : result.difficulty === 'medium' ? '중수' : '시력 4.0'}</span></div>
               <div>완료 라운드: <span style={{ color: '#ffd561' }}>{result.rounds}</span></div>
               <div>평균 반응속도: <span style={{ color: '#ffd561' }}>{formatMs(result.avgMs)}</span></div>
             </div>
