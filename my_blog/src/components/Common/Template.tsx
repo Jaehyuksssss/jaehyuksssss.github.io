@@ -18,6 +18,7 @@ type TemplateProps = {
   image?: string
   keywords?: string[]
   structuredData?: Array<Record<string, unknown>>
+  hideGameButton?: boolean
   children: ReactNode
 }
 
@@ -90,6 +91,7 @@ const Template: FunctionComponent<TemplateProps> = function ({
   image,
   keywords,
   structuredData,
+  hideGameButton,
   children,
 }) {
   const {
@@ -116,7 +118,8 @@ const Template: FunctionComponent<TemplateProps> = function ({
 
   // Current route (for conditionally hiding floating button)
   const location = useLocation()
-  const hideGameButton = Boolean(location && location.pathname && location.pathname.startsWith('/reaction'))
+  const isReactionPage = Boolean(location && location.pathname && location.pathname.startsWith('/reaction'))
+  const shouldHideGameButton = Boolean(hideGameButton || isReactionPage)
 
   // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
   const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || "GTM-TSGR8WXK"
@@ -244,8 +247,8 @@ const Template: FunctionComponent<TemplateProps> = function ({
       </MainLayout>
 
       <Footer />
-      {/* Floating game entry button (draggable). Hidden on /reaction */}
-      {!hideGameButton && <FloatingGameButton to="/reaction" label="게임" />}
+      {/* Floating game entry button (draggable). Hidden on /reaction and when explicitly requested */}
+      {!shouldHideGameButton && <FloatingGameButton to="/reaction" label="게임" />}
     </Container>
   )
 }

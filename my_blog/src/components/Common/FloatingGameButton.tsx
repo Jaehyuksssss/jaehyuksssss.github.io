@@ -11,6 +11,7 @@ const SIZE = 60 // px (touch target >= 44px)
 const RADIUS = 16
 const MARGIN = 16
 const STORAGE_KEY = 'floating_game_btn_pos'
+const MOVE_THRESHOLD = 6 // px: treat below as click, above as drag
 
 type Pos = { x: number; y: number }
 
@@ -74,13 +75,18 @@ function getInitialPos(): Pos {
 
 const FloatingGameButton: React.FC<Props> = ({ to = '/reaction', label = '게임' }) => {
   const [pos, setPos] = useState<Pos>(() => getInitialPos())
+  const posRef = useRef<Pos>(pos)
+  useEffect(() => { posRef.current = pos }, [pos])
   const [dragging, setDragging] = useState(false)
-  const startRef = useRef<{ offX: number; offY: number; moved: boolean }>({
+  const startRef = useRef<{ offX: number; offY: number; moved: boolean; startX: number; startY: number }>({
     offX: 0,
     offY: 0,
     moved: false,
+    startX: 0,
+    startY: 0,
   })
   const btnRef = useRef<HTMLButtonElement | null>(null)
+  const draggingRef = useRef(false)
 
   // Re-clamp on resize to keep the button on-screen
   useEffect(() => {
@@ -109,36 +115,43 @@ const FloatingGameButton: React.FC<Props> = ({ to = '/reaction', label = '게임
 
     function onPointerDown(e: PointerEvent) {
       el!.setPointerCapture?.(e.pointerId)
+      draggingRef.current = true
       setDragging(true)
       const rect = el!.getBoundingClientRect()
       startRef.current.offX = e.clientX - rect.left
       startRef.current.offY = e.clientY - rect.top
       startRef.current.moved = false
+      startRef.current.startX = e.clientX
+      startRef.current.startY = e.clientY
     }
 
     function onPointerMove(e: PointerEvent) {
-      if (!dragging) return
+      if (!draggingRef.current) return
       const w = window.innerWidth
       const h = window.innerHeight
       const nextX = clamp(e.clientX - startRef.current.offX, MARGIN, w - SIZE - MARGIN)
       const nextY = clamp(e.clientY - startRef.current.offY, MARGIN, h - SIZE - MARGIN)
       setPos({ x: nextX, y: nextY })
-      startRef.current.moved = true
+      const dx = e.clientX - startRef.current.startX
+      const dy = e.clientY - startRef.current.startY
+      if (!startRef.current.moved && Math.hypot(dx, dy) > MOVE_THRESHOLD) {
+        startRef.current.moved = true
+      }
     }
 
     function onPointerUp(e: PointerEvent) {
-      if (!dragging) return
+      if (!draggingRef.current) return
+      draggingRef.current = false
       setDragging(false)
 
-      // Edge snap horizontally
       const w = window.innerWidth
       const snapLeft = MARGIN
       const snapRight = w - SIZE - MARGIN
-      const snappedX = pos.x < w / 2 ? snapLeft : snapRight
-      const snapped = { x: snappedX, y: pos.y }
+      const current = posRef.current
+      const snappedX = current.x < w / 2 ? snapLeft : snapRight
+      const snapped = { x: snappedX, y: current.y }
       setPos(snapped)
 
-      // Treat as click if not moved
       const moved = startRef.current.moved
       if (!moved) {
         e.preventDefault()
@@ -155,7 +168,7 @@ const FloatingGameButton: React.FC<Props> = ({ to = '/reaction', label = '게임
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
     }
-  }, [dragging, pos.x, pos.y, to])
+  }, [to])
 
   // Ensure initial position is set after mount to avoid SSR mismatch
   useEffect(() => {
@@ -164,7 +177,7 @@ const FloatingGameButton: React.FC<Props> = ({ to = '/reaction', label = '게임
   }, [])
 
   return (
-    <ButtonWrap ref={btnRef} x={pos.x} y={pos.y} dragging={dragging} aria-label={label} title={label}>
+    <ButtonWrap ref={btnRef} x={pos.x} y={pos.y} dragging={dragging} aria-label={label} title={label} type="button">
       <Text>GAME</Text>
     </ButtonWrap>
   )
