@@ -1,4 +1,5 @@
 import React, { FunctionComponent, ReactNode } from "react"
+import { useLocation } from '@reach/router'
 import styled from "@emotion/styled"
 import { graphql, useStaticQuery } from "gatsby"
 import { Helmet } from "react-helmet"
@@ -8,6 +9,7 @@ import GoogleTagManager, {
   GoogleTagManagerBody,
 } from "components/Common/GoogleTagManager"
 import GoogleAdSense from "components/Common/GoogleAdSense"
+import FloatingGameButton from "components/Common/FloatingGameButton"
 
 type TemplateProps = {
   title?: string
@@ -111,6 +113,10 @@ const Template: FunctionComponent<TemplateProps> = function ({
       }
     }
   `)
+
+  // Current route (for conditionally hiding floating button)
+  const location = useLocation()
+  const hideGameButton = Boolean(location && location.pathname && location.pathname.startsWith('/reaction'))
 
   // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
   const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || "GTM-TSGR8WXK"
@@ -238,6 +244,8 @@ const Template: FunctionComponent<TemplateProps> = function ({
       </MainLayout>
 
       <Footer />
+      {/* Floating game entry button (draggable). Hidden on /reaction */}
+      {!hideGameButton && <FloatingGameButton to="/reaction" label="게임" />}
     </Container>
   )
 }

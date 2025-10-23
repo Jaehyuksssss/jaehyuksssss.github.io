@@ -29,7 +29,7 @@ export default function useViewCount(
       setError(null)
       try {
         const base = 'https://api.countapi.xyz'
-        const path = `${namespace}/${encodeURIComponent(key)}`
+        const path = `${namespace}/${encodeURIComponent(key!)}`
         const url = `${base}/${increment ? 'hit' : 'get'}/${path}`
 
         const res = await fetch(url, {
