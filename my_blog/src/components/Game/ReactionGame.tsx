@@ -82,8 +82,7 @@ function colorPair(difficulty: Difficulty) {
   const l = randInt(42, 58)
 
   if (difficulty === 'hard') {
-    // Slightly larger lightness gap so it's still challenging but noticeable
-    const delta = randInt(12, 18) * (Math.random() < 0.5 ? -1 : 1)
+    const delta = randInt(9, 15) * (Math.random() < 0.5 ? -1 : 1)
     const l2 = Math.max(20, Math.min(85, l + delta))
     return {
       base: `hsl(${h} ${s}% ${l}%)`,
@@ -232,11 +231,11 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
 
   return (
     <Wrapper>
-      <h1 style={{ color: '#fff', margin: 0 }}>브레인스토밍을 위한 반응속도 테스트</h1>
+      <h1 style={{ color: '#fff', margin: 0 }}>머리 식히기 위한 반응속도 테스트</h1>
       <Panel>
         <span>남은 시간: <Stat>{Math.ceil(clamp(remainingMs, 0, timeLimitSec * 1000) / 1000)}s</Stat></span>
         <span>라운드: <Stat>{running ? round : '대기 중'}</Stat></span>
-        <span>난이도: <Stat>{difficulty === 'easy' ? '하수' : difficulty === 'medium' ? '중수' : '시력4.0'}</Stat></span>
+        <span>난이도: <Stat>{difficulty === 'easy' ? '초보' : difficulty === 'medium' ? '중수' : '시력4.0'}</Stat></span>
         <span>이번 평균: <Stat>{formatMs(avg)}</Stat></span>
         {bestRounds ? <span>최고 라운드: <Stat>{bestRounds}</Stat></span> : null}
         {bestAvgMs ? <span>최고 평균: <Stat>{formatMs(bestAvgMs)}</Stat></span> : null}
@@ -282,7 +281,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
             <h2 id="difficulty-title" style={{ margin: '0 0 10px', color: '#fff' }}>난이도 선택</h2>
             <p style={{ marginTop: 0, color: '#bdbdbd' }}>난이도별 색 대비가 다릅니다.</p>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 10 }}>
-              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('easy') }} aria-label="하수 난이도로 시작">하수</PrimaryBtn>
+              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('easy') }} aria-label="초보 난이도로 시작">초보</PrimaryBtn>
               <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('medium') }} aria-label="중수 난이도로 시작">중수</PrimaryBtn>
               <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('hard') }} aria-label="시력 4.0 난이도로 시작">시력 4.0</PrimaryBtn>
             </div>
@@ -313,7 +312,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
           >
             <h2 id="result-title" style={{ margin: '0 0 10px', color: '#fff' }}>결과</h2>
             <div style={{ display: 'grid', gap: 8, marginBottom: 16, fontWeight: 700 }}>고수
-              <div>난이도: <span style={{ color: '#ffd561' }}>{result.difficulty === 'easy' ? '하수' : result.difficulty === 'medium' ? '중수' : '시력 4.0'}</span></div>
+              <div>난이도: <span style={{ color: '#ffd561' }}>{result.difficulty === 'easy' ? '초보' : result.difficulty === 'medium' ? '중수' : '시력 4.0'}</span></div>
               <div>완료 라운드: <span style={{ color: '#ffd561' }}>{result.rounds}</span></div>
               <div>평균 반응속도: <span style={{ color: '#ffd561' }}>{formatMs(result.avgMs)}</span></div>
             </div>
