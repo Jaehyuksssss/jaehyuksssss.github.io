@@ -132,6 +132,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 30, initialGrid = 2 }) =
   const endAtRef = useRef<number | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [result, setResult] = useState<{ rounds: number; avgMs: number; difficulty: Difficulty } | null>(null)
+  const [showDifficultyPicker, setShowDifficultyPicker] = useState(false)
 
   // Grid grows from initialGrid by +1 each round (2x2 → 3x3 → ...)
   const grid = useMemo(() => Math.max(2, initialGrid + Math.max(0, round - 1)), [initialGrid, round])
@@ -254,14 +255,42 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 30, initialGrid = 2 }) =
       </Board>
 
       {!running ? (
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <PrimaryBtn onClick={() => startGame('easy')} aria-label="하수 난이도로 시작">하수</PrimaryBtn>
-          <PrimaryBtn onClick={() => startGame('medium')} aria-label="중수 난이도로 시작">중수</PrimaryBtn>
-          <PrimaryBtn onClick={() => startGame('hard')} aria-label="고수 난이도로 시작">고수</PrimaryBtn>
-        </div>
+        <PrimaryBtn onClick={() => setShowDifficultyPicker(true)} aria-label="게임 시작">게임 시작</PrimaryBtn>
       ) : (
         <span style={{ color: '#e6e6e6' }}>다른 색 타일을 빠르게 터치하세요!</span>
       )}
+
+      {showDifficultyPicker && !running ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="difficulty-title"
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000,
+          }}
+          onClick={() => setShowDifficultyPicker(false)}
+        >
+          <div
+            style={{
+              background: '#1d1d1f', color: '#e6e6e6', padding: 20, borderRadius: 12,
+              width: 'min(420px, 92vw)', boxShadow: '0 10px 30px rgba(0,0,0,0.35)'
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h2 id="difficulty-title" style={{ margin: '0 0 10px', color: '#fff' }}>난이도 선택</h2>
+            <p style={{ marginTop: 0, color: '#bdbdbd' }}>난이도별 색 대비가 다릅니다.</p>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 10 }}>
+              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('easy') }} aria-label="하수 난이도로 시작">하수</PrimaryBtn>
+              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('medium') }} aria-label="중수 난이도로 시작">중수</PrimaryBtn>
+              <PrimaryBtn onClick={() => { setShowDifficultyPicker(false); startGame('hard') }} aria-label="고수 난이도로 시작">고수</PrimaryBtn>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+              <SecondaryBtn onClick={() => setShowDifficultyPicker(false)} aria-label="취소">취소</SecondaryBtn>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {showResult && result ? (
         <div
