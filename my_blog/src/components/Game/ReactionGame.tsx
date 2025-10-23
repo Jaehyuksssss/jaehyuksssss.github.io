@@ -119,7 +119,7 @@ const formatMs = (n: number | null | undefined) =>
 
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n))
 
-const ReactionGame: React.FC<Props> = ({ timeLimitSec = 30, initialGrid = 2 }) => {
+const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) => {
   // Round increments on every successful hit
   const [round, setRound] = useState(0)
   const [times, setTimes] = useState<number[]>([])
@@ -148,25 +148,25 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 30, initialGrid = 2 }) =
     setTarget(idx)
     const diff = overrideDifficulty ?? difficulty
     setColors(colorPair(diff))
-    // Reset per-round timer and start stopwatch after paint
-    endAtRef.current = performance.now() + timeLimitSec * 1000
-    setRemainingMs(timeLimitSec * 1000)
-    // Start timer after paint
+    // Start per-tile stopwatch after paint (for reaction timing only)
     requestAnimationFrame(() => {
       startRef.current = performance.now()
     })
-  }, [totalTiles, difficulty, timeLimitSec])
+  }, [totalTiles, difficulty])
 
   const startGame = useCallback((d: Difficulty) => {
     setTimes([])
     setRound(1)
     setDifficulty(d)
     setRunning(true)
-    // Kick off first round; timer resets inside nextRound
+    // Set global end time for entire game (no per-round reset)
+    endAtRef.current = performance.now() + timeLimitSec * 1000
+    setRemainingMs(timeLimitSec * 1000)
+    // Kick off first round
     nextRound(d)
     setShowResult(false)
     setResult(null)
-  }, [nextRound])
+  }, [nextRound, timeLimitSec])
 
   const handleHit = useCallback(() => {
     if (!running) return
@@ -186,7 +186,7 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 30, initialGrid = 2 }) =
     }
   }
 
-  // Timer for time-attack mode (always 30s by request)
+  // Global game timer (counts down once for the whole session)
   useEffect(() => {
     if (!running) return
     const tick = () => {
