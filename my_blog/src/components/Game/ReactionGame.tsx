@@ -82,7 +82,8 @@ function colorPair(difficulty: Difficulty) {
   const l = randInt(42, 58)
 
   if (difficulty === 'hard') {
-    const delta = randInt(9, 15) * (Math.random() < 0.5 ? -1 : 1)
+    // Slightly larger lightness gap so it's still challenging but noticeable
+    const delta = randInt(12, 18) * (Math.random() < 0.5 ? -1 : 1)
     const l2 = Math.max(20, Math.min(85, l + delta))
     return {
       base: `hsl(${h} ${s}% ${l}%)`,
