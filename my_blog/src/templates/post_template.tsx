@@ -155,6 +155,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
       image={publicURL}
       keywords={categories}
       structuredData={structuredData}
+      hideGameButton
     >
       <PostHead
         title={title}
