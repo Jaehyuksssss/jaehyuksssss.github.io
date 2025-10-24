@@ -1,10 +1,11 @@
-import React from 'react'
-import styled from '@emotion/styled'
-import { navigate } from 'gatsby'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
-import Template from 'components/Common/Template'
-import ReactionGame from 'components/Game/ReactionGame'
+import React from "react"
+import styled from "@emotion/styled"
+import { navigate } from "gatsby"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
+import Template from "components/Common/Template"
+import ReactionGame from "components/Game/ReactionGame"
+import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 
 const TopBackButton = styled.button`
   position: fixed;
@@ -39,10 +40,24 @@ const TopBackButton = styled.button`
 `
 
 const ReactionPage: React.FC = () => {
+  // reaction 페이지 조회수 카운트 (하루에 한 번만)
+  useSupabaseViewCount("reaction", {
+    coolDownMinutes: 60 * 24,
+    globalCoolDown: true,
+  })
+
   return (
-    <Template title="반응속도 테스트" description="30초 타임어택: 색이 다른 칸을 빠르게 찾아 클릭" url="/reaction">
+    <Template
+      title="반응속도 테스트"
+      description="30초 타임어택: 색이 다른 칸을 빠르게 찾아 클릭"
+      url="/reaction"
+    >
       <ReactionGame />
-      <TopBackButton aria-label="홈으로 이동" title="홈으로 이동" onClick={() => navigate('/')}>
+      <TopBackButton
+        aria-label="홈으로 이동"
+        title="홈으로 이동"
+        onClick={() => navigate("/")}
+      >
         <FontAwesomeIcon icon={faArrowLeft} />
       </TopBackButton>
     </Template>

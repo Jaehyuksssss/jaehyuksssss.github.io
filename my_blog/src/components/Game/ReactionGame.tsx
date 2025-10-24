@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "@emotion/styled"
+import { logSessionStart, logSessionEnd } from "lib/reactionAnalytics"
 
 type Props = {
   // Time-attack limit in seconds (always 30 by request)
@@ -152,6 +153,8 @@ const ReactionGame: React.FC<Props> = ({
     difficulty: Difficulty
   } | null>(null)
   const [showDifficultyPicker, setShowDifficultyPicker] = useState(false)
+  const sessionIdRef = useRef<string | null>(null)
+  const startAtMsRef = useRef<number | null>(null)
 
   // Grid grows from initialGrid by +1 each round (2x2 → 3x3 → ...)
   const grid = useMemo(
@@ -199,6 +202,13 @@ const ReactionGame: React.FC<Props> = ({
 
       // Kick off first round
       nextRound(d)
+      // Log start (fire-and-forget)
+      try {
+        const sid = (crypto?.randomUUID?.() || Math.random().toString(36).slice(2))
+        sessionIdRef.current = sid
+        startAtMsRef.current = performance.now()
+        logSessionStart({ sessionId: sid, difficulty: d, timeLimitSec, initialGrid })
+      } catch {}
     },
     [nextRound, timeLimitSec]
   )
@@ -253,6 +263,22 @@ const ReactionGame: React.FC<Props> = ({
           : 0
         setResult({ rounds: completed, avgMs: newAvg, difficulty })
         setShowResult(true)
+        // Log end (fire-and-forget)
+        try {
+          const sid = sessionIdRef.current || (crypto?.randomUUID?.() || Math.random().toString(36).slice(2))
+          const startedAt = startAtMsRef.current || (performance.now() - timeLimitSec * 1000)
+          logSessionEnd({
+            sessionId: sid,
+            difficulty,
+            rounds: completed,
+            avgMs: newAvg,
+            times,
+            timeLimitSec,
+            initialGrid,
+            startedAt,
+            endedAt: performance.now(),
+          })
+        } catch {}
       }
     }
     // Run immediately to avoid 1-tick delay
