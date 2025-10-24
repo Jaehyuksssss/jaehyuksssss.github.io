@@ -47,8 +47,9 @@ create table if not exists public.game_total_count (
   last_updated timestamptz not null default now()
 );
 
--- 초기값 설정
-insert into public.game_total_count (total_games) values (0) on conflict do nothing;
+-- 초기값 설정 (테이블이 비어있을 때만)
+insert into public.game_total_count (total_games) 
+select 0 where not exists (select 1 from public.game_total_count);
 
 -- 게임 시작할 때마다 총 횟수 증가하는 함수
 create or replace function public.increment_total_game_count()
@@ -59,9 +60,17 @@ set search_path = public
 as $$
 declare new_total bigint;
 begin
+  -- 테이블이 비어있으면 초기값 삽입
+  if not exists (select 1 from public.game_total_count) then
+    insert into public.game_total_count (total_games) values (1);
+    return 1;
+  end if;
+  
+  -- 기존 레코드 업데이트
   update public.game_total_count 
   set total_games = total_games + 1, last_updated = now()
   returning total_games into new_total;
+  
   return new_total;
 end;
 $$;

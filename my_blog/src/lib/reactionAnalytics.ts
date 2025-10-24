@@ -41,8 +41,6 @@ export async function logSessionStart(payload: StartPayload) {
     const clientId = getClientId()
     const ua = navigator.userAgent
     const path = location.pathname
-
-    // 게임 세션 로그
     await supabase.from("reaction_sessions").insert({
       session_id: payload.sessionId,
       client_id: clientId,
@@ -53,9 +51,6 @@ export async function logSessionStart(payload: StartPayload) {
       user_agent: ua,
       path,
     })
-
-    // 총 게임 횟수 증가 (난이도 무관)
-    await supabase.rpc("increment_total_game_count")
   } catch (e) {
     // swallow
   }
