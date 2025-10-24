@@ -70,7 +70,7 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
 }) {
   const { total, loading } = useSupabaseTotalViews()
   return (
-    <Background>
+    <Background id="intro-hero-area">
       <Wrapper>
         {profileImage && <ProfileImage profileImage={profileImage} />}
         <div>
