@@ -155,17 +155,24 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
   }, [totalTiles, difficulty])
 
   const startGame = useCallback((d: Difficulty) => {
+    // Hard reset core timers to avoid any stale state between sessions
+    startRef.current = null
+    endAtRef.current = null
+
+    // Reset visible state
+    setShowResult(false)
+    setResult(null)
     setTimes([])
     setRound(1)
     setDifficulty(d)
     setRunning(true)
-    // Set global end time for entire game (no per-round reset)
+
+    // Set global end time for entire game
     endAtRef.current = performance.now() + timeLimitSec * 1000
     setRemainingMs(timeLimitSec * 1000)
+
     // Kick off first round
     nextRound(d)
-    setShowResult(false)
-    setResult(null)
   }, [nextRound, timeLimitSec])
 
   const handleHit = useCallback(() => {
@@ -228,6 +235,18 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
   }, [running, difficulty])
 
   const tiles = new Array(totalTiles).fill(null)
+
+  const restartSame = useCallback(() => {
+    if (!result) return
+    setShowResult(false)
+    // Start on next tick to ensure modal unmounts
+    setTimeout(() => startGame(result.difficulty), 0)
+  }, [result, startGame])
+
+  const openDifficultyFromResult = useCallback(() => {
+    setShowResult(false)
+    setTimeout(() => setShowDifficultyPicker(true), 0)
+  }, [])
 
   return (
     <Wrapper>
@@ -316,9 +335,10 @@ const ReactionGame: React.FC<Props> = ({ timeLimitSec = 60, initialGrid = 2 }) =
               <div>완료 라운드: <span style={{ color: '#ffd561' }}>{result.rounds}</span></div>
               <div>평균 반응속도: <span style={{ color: '#ffd561' }}>{formatMs(result.avgMs)}</span></div>
             </div>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <SecondaryBtn onClick={() => setShowResult(false)} aria-label="닫기">닫기</SecondaryBtn>
-              <PrimaryBtn onClick={() => startGame(result.difficulty)} aria-label="같은 난이도로 다시하기">다시하기</PrimaryBtn>
+              <SecondaryBtn onClick={openDifficultyFromResult} aria-label="난이도 다시 선택">난이도 선택</SecondaryBtn>
+              <PrimaryBtn onClick={restartSame} aria-label="같은 난이도로 다시하기">다시하기</PrimaryBtn>
             </div>
           </div>
         </div>
