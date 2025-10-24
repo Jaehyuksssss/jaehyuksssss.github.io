@@ -70,6 +70,16 @@ $$;
 revoke all on function public.increment_total_game_count() from public;
 grant execute on function public.increment_total_game_count() to anon, authenticated;
 
+-- RLS 활성화 및 정책 설정
+alter table public.game_total_count enable row level security;
+
+-- 읽기 전용 정책 (총 게임 횟수 조회용)
+create policy "allow_read_game_total_count" on public.game_total_count
+  for select to anon, authenticated
+  using (true);
+
+-- 업데이트는 함수를 통해서만 가능 (increment_total_game_count 함수가 security definer로 실행)
+
 -- Example aggregations you can run in SQL editor:
 -- 1) 총 플레이 수
 --   select count(*) from public.reaction_sessions where event = 'start';
