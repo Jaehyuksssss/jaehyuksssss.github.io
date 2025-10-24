@@ -1,6 +1,6 @@
-import { supabase } from './supabaseClient'
+import { supabase } from "./supabaseClient"
 
-export type Difficulty = 'easy' | 'medium' | 'hard'
+export type Difficulty = "easy" | "medium" | "hard"
 
 type StartPayload = {
   sessionId: string
@@ -21,7 +21,7 @@ type EndPayload = {
   endedAt: number
 }
 
-const CLIENT_ID_KEY = 'reaction_game_client_id'
+const CLIENT_ID_KEY = "reaction_game_client_id"
 
 function getClientId(): string {
   try {
@@ -31,41 +31,46 @@ function getClientId(): string {
     localStorage.setItem(CLIENT_ID_KEY, id)
     return id
   } catch {
-    return 'anon'
+    return "anon"
   }
 }
 
 export async function logSessionStart(payload: StartPayload) {
-  if (!supabase || typeof window === 'undefined') return
+  if (!supabase || typeof window === "undefined") return
   try {
     const clientId = getClientId()
     const ua = navigator.userAgent
     const path = location.pathname
-    await supabase.from('reaction_sessions').insert({
+
+    // 게임 세션 로그
+    await supabase.from("reaction_sessions").insert({
       session_id: payload.sessionId,
       client_id: clientId,
-      event: 'start',
+      event: "start",
       difficulty: payload.difficulty,
       time_limit_sec: payload.timeLimitSec,
       initial_grid: payload.initialGrid,
       user_agent: ua,
       path,
     })
+
+    // 총 게임 횟수 증가 (난이도 무관)
+    await supabase.rpc("increment_total_game_count")
   } catch (e) {
     // swallow
   }
 }
 
 export async function logSessionEnd(payload: EndPayload) {
-  if (!supabase || typeof window === 'undefined') return
+  if (!supabase || typeof window === "undefined") return
   try {
     const clientId = getClientId()
     const ua = navigator.userAgent
     const path = location.pathname
-    await supabase.from('reaction_sessions').insert({
+    await supabase.from("reaction_sessions").insert({
       session_id: payload.sessionId,
       client_id: clientId,
-      event: 'end',
+      event: "end",
       difficulty: payload.difficulty,
       rounds: payload.rounds,
       avg_ms: Math.round(payload.avgMs || 0),
@@ -82,4 +87,3 @@ export async function logSessionEnd(payload: EndPayload) {
     // swallow
   }
 }
-
