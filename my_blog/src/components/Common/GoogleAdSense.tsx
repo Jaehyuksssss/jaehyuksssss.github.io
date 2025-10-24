@@ -59,18 +59,50 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
   useEffect(() => {
     if (!isClient || !scriptReady || !adRef.current) return
 
-    // DOM이 완전히 렌더링된 후 광고 초기화
-    const timer = setTimeout(() => {
+    let initialized = false
+    let observer: ResizeObserver | null = null
+
+    const initializeAd = () => {
+      if (initialized || !adRef.current) return
+
       try {
+        // 컨테이너가 실제로 보이는지 확인
+        const rect = adRef.current.getBoundingClientRect()
+        const isVisible = rect.width > 0 && rect.height > 0
+
+        if (!isVisible) {
+          console.log(
+            `AdSense ad skipped for slot: ${adSlot} (container not visible)`
+          )
+          return
+        }
+
         ;(window as any).adsbygoogle = (window as any).adsbygoogle || []
         ;(window as any).adsbygoogle.push({})
+        initialized = true
         console.log(`AdSense ad initialized for slot: ${adSlot}`)
       } catch (error) {
         console.error("Failed to initialize AdSense:", error)
       }
-    }, 100)
+    }
 
-    return () => clearTimeout(timer)
+    // 즉시 시도
+    const timer = setTimeout(initializeAd, 100)
+
+    // ResizeObserver로 컨테이너 크기 변화 감지
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        initializeAd()
+      })
+      observer.observe(adRef.current)
+    }
+
+    return () => {
+      clearTimeout(timer)
+      if (observer) {
+        observer.disconnect()
+      }
+    }
   }, [isClient, scriptReady, adSlot])
 
   if (!isClient) {
