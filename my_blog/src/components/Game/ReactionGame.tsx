@@ -206,7 +206,8 @@ const ReactionGame: React.FC<Props> = ({
       try {
         const sid = (crypto?.randomUUID?.() || Math.random().toString(36).slice(2))
         sessionIdRef.current = sid
-        startAtMsRef.current = performance.now()
+        // Use epoch ms for server-side analytics timestamps
+        startAtMsRef.current = Date.now()
         logSessionStart({ sessionId: sid, difficulty: d, timeLimitSec, initialGrid })
       } catch {}
     },
@@ -266,7 +267,7 @@ const ReactionGame: React.FC<Props> = ({
         // Log end (fire-and-forget)
         try {
           const sid = sessionIdRef.current || (crypto?.randomUUID?.() || Math.random().toString(36).slice(2))
-          const startedAt = startAtMsRef.current || (performance.now() - timeLimitSec * 1000)
+          const startedAt = startAtMsRef.current || (Date.now() - timeLimitSec * 1000)
           logSessionEnd({
             sessionId: sid,
             difficulty,
@@ -276,7 +277,7 @@ const ReactionGame: React.FC<Props> = ({
             timeLimitSec,
             initialGrid,
             startedAt,
-            endedAt: performance.now(),
+            endedAt: Date.now(),
           })
         } catch {}
       }
@@ -422,7 +423,7 @@ const ReactionGame: React.FC<Props> = ({
               난이도 선택
             </h2>
             <p style={{ marginTop: 0, color: "#bdbdbd" }}>
-              난이도별 색 대비가 다릅니다.
+              난이도별 색 대비가 달라요.
             </p>
             <div
               style={{

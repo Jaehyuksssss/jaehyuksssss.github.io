@@ -1,109 +1,107 @@
-import { supabase } from "./supabaseClient"
-
-export type Difficulty = "easy" | "medium" | "hard"
+// reactionLog.ts
+import { supabase } from './supabaseClient'
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
 type StartPayload = {
-  sessionId: string
-  difficulty: Difficulty
-  timeLimitSec: number
-  initialGrid: number
-}
+  sessionId: string;
+  difficulty: Difficulty;
+  timeLimitSec: number;
+  initialGrid: number;
+};
 
 type EndPayload = {
-  sessionId: string
-  difficulty: Difficulty
-  rounds: number
-  avgMs: number
-  times: number[]
-  timeLimitSec: number
-  initialGrid: number
-  startedAt: number
-  endedAt: number
-}
+  sessionId: string;
+  difficulty: Difficulty;
+  rounds: number;
+  avgMs: number;    // 세션 평균 반응(ms)
+  times: number[];  // 라운드별 반응(ms)
+  timeLimitSec: number;
+  initialGrid: number;
+  startedAt: number; // epoch ms (Date.now())
+  endedAt: number;   // epoch ms (Date.now())
+};
 
-const CLIENT_ID_KEY = "reaction_game_client_id"
+const CLIENT_ID_KEY = 'reaction_game_client_id';
 
 function debugEnabled(): boolean {
   try {
-    if (process.env.NODE_ENV !== "production") return true
-    const sp = new URLSearchParams(window.location.search)
-    if (sp.get("debugSupabase") === "1") return true
-    if (localStorage.getItem("debug_supabase") === "1") return true
+    if (process.env.NODE_ENV !== 'production') return true;
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get('debugSupabase') === '1') return true;
+    if (localStorage.getItem('debug_supabase') === '1') return true;
   } catch {}
-  return false
+  return false;
 }
 
 function getClientId(): string {
   try {
-    const existing = localStorage.getItem(CLIENT_ID_KEY)
-    if (existing) return existing
-    const id = crypto?.randomUUID?.() || Math.random().toString(36).slice(2)
-    localStorage.setItem(CLIENT_ID_KEY, id)
-    return id
+    const existing = localStorage.getItem(CLIENT_ID_KEY);
+    if (existing) return existing;
+    const id =
+      (crypto as any)?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+    localStorage.setItem(CLIENT_ID_KEY, id);
+    return id;
   } catch {
-    return "anon"
+    return 'anon';
   }
 }
 
 export async function logSessionStart(payload: StartPayload) {
-  if (!supabase || typeof window === "undefined") return
-  const clientId = getClientId()
-  const ua = navigator.userAgent
-  const path = location.pathname
-  const row = {
+  if (!supabase || typeof window === 'undefined') return;
+  const clientId = getClientId();
+  const ua = navigator.userAgent;
+  const path = location.pathname;
+
+  const { error } = await supabase.rpc('log_reaction_start', {
     session_id: payload.sessionId,
     client_id: clientId,
-    event: "start" as const,
     difficulty: payload.difficulty,
     time_limit_sec: payload.timeLimitSec,
     initial_grid: payload.initialGrid,
     user_agent: ua,
     path,
-  }
-  const { error } = await supabase.rpc("log_reaction_start", row as any)
+  });
+
   if (error && debugEnabled()) {
-    // Surface detailed error in dev to help diagnose 400s
     // eslint-disable-next-line no-console
-    console.error("[Supabase] insert start failed", {
+    console.error('[Supabase] log_reaction_start failed', {
       message: error.message,
       details: (error as any).details,
       hint: (error as any).hint,
       code: error.code,
-      row,
-    })
+    });
   }
 }
 
 export async function logSessionEnd(payload: EndPayload) {
-  if (!supabase || typeof window === "undefined") return
-  const clientId = getClientId()
-  const ua = navigator.userAgent
-  const path = location.pathname
-  const row = {
+  if (!supabase || typeof window === 'undefined') return;
+  const clientId = getClientId();
+  const ua = navigator.userAgent;
+  const path = location.pathname;
+
+  const { error } = await supabase.rpc('log_reaction_end', {
     session_id: payload.sessionId,
     client_id: clientId,
-    event: "end" as const,
     difficulty: payload.difficulty,
-    rounds: payload.rounds,
-    avg_ms: Math.round(payload.avgMs || 0),
-    hits: payload.times?.length || 0,
-    times_ms: payload.times || [],
+    rounds: payload.rounds ?? 0,
+    avg_ms: Math.round(payload.avgMs ?? 0),
+    hits: payload.times?.length ?? 0,
+    times_ms: payload.times ?? [],
     time_limit_sec: payload.timeLimitSec,
     initial_grid: payload.initialGrid,
-    started_at_ms: Math.round(payload.startedAt),
-    ended_at_ms: Math.round(payload.endedAt),
+    started_at_ms: Math.round(payload.startedAt ?? Date.now()),
+    ended_at_ms: Math.round(payload.endedAt ?? Date.now()),
     user_agent: ua,
     path,
-  }
-  const { error } = await supabase.rpc("log_reaction_end", row as any)
+  });
+
   if (error && debugEnabled()) {
     // eslint-disable-next-line no-console
-    console.error("[Supabase] insert end failed", {
+    console.error('[Supabase] log_reaction_end failed', {
       message: error.message,
       details: (error as any).details,
       hint: (error as any).hint,
       code: error.code,
-      row,
-    })
+    });
   }
 }
