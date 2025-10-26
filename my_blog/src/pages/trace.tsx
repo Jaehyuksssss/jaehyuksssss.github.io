@@ -63,6 +63,16 @@ const MobileAdContainer = styled.div`
 const TracePage: React.FC = () => {
   useSupabaseViewCount("trace", { coolDownMinutes: 60 * 24, globalCoolDown: true })
 
+  // Inside the game page, pressing browser back navigates to game list
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onPop = () => {
+      navigate('/games', { replace: true })
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   return (
     <Template title="연결 연결" description="기억력을 테스트 해봐요" url="/trace">
       <MobileAdContainer>
@@ -74,7 +84,7 @@ const TracePage: React.FC = () => {
         />
       </MobileAdContainer>
       <TraceRunner previewMs={3000} startGrid={3} maxGrid={6} />
-      <TopBackButton aria-label="홈으로 이동" title="홈으로 이동" onClick={() => navigate("/")}>
+      <TopBackButton aria-label="게임 리스트로" title="게임 리스트로" onClick={() => navigate("/games")}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </TopBackButton>
     </Template>
