@@ -673,14 +673,12 @@ const TraceRunner: React.FC<Props> = ({
             <div style={{ marginBottom: 12, fontWeight: 700 }}>
               {showHint ? "다음 점이 파란색으로 표시됩니다." : "아쉬워요..좌절하지 마세요"}
             </div>
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <SecondaryBtn type="button" onClick={triggerHint} aria-label={difficulty === "intermediate" ? "힌트 무제한" : "힌트 보기"} disabled={difficulty === "intermediate" ? false : hintsLeft <= 0}>
-                힌트 보기{`(${difficulty === "intermediate" ? "∞" : Math.max(0, hintsLeft)})`}
-              </SecondaryBtn>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+    
               {remainingMs > 0 ? (
-                <PrimaryBtn type="button" onClick={() => { setShowHint(false); setPhase("play") }} aria-label="계속하기">계속하기</PrimaryBtn>
+                <PrimaryBtn type="button" onClick={() => { setShowHint(false); setPhase("play")  }} aria-label="계속하기">계속하기</PrimaryBtn>
               ) : (
-                <PrimaryBtn type="button" onClick={startLevel} aria-label="같은 레벨 재시작">다시하기</PrimaryBtn>
+                <PrimaryBtn type="button" onClick={resetAll } aria-label="">처음 화면 돌아가기</PrimaryBtn>
               )}
             </div>
           </div>
