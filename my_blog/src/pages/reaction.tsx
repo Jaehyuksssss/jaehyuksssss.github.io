@@ -6,6 +6,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 import Template from "components/Common/Template"
 import ReactionGame from "components/Game/ReactionGame"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
+import GoogleAdSense from "components/Common/GoogleAdSense"
 
 const TopBackButton = styled.button`
   position: fixed;
@@ -39,6 +40,29 @@ const TopBackButton = styled.button`
   }
 `
 
+// Mobile-only ad container rendered above the game
+const MobileAdContainer = styled.div`
+  display: none;
+  padding: 8px 16px 0;
+
+  @media (max-width: 768px) {
+    display: block;
+
+    /* Ensure the ad doesn't overflow and keeps a banner shape */
+    .adsbygoogle {
+      max-width: 100% !important;
+      max-height: 100px !important;
+      overflow: hidden !important;
+    }
+
+    /* Google AdSense iframe size guard */
+    iframe {
+      max-width: 100% !important;
+      max-height: 100px !important;
+    }
+  }
+`
+
 const ReactionPage: React.FC = () => {
   // reaction 페이지 조회수 카운트 (하루에 한 번만)
   useSupabaseViewCount("reaction", {
@@ -52,6 +76,15 @@ const ReactionPage: React.FC = () => {
       description="30초 타임어택: 색이 다른 칸을 빠르게 찾아 클릭"
       url="/reaction"
     >
+      {/* On mobile, place ad between back button (fixed) and the game title */}
+      <MobileAdContainer>
+        <GoogleAdSense
+          adClient="ca-pub-3398641306673607"
+          adSlot="2123128311"
+          adFormat="auto"
+          fullWidthResponsive={true}
+        />
+      </MobileAdContainer>
       <ReactionGame />
       <TopBackButton
         aria-label="홈으로 이동"
