@@ -81,7 +81,7 @@ const GamesPage: React.FC = () => {
         </Card>
         <Card to="/trace">
           <Title>경로 그리기</Title>
-          <Desc>5초 미리보기 후 기억한 순서대로 점을 연결</Desc>
+          <Desc>3초 미리보기 후 기억한 순서대로 점을 연결</Desc>
         </Card>
       </Grid>
 
