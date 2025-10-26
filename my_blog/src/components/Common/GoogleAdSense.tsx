@@ -19,7 +19,7 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
 }) => {
   const [isClient, setIsClient] = useState(false)
   const [scriptReady, setScriptReady] = useState(false)
-  const adRef = useRef<HTMLElement>(null)
+  const adRef = useRef<HTMLModElement>(null)
 
   // 클라이언트 사이드 렌더링 확인
   useEffect(() => {
