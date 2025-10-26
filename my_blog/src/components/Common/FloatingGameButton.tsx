@@ -363,7 +363,8 @@ const FloatingGameButton: React.FC<Props> = ({
       aria-label={label}
       title={label}
       type="button"
-      onClick={() => navigate("/reaction")}
+      // Let pointer handlers decide navigation vs drag; keep keyboard access
+      onClick={() => navigate("/games")}
     >
       <Text>GAME</Text>
     </ButtonWrap>

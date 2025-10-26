@@ -119,8 +119,10 @@ const Template: FunctionComponent<TemplateProps> = function ({
   // Current route (for conditionally hiding floating button)
   const location = useLocation()
   const isReactionPage = Boolean(location && location.pathname && location.pathname.startsWith('/reaction'))
+  const isTracePage = Boolean(location && location.pathname && location.pathname.startsWith('/trace'))
+  const isGamesPage = Boolean(location && location.pathname && location.pathname.startsWith('/games'))
   const isHomePage = Boolean(location && location.pathname === '/')
-  const shouldHideGameButton = Boolean(hideGameButton || isReactionPage)
+  const shouldHideGameButton = Boolean(hideGameButton || isReactionPage || isTracePage || isGamesPage)
 
   // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
   const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || "GTM-TSGR8WXK"
@@ -253,7 +255,7 @@ const Template: FunctionComponent<TemplateProps> = function ({
           - Constrained to intro hero area only on the home page */}
       {!shouldHideGameButton && (
         <FloatingGameButton
-          to="/reaction"
+          to="/games"
           label="게임"
           boundToSelector={isHomePage ? '#intro-hero-area' : undefined}
         />
