@@ -64,7 +64,7 @@ const TracePage: React.FC = () => {
   useSupabaseViewCount("trace", { coolDownMinutes: 60 * 24, globalCoolDown: true })
 
   return (
-    <Template title="경로 그리기" description="5초간 경로 미리보기, 기억해 그리기!" url="/trace">
+    <Template title="연결 연결" description="기억력을 테스트 해봐요" url="/trace">
       <MobileAdContainer>
         <GoogleAdSense
           adClient="ca-pub-3398641306673607"
