@@ -73,15 +73,6 @@ const MobileAdContainer = styled.div`
 const GamesPage: React.FC = () => {
   return (
     <Template title="게임" description="반응속도, 경로기억 등 미니게임 리스트" url="/games">
-      <MobileAdContainer>
-        <GoogleAdSense
-          adClient="ca-pub-3398641306673607"
-          adSlot="2123128311"
-          adFormat="auto"
-          fullWidthResponsive={true}
-        />
-      </MobileAdContainer>
-
       <h1 style={{ marginTop: 0 }}>게임 리스트</h1>
       <Grid>
         <Card to="/reaction">
@@ -97,6 +88,15 @@ const GamesPage: React.FC = () => {
       <TopBackButton aria-label="홈으로" title="홈으로" onClick={() => navigate("/")}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </TopBackButton>
+
+      <MobileAdContainer>
+        <GoogleAdSense
+          adClient="ca-pub-3398641306673607"
+          adSlot="2123128311"
+          adFormat="auto"
+          fullWidthResponsive={true}
+        />
+      </MobileAdContainer>
     </Template>
   )
 }
