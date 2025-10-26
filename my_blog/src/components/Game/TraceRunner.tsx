@@ -722,7 +722,7 @@ const TraceRunner: React.FC<Props> = ({
                 onClick={() => startWithDifficulty("intermediate")}
                 aria-label="쉬움"
               >
-                쉬움 — 시작점 표시, 길이 -1
+                쉬움 — 힌트 무한
               </SecondaryBtn>
               <SecondaryBtn
                 type="button"
