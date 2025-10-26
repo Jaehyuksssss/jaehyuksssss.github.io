@@ -722,14 +722,14 @@ const TraceRunner: React.FC<Props> = ({
                 onClick={() => startWithDifficulty("intermediate")}
                 aria-label="쉬움"
               >
-                쉬움 — 힌트 무한
+                쉬움 모드 — 힌트 무한
               </SecondaryBtn>
               <SecondaryBtn
                 type="button"
                 onClick={() => startWithDifficulty("advanced")}
                 aria-label="어려움"
               >
-                아주 살짝 더 어려움
+                아주 살짝 더 어려움 모드
               </SecondaryBtn>
             </div>
           </div>
