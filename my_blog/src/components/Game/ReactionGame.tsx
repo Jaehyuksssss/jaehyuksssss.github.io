@@ -200,8 +200,21 @@ const ReactionGame: React.FC<Props> = ({
       endAtRef.current = performance.now() + timeLimitSec * 1000
       setRemainingMs(timeLimitSec * 1000)
 
-      // Kick off first round
-      nextRound(d)
+      // Kick off first round using the correct initial grid size
+      // Avoid using stale totalTiles from previous session by computing explicitly
+      try {
+        const tilesAtStart = Math.max(2, initialGrid) ** 2
+        const idx = randInt(0, tilesAtStart - 1)
+        setTarget(idx)
+        setColors(colorPair(d))
+        // Start per-tile stopwatch after paint
+        requestAnimationFrame(() => {
+          startRef.current = performance.now()
+        })
+      } catch {
+        // Fallback to generic nextRound if anything unexpected happens
+        nextRound(d)
+      }
       // Log start (fire-and-forget)
       try {
         const sid = (crypto?.randomUUID?.() || Math.random().toString(36).slice(2))
