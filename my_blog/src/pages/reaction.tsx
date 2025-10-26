@@ -70,6 +70,16 @@ const ReactionPage: React.FC = () => {
     globalCoolDown: true,
   })
 
+  // Inside the game page, pressing browser back navigates to game list
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onPop = () => {
+      navigate('/games', { replace: true })
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   return (
     <Template
       title="반응속도 테스트"
@@ -87,9 +97,9 @@ const ReactionPage: React.FC = () => {
       </MobileAdContainer>
       <ReactionGame />
       <TopBackButton
-        aria-label="홈으로 이동"
-        title="홈으로 이동"
-        onClick={() => navigate("/")}
+        aria-label="게임 리스트로"
+        title="게임 리스트로"
+        onClick={() => navigate("/games")}
       >
         <FontAwesomeIcon icon={faArrowLeft} />
       </TopBackButton>

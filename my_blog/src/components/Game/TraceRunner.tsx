@@ -430,7 +430,7 @@ const TraceRunner: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <h1 style={{ color: "#1b1b1b", margin: 0 }}>연결 언걸</h1>
+      <h1 style={{ color: "#1b1b1b", margin: 0 }}>연결 연결</h1>
       <Panel>
         <span >
           레벨: <Stat>{level}</Stat>
