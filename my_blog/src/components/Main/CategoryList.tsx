@@ -43,7 +43,7 @@ type SearchResult = {
 
 const CategoryListWrapper = styled.div<{ isOpen: boolean; hasSearchResults: boolean }>`
   position: fixed;
-  top: 20px;
+  top: 80px; /* push below fixed top navbar (60px) + margin */
   left: 20px;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.95);
@@ -59,7 +59,7 @@ const CategoryListWrapper = styled.div<{ isOpen: boolean; hasSearchResults: bool
   opacity: 1;
 
   @media (max-width: 768px) {
-    top: 10px;
+    top: 70px; /* mobile navbar height */
     left: 10px;
     right: 10px;
     max-width: calc(100vw - 20px);
@@ -151,7 +151,7 @@ const SearchInput = styled.input`
 
 const SearchResults = styled.div<{ isVisible: boolean }>`
   position: fixed; // absolute에서 fixed로 변경
-  top: 80px; // CategoryListWrapper 아래 위치
+  top: 140px; // below navbar + category header
   left: 20px;
   right: 20px;
   background: white;
@@ -170,7 +170,7 @@ const SearchResults = styled.div<{ isVisible: boolean }>`
   @media (max-width: 768px) {
     left: 10px;
     right: 10px;
-    top: 70px;
+    top: 130px;
   }
 
   // 커스텀 스크롤바

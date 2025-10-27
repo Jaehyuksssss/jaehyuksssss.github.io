@@ -15,11 +15,28 @@ const FooterWrapper = styled.footer`
   }
 `
 
+const LinkRow = styled.div`
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+`
+
 const Footer: FunctionComponent = function () {
   return (
     <FooterWrapper>
       Thank You for Visiting My Blog 😎.
       <br />© 2022 Developer Jae Hyuk, Powered By Gatsby.
+      <LinkRow>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms</a>
+      </LinkRow>
     </FooterWrapper>
   )
 }

@@ -38,7 +38,7 @@ const Desc = styled.p`
 
 const TopBackButton = styled.button`
   position: fixed;
-  top: 20px;
+  top: 80px; /* below fixed navbar */
   left: 20px;
   width: 40px;
   height: 40px;
@@ -56,7 +56,7 @@ const TopBackButton = styled.button`
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   &:active { transform: scale(0.96); box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); }
   @media (max-width: 768px) {
-    top: 10px; left: 10px; width: 30px; height: 30px; font-size: 16px;
+    top: 70px; left: 10px; width: 30px; height: 30px; font-size: 16px;
   }
 `
 
@@ -102,4 +102,3 @@ const GamesPage: React.FC = () => {
 }
 
 export default GamesPage
-

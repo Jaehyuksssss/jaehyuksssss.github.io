@@ -224,6 +224,33 @@ const Template: FunctionComponent<TemplateProps> = function ({
       </Helmet>
       <GoogleTagManager containerId={GTM_CONTAINER_ID} />
       <GoogleTagManagerBody containerId={GTM_CONTAINER_ID} />
+      {/* Top navigation */}
+      <nav
+        aria-label="Global"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 60,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 16,
+          background: "rgba(255,255,255,0.9)",
+          backdropFilter: "blur(6px)",
+          borderBottom: "1px solid #eee",
+          zIndex: 2000,
+        }}
+      >
+        <a href="/" style={{ fontWeight: 900, color: "#111", textDecoration: "none" }}>Home</a>
+        <a href="/games" style={{ fontWeight: 800, color: "#111", textDecoration: "none" }}>Games</a>
+        <a href="/about" style={{ color: "#1f2937", textDecoration: "none" }}>About</a>
+        <a href="/contact" style={{ color: "#1f2937", textDecoration: "none" }}>Contact</a>
+        <a href="/privacy" style={{ color: "#1f2937", textDecoration: "none" }}>Privacy</a>
+        <a href="/terms" style={{ color: "#1f2937", textDecoration: "none" }}>Terms</a>
+      </nav>
+
       {/* <Menu /> */}
       <GlobalStyle />
 
