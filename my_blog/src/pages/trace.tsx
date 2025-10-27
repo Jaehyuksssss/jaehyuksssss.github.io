@@ -84,9 +84,9 @@ const TracePage: React.FC = () => {
         />
       </MobileAdContainer>
       <TraceRunner previewMs={3000} startGrid={3} maxGrid={6} />
-      <TopBackButton aria-label="게임 리스트로" title="게임 리스트로" onClick={() => navigate("/games")}>
+      {/* <TopBackButton aria-label="게임 리스트로" title="게임 리스트로" onClick={() => navigate("/games")}>
         <FontAwesomeIcon icon={faArrowLeft} />
-      </TopBackButton>
+      </TopBackButton> */}
     </Template>
   )
 }

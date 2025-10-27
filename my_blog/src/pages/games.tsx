@@ -85,9 +85,9 @@ const GamesPage: React.FC = () => {
         </Card>
       </Grid>
 
-      <TopBackButton aria-label="홈으로" title="홈으로" onClick={() => navigate("/")}>
+      {/* <TopBackButton aria-label="홈으로" title="홈으로" onClick={() => navigate("/")}>
         <FontAwesomeIcon icon={faArrowLeft} />
-      </TopBackButton>
+      </TopBackButton> */}
 
       <MobileAdContainer>
         <GoogleAdSense

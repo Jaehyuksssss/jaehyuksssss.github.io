@@ -37,7 +37,8 @@ const ButtonWrap = styled.button<{
   place-items: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   cursor: pointer;
-  z-index: 2000;
+  /* Keep below nav/back, overlays, and category UI */
+  z-index: 900;
   user-select: none;
   touch-action: none; /* allow free dragging */
   transition: ${({ dragging }) =>
