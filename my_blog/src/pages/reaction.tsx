@@ -10,7 +10,7 @@ import GoogleAdSense from "components/Common/GoogleAdSense"
 
 const TopBackButton = styled.button`
   position: fixed;
-  top: 20px;
+  top: 80px; /* below fixed navbar */
   left: 20px;
   width: 40px;
   height: 40px;
@@ -32,7 +32,7 @@ const TopBackButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    top: 10px;
+    top: 70px; /* below mobile navbar */
     left: 10px;
     width: 30px;
     height: 30px;
