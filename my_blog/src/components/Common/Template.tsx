@@ -10,6 +10,8 @@ import GoogleTagManager, {
 } from "components/Common/GoogleTagManager"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 import FloatingGameButton from "components/Common/FloatingGameButton"
+import { navigate } from "gatsby"
+// removed global back button imports
 
 type TemplateProps = {
   title?: string
@@ -19,6 +21,7 @@ type TemplateProps = {
   keywords?: string[]
   structuredData?: Array<Record<string, unknown>>
   hideGameButton?: boolean
+  showBackButton?: boolean
   children: ReactNode
 }
 
@@ -58,6 +61,73 @@ const ContentArea = styled.div`
   @media (max-width: 768px) {
     padding: 10px;
   }
+`
+
+/* Global back button removed */
+
+// Desktop-only inline links
+const DesktopLinks = styled.div`
+  display: none;
+  gap: 16px;
+  align-items: center;
+  @media (min-width: 769px) {
+    display: flex;
+  }
+`
+
+// Mobile-only hamburger toggle (left aligned)
+const MobileToggleBtn = styled.button`
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  display: none;
+  @media (max-width: 768px) {
+    display: grid;
+    place-items: center;
+  }
+`
+
+// Mobile-only full overlay + panel menu
+const MobileMenuOverlay = styled.div`
+  position: fixed;
+  inset: 60px 0 0 0; /* below navbar */
+  background: rgba(0,0,0,0.25);
+  z-index: 1999;
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+  }
+`
+
+const MobileMenuPanel = styled.div`
+  position: absolute;
+  inset: 0; /* fill overlay area */
+  background: #ffffff;
+  border-radius: 0; /* full-bleed */
+  box-shadow: none;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: center;
+  justify-content: center;
+`
+
+const MobileMenuLink = styled.a`
+  text-decoration: none;
+  color: #1b1b1b;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  padding: 12px 8px;
+  font-size: 20px;
+  border-radius: 8px;
+  &:active { background: #eff6ff; }
 `
 
 const MobileAdContainer = styled.div`
@@ -123,6 +193,7 @@ const Template: FunctionComponent<TemplateProps> = function ({
   const isGamesPage = Boolean(location && location.pathname && location.pathname.startsWith('/games'))
   const isHomePage = Boolean(location && location.pathname === '/')
   const shouldHideGameButton = Boolean(hideGameButton || isReactionPage || isTracePage || isGamesPage)
+  const [navOpen, setNavOpen] = React.useState(false) // 모바일 전용 상태
 
   // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
   const GTM_CONTAINER_ID = process.env.GATSBY_GTM_CONTAINER_ID || "GTM-TSGR8WXK"
@@ -236,23 +307,64 @@ const Template: FunctionComponent<TemplateProps> = function ({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 16,
           background: "rgba(255,255,255,0.9)",
           backdropFilter: "blur(6px)",
           borderBottom: "1px solid #eee",
           zIndex: 2000,
-        }}
+          }}
       >
-        <a href="/" style={{ fontWeight: 900, color: "#111", textDecoration: "none" }}>Home</a>
-        <a href="/games" style={{ fontWeight: 800, color: "#111", textDecoration: "none" }}>Games</a>
-        <a href="/about" style={{ color: "#1f2937", textDecoration: "none" }}>About</a>
-        <a href="/contact" style={{ color: "#1f2937", textDecoration: "none" }}>Contact</a>
-        <a href="/privacy" style={{ color: "#1f2937", textDecoration: "none" }}>Privacy</a>
-        <a href="/terms" style={{ color: "#1f2937", textDecoration: "none" }}>Terms</a>
+        {/* Desktop always-visible links */}
+        <DesktopLinks>
+          <a href="/" style={{ fontWeight: 900, color: "#111", textDecoration: "none" }}>Home</a>
+          <a href="/games" style={{ fontWeight: 800, color: "#111", textDecoration: "none" }}>Games</a>
+          <a href="/about" style={{ color: "#1f2937", textDecoration: "none" }}>About</a>
+          <a href="/contact" style={{ color: "#1f2937", textDecoration: "none" }}>Contact</a>
+          <a href="/privacy" style={{ color: "#1f2937", textDecoration: "none" }}>Privacy</a>
+          <a href="/terms" style={{ color: "#1f2937", textDecoration: "none" }}>Terms</a>
+        </DesktopLinks>
+
+        {/* Mobile hamburger (left) */}
+        <MobileToggleBtn
+          aria-label={navOpen ? '메뉴 접기' : '메뉴 펼치기'}
+          aria-expanded={navOpen}
+          onClick={() => setNavOpen(v => !v)}
+        >
+          <span style={{ fontSize: 18, lineHeight: 1 }}>{navOpen ? '×' : '≡'}</span>
+        </MobileToggleBtn>
       </nav>
+
+      {/* Mobile overlay menu */}
+      {navOpen && (
+        <MobileMenuOverlay onClick={() => setNavOpen(false)}>
+          <MobileMenuPanel onClick={e => e.stopPropagation()}>
+            <MobileMenuLink href="/" onClick={() => setNavOpen(false)}>Home</MobileMenuLink>
+            <MobileMenuLink href="/games" onClick={() => setNavOpen(false)}>Games</MobileMenuLink>
+            <MobileMenuLink href="/about" onClick={() => setNavOpen(false)}>About</MobileMenuLink>
+            <MobileMenuLink href="/contact" onClick={() => setNavOpen(false)}>Contact</MobileMenuLink>
+            <MobileMenuLink href="/privacy" onClick={() => setNavOpen(false)}>Privacy</MobileMenuLink>
+            <MobileMenuLink href="/terms" onClick={() => setNavOpen(false)}>Terms</MobileMenuLink>
+          </MobileMenuPanel>
+        </MobileMenuOverlay>
+      )}
 
       {/* <Menu /> */}
       <GlobalStyle />
+
+      {/* {shouldShowGlobalBack && (
+        <TopBackButton
+          aria-label="뒤로가기"
+          title="뒤로가기"
+          onClick={() => {
+            if (typeof window !== 'undefined' && window.history.length > 1) {
+              window.history.back()
+            } else {
+              navigate('/')
+            }
+          }}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </TopBackButton>
+      )} */}
 
       <MainLayout>
         <Sidebar>

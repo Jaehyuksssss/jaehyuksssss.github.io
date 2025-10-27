@@ -96,13 +96,13 @@ const ReactionPage: React.FC = () => {
         />
       </MobileAdContainer>
       <ReactionGame />
-      <TopBackButton
+      {/* <TopBackButton
         aria-label="게임 리스트로"
         title="게임 리스트로"
         onClick={() => navigate("/games")}
       >
         <FontAwesomeIcon icon={faArrowLeft} />
-      </TopBackButton>
+      </TopBackButton> */}
     </Template>
   )
 }
