@@ -1,44 +1,13 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { navigate } from "gatsby"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
+// page back button removed
 import Template from "components/Common/Template"
 import ReactionGame from "components/Game/ReactionGame"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 
-const TopBackButton = styled.button`
-  position: fixed;
-  top: 80px; /* below fixed navbar */
-  left: 20px;
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #000000;
-  font-size: 18px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  z-index: 2100;
-  user-select: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  &:active {
-    transform: scale(0.96);
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    top: 70px; /* below mobile navbar */
-    left: 10px;
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-  }
-`
+/* page back button removed */
 
 // Mobile-only ad container rendered above the game
 const MobileAdContainer = styled.div`
@@ -96,13 +65,7 @@ const ReactionPage: React.FC = () => {
         />
       </MobileAdContainer>
       <ReactionGame />
-      {/* <TopBackButton
-        aria-label="게임 리스트로"
-        title="게임 리스트로"
-        onClick={() => navigate("/games")}
-      >
-        <FontAwesomeIcon icon={faArrowLeft} />
-      </TopBackButton> */}
+      {/* back button removed; use navbar */}
     </Template>
   )
 }

@@ -10,7 +10,7 @@ import GoogleTagManager, {
 } from "components/Common/GoogleTagManager"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 import FloatingGameButton from "components/Common/FloatingGameButton"
-import { navigate } from "gatsby"
+// no navigate import needed here
 // removed global back button imports
 
 type TemplateProps = {
@@ -21,7 +21,6 @@ type TemplateProps = {
   keywords?: string[]
   structuredData?: Array<Record<string, unknown>>
   hideGameButton?: boolean
-  showBackButton?: boolean
   children: ReactNode
 }
 
@@ -47,7 +46,8 @@ const Sidebar = styled.aside`
   width: 200px;
   min-width: 200px;
   padding: 20px;
-  padding-top: 120px; /* 메뉴바 높이만큼 여백 추가 */
+  /* 고정된 카테고리 헤더(80px + 헤더 높이 약 60px)를 피해 여백 확대 */
+  padding-top: 180px;
 
   @media (max-width: 768px) {
     display: none;

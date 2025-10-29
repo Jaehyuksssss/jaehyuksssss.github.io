@@ -3,8 +3,7 @@ import styled from "@emotion/styled"
 import { Link, navigate } from "gatsby"
 import Template from "components/Common/Template"
 import GoogleAdSense from "components/Common/GoogleAdSense"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
+// back button removed on this page
 
 const Grid = styled.div`
   display: grid;
@@ -36,29 +35,7 @@ const Desc = styled.p`
   color: #bdbdbd;
 `
 
-const TopBackButton = styled.button`
-  position: fixed;
-  top: 80px; /* below fixed navbar */
-  left: 20px;
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #000000;
-  font-size: 18px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  z-index: 2100;
-  user-select: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  &:active { transform: scale(0.96); box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); }
-  @media (max-width: 768px) {
-    top: 70px; left: 10px; width: 30px; height: 30px; font-size: 16px;
-  }
-`
+/* page back button removed */
 
 const MobileAdContainer = styled.div`
   display: none;
@@ -85,9 +62,7 @@ const GamesPage: React.FC = () => {
         </Card>
       </Grid>
 
-      {/* <TopBackButton aria-label="홈으로" title="홈으로" onClick={() => navigate("/")}>
-        <FontAwesomeIcon icon={faArrowLeft} />
-      </TopBackButton> */}
+
 
       <MobileAdContainer>
         <GoogleAdSense
