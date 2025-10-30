@@ -10,8 +10,7 @@ import GoogleTagManager, {
 } from "components/Common/GoogleTagManager"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 import FloatingGameButton from "components/Common/FloatingGameButton"
-// no navigate import needed here
-// removed global back button imports
+
 
 type TemplateProps = {
   title?: string
@@ -63,7 +62,6 @@ const ContentArea = styled.div`
   }
 `
 
-/* Global back button removed */
 
 // Desktop-only inline links
 const DesktopLinks = styled.div`
