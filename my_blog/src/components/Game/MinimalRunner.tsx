@@ -644,9 +644,7 @@ const Runner: React.FC = () => {
 
   return (
     <Wrapper>
-      <h1 style={{ color: "#1b1b1b", margin: 0 }}>
-        Minimal Runner (더블 점프)
-      </h1>
+      <h1 style={{ color: "#1b1b1b", margin: 0 }}>뛰 뛰 뛰어</h1>
 
       <Panel>
         <span>
