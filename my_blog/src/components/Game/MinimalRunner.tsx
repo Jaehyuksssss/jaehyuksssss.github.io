@@ -669,7 +669,11 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
 
   return (
     <Wrapper>
-      <h1 style={{ color: "#1b1b1b", margin: 0 }}>점프 세번 가능</h1>
+      <h1
+        style={{ color: "#1b1b1b", margin: 0, fontSize: 20, fontWeight: 900 }}
+      >
+        화면 터치로 점프 세번 가능
+      </h1>
 
       <Panel>
         <span>
