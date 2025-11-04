@@ -443,7 +443,7 @@ const Runner: React.FC = () => {
             s.tempo.hold = 0.9
             s.tempo.rampOut = 1.6
             s.tempo.multTo = 1.25 + rng() * 0.25 // 1.25~1.5x
-            setEventLabel("뛰자 뛰자 팡팡팡!!")
+            setEventLabel("뛰 뛰 뛰어")
           } else {
             s.tempo.rampIn = 0.3
             s.tempo.hold = 1.1
