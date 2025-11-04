@@ -118,7 +118,9 @@ const clamp = (n: number, min: number, max: number) =>
 
 const formatMeters = (n: number) => `${Math.floor(n)} m`
 
-const Runner: React.FC = () => {
+type RunnerProps = { allowedJumps?: number }
+
+const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [running, setRunning] = useState(false)
   const [gameOver, setGameOver] = useState(false)
@@ -164,7 +166,7 @@ const Runner: React.FC = () => {
     gravity: 1400, // px/s^2
     onGround: true,
     jumpsUsed: 0,
-    allowedJumps: 2,
+    allowedJumps: allowedJumps,
     coyoteMs: 110,
     bufferMs: 130,
     lastGroundedAt: 0,
@@ -188,6 +190,7 @@ const Runner: React.FC = () => {
     score: 0,
     alive: true,
     shakeMs: 0,
+    flashMs: 0,
   })
 
   const setNextSpawn = useCallback(() => {
@@ -214,7 +217,7 @@ const Runner: React.FC = () => {
     s.gravity = 1400
     s.onGround = true
     s.jumpsUsed = 0
-    s.allowedJumps = 2
+    s.allowedJumps = allowedJumps
     s.coyoteMs = 110
     s.bufferMs = 130
     s.lastGroundedAt = 0
@@ -238,6 +241,7 @@ const Runner: React.FC = () => {
     s.score = 0
     s.alive = true
     s.shakeMs = 0
+    s.flashMs = 0
     setScore(0)
     setMeters(0)
     setPassed(0)
@@ -444,6 +448,7 @@ const Runner: React.FC = () => {
             s.tempo.rampOut = 1.6
             s.tempo.multTo = 1.25 + rng() * 0.25 // 1.25~1.5x
             setEventLabel("뛰 뛰 뛰어")
+            s.flashMs = 2000
           } else {
             s.tempo.rampIn = 0.3
             s.tempo.hold = 1.1
@@ -595,20 +600,34 @@ const Runner: React.FC = () => {
       if (s.onGround && Math.abs(s.vy) < 0.00001 && s.shakeMs > 0) {
         s.shakeMs -= dt * 1000
       }
+      // Fade out red flash (burst cue)
+      if (s.flashMs > 0) {
+        s.flashMs = Math.max(0, s.flashMs - dt * 1000)
+      }
 
       // Draw
       ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
       // optional shake
+      const drawFlash = () => {
+        if (s.flashMs > 0) {
+          const a = Math.min(1, s.flashMs / 380) * 0.35
+          ctx.fillStyle = `rgba(239, 68, 68, ${a})` // red tint
+          // draw after ground but before obstacles/player to tint background only
+          ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight)
+        }
+      }
       if (s.shakeMs > 0) {
         const mag = (s.shakeMs / 100) * 2
         ctx.save()
         ctx.translate((rng() - 0.5) * mag, (rng() - 0.5) * mag)
         drawGround()
+        drawFlash()
         drawObstacles()
         drawPlayer()
         ctx.restore()
       } else {
         drawGround()
+        drawFlash()
         drawObstacles()
         drawPlayer()
       }
@@ -642,9 +661,15 @@ const Runner: React.FC = () => {
     startGame()
   }, [startGame])
 
+  const jumpLabel = React.useMemo(() => {
+    if (allowedJumps === 2) return "더블 점프"
+    if (allowedJumps === 3) return "트리플 점프"
+    return `${allowedJumps}회 점프`
+  }, [allowedJumps])
+
   return (
     <Wrapper>
-      <h1 style={{ color: "#1b1b1b", margin: 0 }}>뛰 뛰 뛰어</h1>
+      <h1 style={{ color: "#1b1b1b", margin: 0 }}>점프 세번 가능</h1>
 
       <Panel>
         <span>
@@ -714,7 +739,7 @@ const Runner: React.FC = () => {
               }}
             >
               <div style={{ marginBottom: 10, textAlign: "center" }}>
-                스페이스 / 화면 터치로 점프 (더블 점프)
+                스페이스 / 화면 터치로 점프 ({jumpLabel})
               </div>
               <div
                 style={{ display: "flex", gap: 10, justifyContent: "center" }}
