@@ -743,7 +743,7 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
               }}
             >
               <div style={{ marginBottom: 10, textAlign: "center" }}>
-                스페이스 / 화면 터치로 점프 ({jumpLabel})
+                스페이스 / 화면 터치로 점프 (가로가 유리해요)
               </div>
               <div
                 style={{ display: "flex", gap: 10, justifyContent: "center" }}
