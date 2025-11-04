@@ -38,7 +38,7 @@ const MinimalRunnerPage: React.FC = () => {
 
   return (
     <Template
-      title="뛰어~"
+      title="뛰 뛰 뛰어~"
       description="스페이스/터치로 더블 점프! 장애물을 피해 오래 달려요"
       url="/jump"
       hideGameButton

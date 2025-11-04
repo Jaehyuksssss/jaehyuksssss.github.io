@@ -77,7 +77,7 @@ const GamesPage: React.FC = () => {
           <Desc>3초 미리보기 후 기억한 순서대로 점을 연결</Desc>
         </Card>
         <Card to="/jump">
-          <Title>뛰어~</Title>
+          <Title>뛰 뛰 뛰어~</Title>
           <Desc>뛰어서, 얼마나 오래 버티나?</Desc>
         </Card>
       </Grid>
