@@ -5,8 +5,6 @@ import { navigate } from "gatsby"
 type Props = {
   to?: string
   label?: string
-  // CSS selector for a bounding element. When provided, the button can move
-  // only within that element's client rect. Falls back to viewport otherwise.
   boundToSelector?: string
 }
 
@@ -118,8 +116,6 @@ function getInitialRel(selector?: string): Pos {
   const b = getRelBounds(selector)
   return { x: b.maxX, y: b.maxY }
 }
-
-// (Legacy helpers removed: getBounds/getInitialPos)
 
 const FloatingGameButton: React.FC<Props> = ({
   to = "/reaction",
