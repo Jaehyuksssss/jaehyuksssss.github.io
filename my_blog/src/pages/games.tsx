@@ -80,6 +80,10 @@ const GamesPage: React.FC = () => {
           <Title>뛰 뛰 뛰어~</Title>
           <Desc>뛰어서, 얼마나 오래 버티나?</Desc>
         </Card>
+        <Card to="/mole">
+          <Title>뉴트리아 잡기</Title>
+          <Desc>라운드마다 더 빨라지는 뉴트리아 잡아서 환경 보호해요</Desc>
+        </Card>
       </Grid>
 
       <MobileAdContainer>
