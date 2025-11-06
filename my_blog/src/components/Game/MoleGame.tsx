@@ -145,9 +145,9 @@ const MoleGame: React.FC<Props> = ({
     [difficulty, round]
   )
 
-  // Required count scales +5 per round (base is requiredPerRound)
+  // Required count scales +2 per round (base is requiredPerRound)
   const requiredThisRound = useMemo(
-    () => requiredPerRound + (round - 1) * 5,
+    () => requiredPerRound + (round - 1) * 2,
     [requiredPerRound, round]
   )
 
@@ -262,7 +262,12 @@ const MoleGame: React.FC<Props> = ({
       if (!running) return
       setActive(prev => {
         const idx = prev.findIndex(m => m.idx === i)
-        if (idx === -1) return prev
+        if (idx === -1) {
+          // 빈 칸을 잘못 클릭해도 미스로 처리
+          setCombo(0)
+          setMisses(x => x + 1)
+          return prev
+        }
         const m = prev[idx]
         const rest = prev.slice(0, idx).concat(prev.slice(idx + 1))
         if (m.fake) {
@@ -295,7 +300,7 @@ const MoleGame: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <h1 style={{ color: "#1b1b1b", margin: 0 }}>뉴트리아 잡기</h1>
+      <h1 style={{ color: "#1b1b1b", margin: 0 }}>두더지 잡기</h1>
       <Panel>
         <span>
           라운드: <Stat>{round}</Stat>
@@ -332,7 +337,7 @@ const MoleGame: React.FC<Props> = ({
           <Tile
             key={i}
             type="button"
-            aria-label={activeIdx.has(i) ? "뉴트리아" : "타일"}
+            aria-label={activeIdx.has(i) ? "두더지" : "타일"}
             isMole={activeIdx.has(i)}
             onClick={() => onTileClick(i)}
           />
@@ -381,7 +386,7 @@ const MoleGame: React.FC<Props> = ({
               난이도 선택
             </h2>
             <p style={{ marginTop: 0, color: "#bdbdbd" }}>
-              라운드가 진행될수록 뉴트리아가 빨리 나타났다 사라져요.
+              라운드가 진행될수록 두더지가 빨리 나타났다 사라져요.
               <br />
               판당 미스 {MISS_LIMIT}개면 종료됩니다.
             </p>
