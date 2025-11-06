@@ -155,10 +155,10 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
   const stateRef = useRef({
     t: 0,
     last: 0,
-    speed: 240, // current effective px/s (baseSpeed * tempo multiplier)
-    baseSpeed: 240, // underlying ramping speed before tempo multiplier
+    speed: 220, // slightly slower start speed
+    baseSpeed: 220, // slightly slower base speed
     maxSpeed: 540,
-    accel: 18, // px/s^2 (gentle)
+    accel: 16, // slightly gentler ramp
     groundY: 170, // canvas logical units before DPR scaling
     playerX: 80,
     playerY: 170,
@@ -206,10 +206,10 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
     const s = stateRef.current
     s.t = 0
     s.last = 0
-    s.speed = 240
-    s.baseSpeed = 240
+    s.speed = 220
+    s.baseSpeed = 220
     s.maxSpeed = 540
-    s.accel = 18
+    s.accel = 16
     s.groundY = 170
     s.playerX = 80
     s.playerY = s.groundY
@@ -446,7 +446,7 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
             s.tempo.rampIn = 0.35
             s.tempo.hold = 0.9
             s.tempo.rampOut = 1.6
-            s.tempo.multTo = 1.25 + rng() * 0.25 // 1.25~1.5x
+            s.tempo.multTo = 1.2 + rng() * 0.2 // 1.2~1.4x (slightly softer)
             setEventLabel("뛰 뛰 뛰어")
             s.flashMs = 2000
           } else {
@@ -454,7 +454,7 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
             s.tempo.hold = 1.1
             s.tempo.rampOut = 1.0
             s.tempo.multTo = 0.7 + rng() * 0.15 // 0.7~0.85x
-            setEventLabel("zone 2")
+            setEventLabel("슬로우 러닝")
           }
         }
       } else {
@@ -817,7 +817,7 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
       </div>
 
       {!running && !gameOver ? (
-        <span style={{ color: "#1b1b1b" }}>누가누가 오래가나</span>
+        <span style={{ color: "#1b1b1b" }}>누가누가 오래 뛸까?</span>
       ) : null}
     </Wrapper>
   )
