@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "@emotion/styled"
 
-type Difficulty = "easy" | "medium" | "hard"
+type Difficulty = "easy"
 
 type Props = {
   initialGrid?: number
@@ -58,7 +58,13 @@ const Tile = styled.button<{ isMole?: boolean }>`
   &:active {
     transform: scale(0.98);
   }
-  background: ${({ isMole }) => (isMole ? "#ef4444" : "#60a5fa")};
+  /* Base color (red when mole visible, blue otherwise) */
+  background-color: ${({ isMole }) => (isMole ? "#ef4444" : "#60a5fa")};
+  /* Center the mole image on active tiles */
+  background-image: ${({ isMole }) => (isMole ? "url('/mole.png')" : "none")};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 68%;
   color: transparent;
 `
 
@@ -100,15 +106,15 @@ const clamp = (n: number, min: number, max: number) =>
 
 const MISS_LIMIT = 5
 
-function settingsFor(d: Difficulty, round: number) {
-  // Round-based scaling: faster spawns and shorter TTL as round increases
+function settingsFor(_d: Difficulty, round: number) {
+  // Single difficulty (easy). Scale by round only.
   const r = Math.max(1, round)
-  const ttlBase = d === "easy" ? 1100 : d === "medium" ? 900 : 750
-  const intervalBase = d === "easy" ? 850 : d === "medium" ? 700 : 580
+  const ttlBase = 1100
+  const intervalBase = 850
   const ttl = clamp(ttlBase - (r - 1) * 70, 330, ttlBase)
   const interval = clamp(intervalBase - (r - 1) * 50, 280, intervalBase)
-  const sim = d === "easy" ? 1 : d === "medium" ? 2 : 3
-  const fakeChance = d === "hard" ? 0.22 : d === "medium" ? 0.1 : 0
+  const sim = 1
+  const fakeChance = 0
   return { ttl, interval, sim, fakeChance }
 }
 
@@ -118,8 +124,7 @@ const MoleGame: React.FC<Props> = ({
   requiredPerRound = 5,
 }) => {
   const [running, setRunning] = useState(false)
-  const [difficulty, setDifficulty] = useState<Difficulty>("medium")
-  const [showDiff, setShowDiff] = useState(false)
+  const [difficulty, setDifficulty] = useState<Difficulty>("easy")
 
   const [round, setRound] = useState(1)
   const grid = useMemo(
@@ -165,7 +170,6 @@ const MoleGame: React.FC<Props> = ({
   const startGame = useCallback(
     (d: Difficulty) => {
       setDifficulty(d)
-      setShowDiff(false)
       resetAll()
       setRunning(true)
       nextSpawnAtRef.current = nowMs() + interval
@@ -306,16 +310,6 @@ const MoleGame: React.FC<Props> = ({
           라운드: <Stat>{round}</Stat>
         </span>
         <span>
-          난이도:{" "}
-          <Stat>
-            {difficulty === "easy"
-              ? "초보"
-              : difficulty === "medium"
-              ? "중수"
-              : "고수"}
-          </Stat>
-        </span>
-        <span>
           잡은 수:{" "}
           <Stat>
             {caughtInRound}/{requiredThisRound}
@@ -345,80 +339,9 @@ const MoleGame: React.FC<Props> = ({
       </Board>
 
       {!running && !roundClear ? (
-        <PrimaryBtn onClick={() => setShowDiff(true)} aria-label="게임 시작">
+        <PrimaryBtn onClick={() => startGame("easy")} aria-label="게임 시작">
           게임 시작
         </PrimaryBtn>
-      ) : null}
-
-      {showDiff && !running ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="mole-diff-title"
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 3000,
-          }}
-          onClick={() => setShowDiff(false)}
-        >
-          <div
-            style={{
-              background: "#1d1d1f",
-              color: "#e6e6e6",
-              padding: 20,
-              borderRadius: 12,
-              width: "min(420px, 92vw)",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
-              display: "grid",
-              gap: 12,
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <h2
-              id="mole-diff-title"
-              style={{ margin: "0 0 10px", color: "#fff" }}
-            >
-              난이도 선택
-            </h2>
-            <p style={{ marginTop: 0, color: "#bdbdbd" }}>
-              라운드가 진행될수록 두더지가 빨리 나타났다 사라져요.
-              <br />
-              판당 미스 {MISS_LIMIT}개면 종료됩니다.
-            </p>
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                justifyContent: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <PrimaryBtn
-                onClick={() => startGame("easy")}
-                aria-label="초보 난이도로 시작"
-              >
-                초보
-              </PrimaryBtn>
-              <PrimaryBtn
-                onClick={() => startGame("medium")}
-                aria-label="중수 난이도로 시작"
-              >
-                중수
-              </PrimaryBtn>
-              <PrimaryBtn
-                onClick={() => startGame("hard")}
-                aria-label="고수 난이도로 시작"
-              >
-                고수
-              </PrimaryBtn>
-            </div>
-          </div>
-        </div>
       ) : null}
 
       {roundClear ? (
