@@ -191,6 +191,7 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
     alive: true,
     shakeMs: 0,
     flashMs: 0,
+    burstBonus: 0,
   })
 
   const setNextSpawn = useCallback(() => {
@@ -239,6 +240,7 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
     s.meters = 0
     s.passed = 0
     s.score = 0
+    s.burstBonus = 0
     s.alive = true
     s.shakeMs = 0
     s.flashMs = 0
@@ -550,8 +552,13 @@ const Runner: React.FC<RunnerProps> = ({ allowedJumps = 2 }) => {
         }
       }
       if (newlyPassed) s.passed += newlyPassed
-      // base score: meters floor + 5 * passed
-      s.score = Math.floor(s.meters) + s.passed * 5
+      if (s.tempo.active && s.tempo.type === "burst") {
+        // boost score gain during "뛰 뛰 뛰어" bursts (12 pts/sec default)
+        s.burstBonus += dt * 15
+      }
+      const burstPoints = Math.floor(s.burstBonus)
+      // base score plus burst bonus: meters floor + 5 * passed + burst bonus
+      s.score = Math.floor(s.meters) + s.passed * 5 + burstPoints
 
       // Collision check
       const px = s.playerX - 10
