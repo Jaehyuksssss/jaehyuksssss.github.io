@@ -47,7 +47,7 @@ const Board = styled.div<{ cols: number }>`
   margin-top: 8px;
 `
 
-const Tile = styled.button<{ isMole?: boolean }>`
+const Tile = styled.button<{ isMole?: boolean; isBomb?: boolean }>`
   aspect-ratio: 1 / 1;
   border: none;
   border-radius: 10px;
@@ -58,10 +58,11 @@ const Tile = styled.button<{ isMole?: boolean }>`
   &:active {
     transform: scale(0.98);
   }
-  /* Base color (red when mole visible, blue otherwise) */
+  /* Base color (red when mole/bomb visible, blue otherwise) */
   background-color: ${({ isMole }) => (isMole ? "#ef4444" : "#60a5fa")};
-  /* Center the mole image on active tiles */
-  background-image: ${({ isMole }) => (isMole ? "url('/mole.png')" : "none")};
+  /* Center the mole/bomb image on active tiles */
+  background-image: ${({ isMole, isBomb }) =>
+    isMole ? (isBomb ? "url('/bomb.png')" : "url('/mole.png')") : "none"};
   background-repeat: no-repeat;
   background-position: center;
   background-size: 68%;
@@ -113,8 +114,10 @@ function settingsFor(_d: Difficulty, round: number) {
   const intervalBase = 850
   const ttl = clamp(ttlBase - (r - 1) * 70, 330, ttlBase)
   const interval = clamp(intervalBase - (r - 1) * 50, 280, intervalBase)
-  const sim = 1
-  const fakeChance = 0
+  // Allow multiple simultaneous spawns as rounds progress (1→4)
+  const sim = Math.min(1 + Math.floor((r - 1) / 2), 4)
+  // Increase bomb frequency a bit more as round increases (max 50%)
+  const fakeChance = clamp(0.22 + (r - 1) * 0.04, 0, 0.5)
   return { ttl, interval, sim, fakeChance }
 }
 
@@ -294,6 +297,11 @@ const MoleGame: React.FC<Props> = ({
 
   const tiles = useMemo(() => new Array(totalTiles).fill(null), [totalTiles])
   const activeIdx = useMemo(() => new Set(active.map(a => a.idx)), [active])
+  const activeByIdx = useMemo(() => {
+    const m = new Map<number, Mole>()
+    for (const a of active) m.set(a.idx, a)
+    return m
+  }, [active])
 
   const restart = useCallback(() => {
     setGameOver(false)
@@ -331,8 +339,9 @@ const MoleGame: React.FC<Props> = ({
           <Tile
             key={i}
             type="button"
-            aria-label={activeIdx.has(i) ? "두더지" : "타일"}
+            aria-label={activeIdx.has(i) ? (activeByIdx.get(i)?.fake ? "폭탄" : "두더지") : "타일"}
             isMole={activeIdx.has(i)}
+            isBomb={activeByIdx.get(i)?.fake}
             onClick={() => onTileClick(i)}
           />
         ))}
