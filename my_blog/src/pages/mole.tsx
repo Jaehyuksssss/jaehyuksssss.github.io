@@ -39,7 +39,7 @@ const MolePage: React.FC = () => {
   return (
     <Template
       title="뉴트리아 잡기"
-      description="라운드마다 더 빨라지는 뉴트리아! 잡아서 환경 보호해요"
+      description="라운드마다 더 빨라지는 두더지 잡아요"
       url="/mole"
       hideGameButton
     >
