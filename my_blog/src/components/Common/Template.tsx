@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ReactNode } from "react"
-import { useLocation } from '@reach/router'
+import { useLocation } from "@reach/router"
 import styled from "@emotion/styled"
 import { graphql, useStaticQuery } from "gatsby"
 import { Helmet } from "react-helmet"
@@ -10,7 +10,6 @@ import GoogleTagManager, {
 } from "components/Common/GoogleTagManager"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 import FloatingGameButton from "components/Common/FloatingGameButton"
-
 
 type TemplateProps = {
   title?: string
@@ -62,7 +61,6 @@ const ContentArea = styled.div`
   }
 `
 
-
 // Desktop-only inline links
 const DesktopLinks = styled.div`
   display: none;
@@ -95,7 +93,7 @@ const MobileToggleBtn = styled.button`
 const MobileMenuOverlay = styled.div`
   position: fixed;
   inset: 60px 0 0 0; /* below navbar */
-  background: rgba(0,0,0,0.25);
+  background: rgba(0, 0, 0, 0.25);
   z-index: 1999;
   display: none;
   @media (max-width: 768px) {
@@ -125,30 +123,8 @@ const MobileMenuLink = styled.a`
   padding: 12px 8px;
   font-size: 20px;
   border-radius: 8px;
-  &:active { background: #eff6ff; }
-`
-
-const MobileAdContainer = styled.div`
-  display: none;
-  padding: 10px 20px;
-  margin-top: 80px; /* 메뉴바 높이만큼 여백 추가 */
-
-  @media (max-width: 768px) {
-    display: block;
-    margin-top: 90px; /* 모바일 메뉴바 높이만큼 여백 추가 */
-
-    /* 모바일 광고 크기 제한 */
-    .adsbygoogle {
-      max-width: 100% !important;
-      max-height: 100px !important;
-      overflow: hidden !important;
-    }
-
-    /* Google AdSense iframe 크기 제한 */
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
+  &:active {
+    background: #eff6ff;
   }
 `
 
@@ -186,11 +162,19 @@ const Template: FunctionComponent<TemplateProps> = function ({
 
   // Current route (for conditionally hiding floating button)
   const location = useLocation()
-  const isReactionPage = Boolean(location && location.pathname && location.pathname.startsWith('/reaction'))
-  const isTracePage = Boolean(location && location.pathname && location.pathname.startsWith('/trace'))
-  const isGamesPage = Boolean(location && location.pathname && location.pathname.startsWith('/games'))
-  const isHomePage = Boolean(location && location.pathname === '/')
-  const shouldHideGameButton = Boolean(hideGameButton || isReactionPage || isTracePage || isGamesPage)
+  const isReactionPage = Boolean(
+    location && location.pathname && location.pathname.startsWith("/reaction")
+  )
+  const isTracePage = Boolean(
+    location && location.pathname && location.pathname.startsWith("/trace")
+  )
+  const isGamesPage = Boolean(
+    location && location.pathname && location.pathname.startsWith("/games")
+  )
+  const isHomePage = Boolean(location && location.pathname === "/")
+  const shouldHideGameButton = Boolean(
+    hideGameButton || isReactionPage || isTracePage || isGamesPage
+  )
   const [navOpen, setNavOpen] = React.useState(false) // 모바일 전용 상태
 
   // Google Tag Manager Container ID (환경변수에서 가져오거나 하드코딩)
@@ -309,25 +293,51 @@ const Template: FunctionComponent<TemplateProps> = function ({
           backdropFilter: "blur(6px)",
           borderBottom: "1px solid #eee",
           zIndex: 2000,
-          }}
+        }}
       >
         {/* Desktop always-visible links */}
         <DesktopLinks>
-          <a href="/" style={{ fontWeight: 900, color: "#111", textDecoration: "none" }}>Home</a>
-          <a href="/games" style={{ fontWeight: 800, color: "#111", textDecoration: "none" }}>Games</a>
-          <a href="/about" style={{ color: "#1f2937", textDecoration: "none" }}>About</a>
-          <a href="/contact" style={{ color: "#1f2937", textDecoration: "none" }}>Contact</a>
-          <a href="/privacy" style={{ color: "#1f2937", textDecoration: "none" }}>Privacy</a>
-          <a href="/terms" style={{ color: "#1f2937", textDecoration: "none" }}>Terms</a>
+          <a
+            href="/"
+            style={{ fontWeight: 900, color: "#111", textDecoration: "none" }}
+          >
+            Home
+          </a>
+          <a
+            href="/games"
+            style={{ fontWeight: 800, color: "#111", textDecoration: "none" }}
+          >
+            Games
+          </a>
+          <a href="/about" style={{ color: "#1f2937", textDecoration: "none" }}>
+            About
+          </a>
+          <a
+            href="/contact"
+            style={{ color: "#1f2937", textDecoration: "none" }}
+          >
+            Contact
+          </a>
+          <a
+            href="/privacy"
+            style={{ color: "#1f2937", textDecoration: "none" }}
+          >
+            Privacy
+          </a>
+          <a href="/terms" style={{ color: "#1f2937", textDecoration: "none" }}>
+            Terms
+          </a>
         </DesktopLinks>
 
         {/* Mobile hamburger (left) */}
         <MobileToggleBtn
-          aria-label={navOpen ? '메뉴 접기' : '메뉴 펼치기'}
+          aria-label={navOpen ? "메뉴 접기" : "메뉴 펼치기"}
           aria-expanded={navOpen}
           onClick={() => setNavOpen(v => !v)}
         >
-          <span style={{ fontSize: 18, lineHeight: 1 }}>{navOpen ? '×' : '≡'}</span>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>
+            {navOpen ? "×" : "≡"}
+          </span>
         </MobileToggleBtn>
       </nav>
 
@@ -335,12 +345,24 @@ const Template: FunctionComponent<TemplateProps> = function ({
       {navOpen && (
         <MobileMenuOverlay onClick={() => setNavOpen(false)}>
           <MobileMenuPanel onClick={e => e.stopPropagation()}>
-            <MobileMenuLink href="/" onClick={() => setNavOpen(false)}>Home</MobileMenuLink>
-            <MobileMenuLink href="/games" onClick={() => setNavOpen(false)}>Games</MobileMenuLink>
-            <MobileMenuLink href="/about" onClick={() => setNavOpen(false)}>About</MobileMenuLink>
-            <MobileMenuLink href="/contact" onClick={() => setNavOpen(false)}>Contact</MobileMenuLink>
-            <MobileMenuLink href="/privacy" onClick={() => setNavOpen(false)}>Privacy</MobileMenuLink>
-            <MobileMenuLink href="/terms" onClick={() => setNavOpen(false)}>Terms</MobileMenuLink>
+            <MobileMenuLink href="/" onClick={() => setNavOpen(false)}>
+              Home
+            </MobileMenuLink>
+            <MobileMenuLink href="/games" onClick={() => setNavOpen(false)}>
+              Games
+            </MobileMenuLink>
+            <MobileMenuLink href="/about" onClick={() => setNavOpen(false)}>
+              About
+            </MobileMenuLink>
+            <MobileMenuLink href="/contact" onClick={() => setNavOpen(false)}>
+              Contact
+            </MobileMenuLink>
+            <MobileMenuLink href="/privacy" onClick={() => setNavOpen(false)}>
+              Privacy
+            </MobileMenuLink>
+            <MobileMenuLink href="/terms" onClick={() => setNavOpen(false)}>
+              Terms
+            </MobileMenuLink>
           </MobileMenuPanel>
         </MobileMenuOverlay>
       )}
@@ -394,7 +416,7 @@ const Template: FunctionComponent<TemplateProps> = function ({
         <FloatingGameButton
           to="/games"
           label="게임"
-          boundToSelector={isHomePage ? '#intro-hero-area' : undefined}
+          boundToSelector={isHomePage ? "#intro-hero-area" : undefined}
         />
       )}
     </Container>
