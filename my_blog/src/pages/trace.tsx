@@ -18,7 +18,6 @@ const MobileAdContainer = styled.div`
 
     .adsbygoogle {
       max-width: 100% !important;
-      max-height: 100px !important;
       overflow: hidden !important;
     }
 
@@ -30,20 +29,27 @@ const MobileAdContainer = styled.div`
 `
 
 const TracePage: React.FC = () => {
-  useSupabaseViewCount("trace", { coolDownMinutes: 60 * 24, globalCoolDown: true })
+  useSupabaseViewCount("trace", {
+    coolDownMinutes: 60 * 24,
+    globalCoolDown: true,
+  })
 
   // Inside the game page, pressing browser back navigates to game list
   React.useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === "undefined") return
     const onPop = () => {
-      navigate('/games', { replace: true })
+      navigate("/games", { replace: true })
     }
-    window.addEventListener('popstate', onPop)
-    return () => window.removeEventListener('popstate', onPop)
+    window.addEventListener("popstate", onPop)
+    return () => window.removeEventListener("popstate", onPop)
   }, [])
 
   return (
-    <Template title="연결 연결" description="기억력을 테스트 해봐요" url="/trace">
+    <Template
+      title="연결 연결"
+      description="기억력을 테스트 해봐요"
+      url="/trace"
+    >
       <MobileAdContainer>
         <GoogleAdSense
           adClient="ca-pub-3398641306673607"
@@ -53,7 +59,6 @@ const TracePage: React.FC = () => {
         />
       </MobileAdContainer>
       <TraceRunner previewMs={3000} startGrid={3} maxGrid={6} />
-
     </Template>
   )
 }
