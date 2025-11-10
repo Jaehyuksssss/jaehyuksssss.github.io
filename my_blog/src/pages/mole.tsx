@@ -21,16 +21,6 @@ const MobileAdContainer = styled.div`
   @media (max-width: 768px) {
     visibility: visible;
     opacity: 1;
-
-    .adsbygoogle {
-      max-width: 100% !important;
-      max-height: 100px !important;
-      overflow: hidden !important;
-    }
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
   }
 `
 
