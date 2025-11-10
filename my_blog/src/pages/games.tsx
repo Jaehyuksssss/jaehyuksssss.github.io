@@ -74,7 +74,7 @@ const GamesPage: React.FC = () => {
         </Card>
         <Card to="/time">
           <Title>시간 맞추기</Title>
-          <Desc>1초/3초에 정확히 멈추기</Desc>
+          <Desc>정확히 시간에 멈추기</Desc>
         </Card>
         <Card to="/trace">
           <Title>경로 그리기</Title>
