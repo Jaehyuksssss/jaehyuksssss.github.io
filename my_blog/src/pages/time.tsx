@@ -1,27 +1,9 @@
 import React from "react"
 import styled from "@emotion/styled"
 import Template from "components/Common/Template"
-import GoogleAdSense from "components/Common/GoogleAdSense"
 import TimeMatch from "components/Game/TimeMatch"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 import { fetchTopTimeMatchScores, PublicScore } from "lib/timeMatchApi"
-
-const MobileAdContainer = styled.div`
-  display: none;
-  padding: 8px 16px 0;
-  @media (max-width: 768px) {
-    display: block;
-    .adsbygoogle {
-      max-width: 100% !important;
-      max-height: 100px !important;
-      overflow: hidden !important;
-    }
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
-  }
-`
 
 const Board = styled.div`
   width: min(560px, 92vw);
@@ -48,15 +30,24 @@ const TimePage: React.FC = () => {
   })
   const [scores, setScores] = React.useState<PublicScore[]>([])
 
+  const loadScores = React.useCallback(async () => {
+    const result = await fetchTopTimeMatchScores(10)
+    return result
+  }, [])
+
+  const refreshScores = React.useCallback(() => {
+    loadScores().then(setScores)
+  }, [loadScores])
+
   React.useEffect(() => {
     let alive = true
-    fetchTopTimeMatchScores(10).then(r => {
-      if (alive) setScores(r)
+    loadScores().then(result => {
+      if (alive) setScores(result)
     })
     return () => {
       alive = false
     }
-  }, [])
+  }, [loadScores])
 
   return (
     <Template
@@ -79,7 +70,7 @@ const TimePage: React.FC = () => {
             href="#"
             onClick={e => {
               e.preventDefault()
-              fetchTopTimeMatchScores(10).then(setScores)
+              refreshScores()
             }}
             style={{ fontSize: 12 }}
           >
@@ -108,7 +99,7 @@ const TimePage: React.FC = () => {
         )}
       </Board>
 
-      <TimeMatch />
+      <TimeMatch onSubmitSuccess={refreshScores} />
     </Template>
   )
 }
