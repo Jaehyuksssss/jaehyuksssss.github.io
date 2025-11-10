@@ -50,14 +50,6 @@ const TracePage: React.FC = () => {
       description="기억력을 테스트 해봐요"
       url="/trace"
     >
-      <MobileAdContainer>
-        <GoogleAdSense
-          adClient="ca-pub-3398641306673607"
-          adSlot="2123128311"
-          adFormat="auto"
-          fullWidthResponsive={true}
-        />
-      </MobileAdContainer>
       <TraceRunner previewMs={3000} startGrid={3} maxGrid={6} />
     </Template>
   )
