@@ -4,6 +4,10 @@ import { submitTimeMatchScore } from "lib/timeMatchApi"
 
 type Phase = "idle" | "running" | "round_result" | "finished"
 
+type TimeMatchProps = {
+  onSubmitSuccess?: (payload: { avgMs: number; singleMs: number }) => void
+}
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -120,7 +124,7 @@ function now() {
   return performance.now()
 }
 
-const TimeMatch: React.FC = () => {
+const TimeMatch: React.FC<TimeMatchProps> = ({ onSubmitSuccess }) => {
   const [phase, setPhase] = useState<Phase>("idle")
   const [round, setRound] = useState(1)
   const [targetSec, setTargetSec] = useState<number>(pickTargetSec())
@@ -301,12 +305,15 @@ const TimeMatch: React.FC = () => {
         singleMs: bestSingle,
       })
       setSubmitOk(ok)
+      if (ok) {
+        onSubmitSuccess?.({ avgMs: bestAvg, singleMs: bestSingle })
+      }
     } catch {
       setSubmitOk(false)
     } finally {
       setSubmitting(false)
     }
-  }, [nickname, last4, bestAvg, bestSingle])
+  }, [nickname, last4, bestAvg, bestSingle, onSubmitSuccess])
 
   useEffect(() => {
     if (submitOk !== true) return
