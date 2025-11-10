@@ -65,15 +65,6 @@ const TimePage: React.FC = () => {
       url="/time"
       hideGameButton
     >
-      <MobileAdContainer>
-        <GoogleAdSense
-          adClient="ca-pub-3398641306673607"
-          adSlot="2123128311"
-          adFormat="auto"
-          fullWidthResponsive={true}
-        />
-      </MobileAdContainer>
-
       {/* Leader보드 (Top 10) */}
       <Board>
         <div
