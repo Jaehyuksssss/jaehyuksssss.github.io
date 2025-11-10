@@ -63,7 +63,8 @@ begin
   if p_nickname is null or char_length(trim(p_nickname)) < 2 or char_length(trim(p_nickname)) > 16 then
     raise exception 'invalid nickname';
   end if;
-  if p_last4 is null or p_last4 !~ '^\\d{4}$' then
+  -- NOTE: PostgreSQL regex doesn't support "\\d"; use [0-9]
+  if p_last4 is null or p_last4 !~ '^[0-9]{4}$' then
     raise exception 'invalid last4';
   end if;
   if p_avg_ms is null or p_avg_ms < 0 or p_avg_ms > 60000 then
@@ -117,4 +118,3 @@ grant execute on function public.tm_top_scores(int) to anon, authenticated;
 
 -- (Optional) set a server-side pepper (run once; adjust DB name if needed)
 -- alter database postgres set app.tm_pepper = 'change-this-to-a-random-secret';
-

@@ -50,7 +50,7 @@ const TimePage: React.FC = () => {
 
   React.useEffect(() => {
     let alive = true
-    fetchTopTimeMatchScores(20).then(r => {
+    fetchTopTimeMatchScores(10).then(r => {
       if (alive) setScores(r)
     })
     return () => {
@@ -74,41 +74,48 @@ const TimePage: React.FC = () => {
         />
       </MobileAdContainer>
 
-      {/* Leaderboard (read-only) */}
-      {scores && scores.length > 0 ? (
-        <Board>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+      {/* Leader보드 (Top 10) */}
+      <Board>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h3 style={{ margin: "0 0 6px" }}>리더보드 TOP 10</h3>
+          <a
+            href="#"
+            onClick={e => {
+              e.preventDefault()
+              fetchTopTimeMatchScores(10).then(setScores)
             }}
+            style={{ fontSize: 12 }}
           >
-            <h3 style={{ margin: "0 0 6px" }}>
-              리더보드 TOP {Math.min(scores.length, 20)}
-            </h3>
-            <a
-              href="#"
-              onClick={e => {
-                e.preventDefault()
-                fetchTopTimeMatchScores(20).then(setScores)
-              }}
-              style={{ fontSize: 12 }}
-            >
-              새로고침
-            </a>
+            새로고침
+          </a>
+        </div>
+        <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 6 }}>
+          <strong>등수 · 닉네임 · 평균 오차(ms)</strong> 오차가 낮을수록 순위가
+          높아요.
+        </div>
+        {scores && scores.length > 0 ? (
+          <>
+            {scores.map((s, i) => (
+              <Row key={`${s.nickname}-${i}`}>
+                <div>
+                  {s.rank}등 {s.nickname}님
+                </div>
+                <div style={{ color: "#2563eb" }}>{s.best_avg_ms}ms</div>
+              </Row>
+            ))}
+          </>
+        ) : (
+          <div style={{ color: "#6b7280", fontWeight: 600, padding: "6px 0" }}>
+            아직 기록이 없어요
           </div>
-          {scores.map((s, i) => (
-            <Row key={`${s.nickname}-${i}`}>
-              <div>
-                #{s.rank} {s.nickname}
-              </div>
-              <div style={{ color: "#2563eb" }}>{s.best_avg_ms}ms</div>
-              <div style={{ color: "#059669" }}>{s.best_single_ms}ms</div>
-            </Row>
-          ))}
-        </Board>
-      ) : null}
+        )}
+      </Board>
 
       <TimeMatch />
     </Template>
