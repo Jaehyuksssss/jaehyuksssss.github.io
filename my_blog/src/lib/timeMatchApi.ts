@@ -1,5 +1,15 @@
 import { supabase } from './supabaseClient'
 
+function debugEnabled(): boolean {
+  try {
+    if (process.env.NODE_ENV !== 'production') return true
+    const sp = new URLSearchParams(window.location.search)
+    if (sp.get('debugSupabase') === '1') return true
+    if (localStorage.getItem('debug_supabase') === '1') return true
+  } catch {}
+  return false
+}
+
 export type PublicScore = {
   rank: number
   nickname: string
@@ -27,11 +37,17 @@ export async function submitTimeMatchScore(params: {
     p_last4: last4,
     p_avg_ms: avgMs,
     p_single_ms: singleMs,
+    p_client_id: null,
   })
   if (error) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (debugEnabled()) {
       // eslint-disable-next-line no-console
-      console.error('[Supabase] tm_submit_score error', error)
+      console.error('[Supabase] tm_submit_score error', {
+        message: error.message,
+        details: (error as any).details,
+        hint: (error as any).hint,
+        code: (error as any).code,
+      })
     }
     return false
   }
@@ -52,4 +68,3 @@ export async function fetchTopTimeMatchScores(limit = 20): Promise<PublicScore[]
   }
   return (data || []) as PublicScore[]
 }
-
