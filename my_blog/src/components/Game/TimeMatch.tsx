@@ -273,6 +273,24 @@ const TimeMatch: React.FC = () => {
     []
   )
 
+  const resetGame = useCallback(() => {
+    setPhase("idle")
+    setRound(1)
+    setTargetSec(pickTargetSec())
+    setManualMode(false)
+    setManualTargetSec(2.0)
+    setRoundErrors([])
+    setMinError(null)
+    setLastError(null)
+    setLastDirection(null)
+    setElapsedMs(0)
+    setCanStopAt(0)
+    startAtRef.current = null
+    setShowPrep(false)
+    setNickname("")
+    setLast4("")
+  }, [])
+
   const submitScore = useCallback(async () => {
     setSubmitting(true)
     try {
@@ -289,6 +307,15 @@ const TimeMatch: React.FC = () => {
       setSubmitting(false)
     }
   }, [nickname, last4, bestAvg, bestSingle])
+
+  useEffect(() => {
+    if (submitOk !== true) return
+    const timer = window.setTimeout(() => {
+      resetGame()
+      setSubmitOk(null)
+    }, 1200)
+    return () => window.clearTimeout(timer)
+  }, [submitOk, resetGame])
 
   return (
     <Wrapper>
