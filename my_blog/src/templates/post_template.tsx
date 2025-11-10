@@ -46,7 +46,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
     site,
     allMarkdownRemark: { edges },
   },
-  location: { href }
+  location: { href },
 }) {
   const siteMetadata = site?.siteMetadata || {}
   const { siteUrl = "", title: siteTitle = "", author = "" } = siteMetadata
@@ -73,29 +73,27 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
   const {
     node: {
       html,
-      frontmatter: {
-        title,
-        summary,
-        date,
-        dateISO,
-        categories,
-        thumbnail,
-      },
+      frontmatter: { title, summary, date, dateISO, categories, thumbnail },
       // bring in GraphQL slug field for reliable keying
       fields,
     },
   } = edges[0]
 
   // thumbnail이 문자열인 경우 처리
-  const isThumbnailString = typeof thumbnail === 'string';
-  const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
-  const publicURL = !isThumbnailString ? thumbnail?.publicURL : thumbnail;
+  const isThumbnailString = typeof thumbnail === "string"
+  const gatsbyImageData = !isThumbnailString
+    ? thumbnail?.childImageSharp?.gatsbyImageData
+    : null
+  const publicURL = !isThumbnailString ? thumbnail?.publicURL : thumbnail
 
   // postSlug는 GraphQL의 fields.slug를 사용해 안정적으로 키를 생성
-  const postSlug = fields?.slug || ''
+  const postSlug = fields?.slug || ""
 
   const canonicalUrl = href || toAbsoluteUrl(postSlug)
-  const shareImage = typeof publicURL === 'string' && publicURL.length > 0 ? toAbsoluteUrl(publicURL) : undefined
+  const shareImage =
+    typeof publicURL === "string" && publicURL.length > 0
+      ? toAbsoluteUrl(publicURL)
+      : undefined
   const publishedAt = dateISO ? new Date(dateISO).toISOString() : undefined
 
   const structuredData = [
@@ -134,7 +132,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
         {
           "@type": "ListItem",
           position: 1,
-          name: siteTitle || 'Home',
+          name: siteTitle || "Home",
           item: normalizedBaseUrl || canonicalUrl,
         },
         {
@@ -156,13 +154,12 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
       keywords={categories}
       structuredData={structuredData}
       hideGameButton
-      showBackButton
     >
       <PostHead
         title={title}
         date={date}
         categories={categories}
-        thumbnail={gatsbyImageData || (isThumbnailString ? thumbnail : '')}
+        thumbnail={gatsbyImageData || (isThumbnailString ? thumbnail : "")}
         postSlug={postSlug}
       />
       <PostContent html={html} />
@@ -195,7 +192,9 @@ export const queryMarkdownDataBySlug = graphql`
             categories
             thumbnail
           }
-          fields { slug }
+          fields {
+            slug
+          }
         }
       }
     }
