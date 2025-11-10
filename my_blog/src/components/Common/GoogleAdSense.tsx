@@ -161,7 +161,9 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
       className="adsbygoogle"
       style={{
         display: "block",
-        width: "100%",
+        minWidth: "160px",
+        minHeight: "100px",
+        maxWidth: "100%",
       }}
       data-ad-client={adClient}
       data-ad-slot={adSlot}
