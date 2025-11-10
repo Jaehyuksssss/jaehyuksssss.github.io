@@ -81,8 +81,8 @@ const GamesPage: React.FC = () => {
           <Desc>뛰어서, 얼마나 오래 버티나?</Desc>
         </Card>
         <Card to="/mole">
-          <Title>뉴트리아 잡기</Title>
-          <Desc>라운드마다 더 빨라지는 뉴트리아 잡아서 환경 보호해요</Desc>
+          <Title>두더지 잡기</Title>
+          <Desc>라운드마다 더 빨라지는 두더지 잡아요</Desc>
         </Card>
       </Grid>
 

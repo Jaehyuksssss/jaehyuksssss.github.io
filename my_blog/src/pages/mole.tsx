@@ -7,10 +7,21 @@ import MoleGame from "components/Game/MoleGame"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 
 const MobileAdContainer = styled.div`
-  display: none;
+  display: block;
   padding: 8px 16px 0;
+  min-height: 120px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+
   @media (max-width: 768px) {
-    display: block;
+    visibility: visible;
+    opacity: 1;
+
     .adsbygoogle {
       max-width: 100% !important;
       max-height: 100px !important;

@@ -27,7 +27,14 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
   }, [])
 
   useEffect(() => {
-    if (!isClient || scriptLoaded || scriptLoading) return
+    if (!isClient) return
+
+    if (scriptLoaded) {
+      setScriptReady(true)
+      return
+    }
+
+    if (scriptLoading) return
 
     scriptLoading = true
 
@@ -60,47 +67,86 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
     if (!isClient || !scriptReady || !adRef.current) return
 
     let initialized = false
-    let observer: ResizeObserver | null = null
+    let resizeObserver: ResizeObserver | null = null
+    let intersectionObserver: IntersectionObserver | null = null
+    let retryTimer: number | null = null
+    let retryCount = 0
+    const maxRetries = 12
+
+    const clearRetryTimer = () => {
+      if (retryTimer) {
+        window.clearTimeout(retryTimer)
+        retryTimer = null
+      }
+    }
+
+    const enqueueRetry = () => {
+      if (initialized || retryTimer || retryCount >= maxRetries) return
+      retryTimer = window.setTimeout(() => {
+        retryTimer = null
+        retryCount += 1
+        initializeAd()
+      }, 500)
+    }
 
     const initializeAd = () => {
       if (initialized || !adRef.current) return
 
       try {
-        // 컨테이너가 실제로 보이는지 확인
-        const rect = adRef.current.getBoundingClientRect()
-        const isVisible = rect.width > 0 && rect.height > 0
+        const element = adRef.current
+        const rect = element.getBoundingClientRect()
+        const style = window.getComputedStyle(element)
+        const hasSize = rect.width > 0 && rect.height > 0
+        const isDisplayed =
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          parseFloat(style.opacity || "1") > 0
 
-        if (!isVisible) {
-          console.log(
-            `AdSense ad skipped for slot: ${adSlot} (container not visible)`
-          )
+        if (!hasSize || !isDisplayed) {
+          enqueueRetry()
           return
         }
 
         ;(window as any).adsbygoogle = (window as any).adsbygoogle || []
         ;(window as any).adsbygoogle.push({})
         initialized = true
+        clearRetryTimer()
         console.log(`AdSense ad initialized for slot: ${adSlot}`)
       } catch (error) {
         console.error("Failed to initialize AdSense:", error)
       }
     }
 
-    // 즉시 시도
-    const timer = setTimeout(initializeAd, 100)
+    const immediateTimer = window.setTimeout(initializeAd, 100)
 
-    // ResizeObserver로 컨테이너 크기 변화 감지
     if (typeof ResizeObserver !== "undefined") {
-      observer = new ResizeObserver(() => {
+      resizeObserver = new ResizeObserver(() => {
         initializeAd()
       })
-      observer.observe(adRef.current)
+      resizeObserver.observe(adRef.current)
+    }
+
+    if (typeof IntersectionObserver !== "undefined") {
+      intersectionObserver = new IntersectionObserver(
+        entries => {
+          const anyVisible = entries.some(entry => entry.isIntersecting)
+          if (anyVisible) {
+            initializeAd()
+          }
+        },
+        { threshold: 0.1 }
+      )
+      intersectionObserver.observe(adRef.current)
     }
 
     return () => {
-      clearTimeout(timer)
-      if (observer) {
-        observer.disconnect()
+      window.clearTimeout(immediateTimer)
+      clearRetryTimer()
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
+      if (intersectionObserver) {
+        intersectionObserver.disconnect()
       }
     }
   }, [isClient, scriptReady, adSlot])
