@@ -631,7 +631,7 @@ const TimeMatch: React.FC = () => {
               {targetSec.toFixed(1)}초
             </div>
             <div style={{ marginTop: 8, color: "#4b5563" }}>
-              곧 시작합니다. 기억해두세요!
+              1초 후 시작합니다.!
             </div>
           </div>
         </div>
