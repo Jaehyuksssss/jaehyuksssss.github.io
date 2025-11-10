@@ -61,7 +61,7 @@ const TimePage: React.FC = () => {
   return (
     <Template
       title="시간 맞추기"
-      description="정확히 시간에 멈추기"
+      description="정확한 시간에 멈추기"
       url="/time"
       hideGameButton
     >
