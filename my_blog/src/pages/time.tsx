@@ -92,7 +92,7 @@ const TimePage: React.FC = () => {
             }}
             style={{ fontSize: 12 }}
           >
-            새로고침
+            새로고침으로 갱신
           </a>
         </div>
         <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 6 }}>
