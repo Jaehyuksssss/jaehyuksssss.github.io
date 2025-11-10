@@ -62,7 +62,7 @@ const MobileAdContainer = styled.div`
 const GamesPage: React.FC = () => {
   return (
     <Template
-      title="게임"
+      title="재니 게임 천국"
       description="반응속도, 경로기억 등 미니게임 리스트"
       url="/games"
     >
