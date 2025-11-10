@@ -72,6 +72,10 @@ const GamesPage: React.FC = () => {
           <Title>반응속도 테스트</Title>
           <Desc>색이 다른 타일을 빠르게 찾아 클릭</Desc>
         </Card>
+        <Card to="/time">
+          <Title>시간 맞추기</Title>
+          <Desc>1초/3초에 정확히 멈추기</Desc>
+        </Card>
         <Card to="/trace">
           <Title>경로 그리기</Title>
           <Desc>3초 미리보기 후 기억한 순서대로 점을 연결</Desc>
