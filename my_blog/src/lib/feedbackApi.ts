@@ -1,5 +1,15 @@
 import { supabase } from './supabaseClient'
 
+function debugEnabled(): boolean {
+  try {
+    if (process.env.NODE_ENV !== 'production') return true
+    const sp = new URLSearchParams(window.location.search)
+    if (sp.get('debugSupabase') === '1') return true
+    if (localStorage.getItem('debug_supabase') === '1') return true
+  } catch {}
+  return false
+}
+
 export type PublicFeedback = {
   id: string
   display_name: string
@@ -28,9 +38,14 @@ export async function submitFeedback(params: {
   })
 
   if (error) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (debugEnabled()) {
       // eslint-disable-next-line no-console
-      console.error('[Supabase] gf_submit_feedback error', error)
+      console.error('[Supabase] gf_submit_feedback error', {
+        message: error.message,
+        details: (error as any).details,
+        hint: (error as any).hint,
+        code: (error as any).code,
+      })
     }
     return false
   }
@@ -43,12 +58,16 @@ export async function fetchRecentFeedback(limit = 10): Promise<PublicFeedback[]>
     p_limit: limit,
   })
   if (error) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (debugEnabled()) {
       // eslint-disable-next-line no-console
-      console.error('[Supabase] gf_recent_public error', error)
+      console.error('[Supabase] gf_recent_public error', {
+        message: error.message,
+        details: (error as any).details,
+        hint: (error as any).hint,
+        code: (error as any).code,
+      })
     }
     return []
   }
   return (data || []) as PublicFeedback[]
 }
-
