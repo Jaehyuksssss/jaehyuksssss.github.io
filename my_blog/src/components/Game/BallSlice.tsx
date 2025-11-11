@@ -56,7 +56,8 @@ const CanvasBox = styled.div`
   background: #0b1220;
   border-radius: 16px;
   position: relative;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.06), 0 10px 26px rgba(0,0,0,0.24);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 10px 26px rgba(0, 0, 0, 0.24);
   overflow: hidden;
 `
 
@@ -93,13 +94,26 @@ type Particle = {
   color: string
 }
 
-type FloatText = { x: number; y: number; life: number; max: number; text: string }
+type FloatText = {
+  x: number
+  y: number
+  life: number
+  max: number
+  text: string
+}
 
 function rand(min: number, max: number) {
   return Math.random() * (max - min) + min
 }
 
-function distanceToSegSq(px: number, py: number, x1: number, y1: number, x2: number, y2: number) {
+function distanceToSegSq(
+  px: number,
+  py: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
   const dx = x2 - x1
   const dy = y2 - y1
   if (dx === 0 && dy === 0) {
@@ -141,12 +155,23 @@ const BallSlice: React.FC = () => {
   const textsRef = React.useRef<FloatText[]>([])
   const pauseUntilRef = React.useRef(0)
   const [stageText, setStageText] = React.useState<string | null>(null)
-  const [name, setName] = React.useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('slice_name') || '') : '')
-  const [last4, setLast4] = React.useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('slice_last4') || '') : '')
+  const [name, setName] = React.useState<string>(
+    typeof window !== "undefined"
+      ? localStorage.getItem("slice_name") || ""
+      : ""
+  )
+  const [last4, setLast4] = React.useState<string>(
+    typeof window !== "undefined"
+      ? localStorage.getItem("slice_last4") || ""
+      : ""
+  )
   const [submitting, setSubmitting] = React.useState(false)
   const [submitOk, setSubmitOk] = React.useState<boolean | null>(null)
 
-  const requiredForLevel = React.useCallback((lv: number) => 10 + (lv - 1) * 2, [])
+  const requiredForLevel = React.useCallback(
+    (lv: number) => 10 + (lv - 1) * 2,
+    []
+  )
 
   const slicedThisLevelRef = React.useRef(0)
 
@@ -172,7 +197,7 @@ const BallSlice: React.FC = () => {
     window.addEventListener("resize", onResize)
     // Observe container size changes for responsive behavior
     let ro: ResizeObserver | undefined
-    if (typeof ResizeObserver !== 'undefined' && boxRef.current) {
+    if (typeof ResizeObserver !== "undefined" && boxRef.current) {
       ro = new ResizeObserver(() => resizeCanvas())
       ro.observe(boxRef.current)
     }
@@ -211,57 +236,69 @@ const BallSlice: React.FC = () => {
     const x = rand(r + 8, w - r - 8)
     const y = -r - 10
     const vx = rand(-20, 20)
-    const vy = rand(45, 75) + levelRef.current * 4
+    const vy = rand(50, 85) + levelRef.current * 4.5
     const id = ++lastIdRef.current
     const color = `hsl(${Math.floor(rand(0, 360))} 80% 60%)`
     ballsRef.current.push({ id, x, y, vx, vy, r, color })
   }, [])
 
-  const sliceHitTest = React.useCallback((b: Ball, x1: number, y1: number, x2: number, y2: number) => {
-    const thr = b.r + 12 // easier slicing tolerance
-    const d2 = distanceToSegSq(b.x, b.y, x1, y1, x2, y2)
-    return d2 <= thr * thr
-  }, [])
+  const sliceHitTest = React.useCallback(
+    (b: Ball, x1: number, y1: number, x2: number, y2: number) => {
+      const thr = b.r + 12 // easier slicing tolerance
+      const d2 = distanceToSegSq(b.x, b.y, x1, y1, x2, y2)
+      return d2 <= thr * thr
+    },
+    []
+  )
 
-  const processTrailHits = React.useCallback((w: number, h: number) => {
-    const trail = trailRef.current
-    if (trail.length < 2) return
-    for (let i = 0; i < ballsRef.current.length; i++) {
-      const b = ballsRef.current[i]
-      if (b.sliced) continue
-      // test recent segments only
-      for (let j = trail.length - 2; j >= 0 && j >= trail.length - 6; j--) {
-        const p1 = trail[j]
-        const p2 = trail[j + 1]
-        if (sliceHitTest(b, p1.x, p1.y, p2.x, p2.y)) {
-          b.sliced = true
-          const add = 10 * levelRef.current
-          setScore(s => s + add)
-          slicedThisLevelRef.current += 1
-          // explosion particles
-          const count = 14
-          for (let k = 0; k < count; k++) {
-            const ang = rand(0, Math.PI * 2)
-            const spd = rand(80, 160)
-            particlesRef.current.push({
+  const processTrailHits = React.useCallback(
+    (w: number, h: number) => {
+      const trail = trailRef.current
+      if (trail.length < 2) return
+      for (let i = 0; i < ballsRef.current.length; i++) {
+        const b = ballsRef.current[i]
+        if (b.sliced) continue
+        // test recent segments only
+        for (let j = trail.length - 2; j >= 0 && j >= trail.length - 6; j--) {
+          const p1 = trail[j]
+          const p2 = trail[j + 1]
+          if (sliceHitTest(b, p1.x, p1.y, p2.x, p2.y)) {
+            b.sliced = true
+            const add = 10 * levelRef.current
+            setScore(s => s + add)
+            slicedThisLevelRef.current += 1
+            // explosion particles
+            const count = 14
+            for (let k = 0; k < count; k++) {
+              const ang = rand(0, Math.PI * 2)
+              const spd = rand(80, 160)
+              particlesRef.current.push({
+                x: b.x,
+                y: b.y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd,
+                r: rand(2, 4),
+                life: 0,
+                max: 400,
+                color: b.color,
+              })
+            }
+            textsRef.current.push({
               x: b.x,
-              y: b.y,
-              vx: Math.cos(ang) * spd,
-              vy: Math.sin(ang) * spd,
-              r: rand(2, 4),
+              y: b.y - b.r,
               life: 0,
-              max: 400,
-              color: b.color,
+              max: 600,
+              text: `+${add}`,
             })
+            break
           }
-          textsRef.current.push({ x: b.x, y: b.y - b.r, life: 0, max: 600, text: `+${add}` })
-          break
         }
       }
-    }
-    // remove sliced balls
-    ballsRef.current = ballsRef.current.filter(b => !b.sliced)
-  }, [sliceHitTest])
+      // remove sliced balls
+      ballsRef.current = ballsRef.current.filter(b => !b.sliced)
+    },
+    [sliceHitTest]
+  )
 
   const blowAwayAllBalls = React.useCallback(() => {
     // convert current balls into particles and clear them
@@ -295,7 +332,7 @@ const BallSlice: React.FC = () => {
     // spawn control based on level
     const now = performance.now()
     const lv = levelRef.current
-    const interval = Math.max(500, 1400 - lv * 90)
+    const interval = Math.max(480, 1350 - lv * 85)
     const canSpawn = now >= pauseUntilRef.current
     if (canSpawn && now - lastSpawnRef.current > interval) {
       lastSpawnRef.current = now
@@ -304,7 +341,7 @@ const BallSlice: React.FC = () => {
     }
 
     // physics
-    const g = 14 + lv * 3
+    const g = 16 + lv * 3.6
     const dt = 1 / 60
     for (const b of ballsRef.current) {
       b.vy += g * dt
@@ -353,13 +390,18 @@ const BallSlice: React.FC = () => {
       for (let i = par.length - 1; i >= 0; i--) {
         const p = par[i]
         p.life += 1000 * dt
-        if (p.life >= p.max) { par.splice(i, 1); continue }
+        if (p.life >= p.max) {
+          par.splice(i, 1)
+          continue
+        }
         p.vy += g2 * dt
         p.x += p.vx * dt
         p.y += p.vy * dt
         const a = Math.max(0, 1 - p.life / p.max)
         ctx.beginPath()
-        ctx.fillStyle = p.color.replace('hsl', 'hsla').replace(')', ` / ${a.toFixed(2)})`)
+        ctx.fillStyle = p.color
+          .replace("hsl", "hsla")
+          .replace(")", ` / ${a.toFixed(2)})`)
         // Fallback if hsla replacement fails
         if (!ctx.fillStyle) ctx.fillStyle = `rgba(255,255,255,${a.toFixed(2)})`
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
@@ -369,13 +411,16 @@ const BallSlice: React.FC = () => {
     // floating score text
     {
       const arr = textsRef.current
-      ctx.font = 'bold 16px system-ui, -apple-system, Segoe UI, Roboto'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
+      ctx.font = "bold 16px system-ui, -apple-system, Segoe UI, Roboto"
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
       for (let i = arr.length - 1; i >= 0; i--) {
         const t = arr[i]
         t.life += 1000 * dt
-        if (t.life >= t.max) { arr.splice(i, 1); continue }
+        if (t.life >= t.max) {
+          arr.splice(i, 1)
+          continue
+        }
         const a = Math.max(0, 1 - t.life / t.max)
         t.y -= 20 * dt
         ctx.fillStyle = `rgba(255,255,255,${a.toFixed(2)})`
@@ -406,10 +451,21 @@ const BallSlice: React.FC = () => {
     }
 
     rafRef.current = requestAnimationFrame(tick)
-  }, [endGame, miss, processTrailHits, requiredForLevel, spawnBall, blowAwayAllBalls])
+  }, [
+    endGame,
+    miss,
+    processTrailHits,
+    requiredForLevel,
+    spawnBall,
+    blowAwayAllBalls,
+  ])
   // keep state and ref in sync when external updates occur
-  React.useEffect(() => { missRef.current = miss }, [miss])
-  React.useEffect(() => { levelRef.current = level }, [level])
+  React.useEffect(() => {
+    missRef.current = miss
+  }, [miss])
+  React.useEffect(() => {
+    levelRef.current = level
+  }, [level])
 
   // pointer handling
   React.useEffect(() => {
@@ -436,7 +492,10 @@ const BallSlice: React.FC = () => {
     }
     const end = (ev?: PointerEvent) => {
       pointerDownRef.current = false
-      if (ev) try { c.releasePointerCapture(ev.pointerId) } catch {}
+      if (ev)
+        try {
+          c.releasePointerCapture(ev.pointerId)
+        } catch {}
     }
     c.addEventListener("pointerdown", onDown)
     c.addEventListener("pointermove", onMove)
@@ -451,7 +510,12 @@ const BallSlice: React.FC = () => {
   }, [phase])
 
   // lifecycle cleanup
-  React.useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }, [])
+  React.useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    },
+    []
+  )
 
   return (
     <Wrapper>
@@ -470,8 +534,29 @@ const BallSlice: React.FC = () => {
       <CanvasBox ref={boxRef}>
         <Canvas ref={canvasRef} />
         {stageText ? (
-          <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', pointerEvents:'none' }}>
-            <div style={{ background:'rgba(0,0,0,0.4)', color:'#fff', padding:'10px 16px', borderRadius:12, fontWeight:900, fontSize:24, boxShadow:'0 8px 18px rgba(0,0,0,0.25)' }}>{stageText}</div>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              pointerEvents: "none",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(0,0,0,0.4)",
+                color: "#fff",
+                padding: "10px 16px",
+                borderRadius: 12,
+                fontWeight: 900,
+                fontSize: 24,
+                boxShadow: "0 8px 18px rgba(0,0,0,0.25)",
+              }}
+            >
+              {stageText}
+            </div>
           </div>
         ) : null}
       </CanvasBox>
@@ -515,31 +600,99 @@ const BallSlice: React.FC = () => {
               gap: 12,
             }}
           >
-            <h2 id="slice-over-title" style={{ margin: 0 }}>게임 오버</h2>
-            <div>최종 점수: <span style={{ color: '#ffd561' }}>{score}</span></div>
-            <div style={{ height: 1, background: '#334155', opacity: 0.5 }} />
-            <div style={{ display: 'grid', gap: 8 }}>
-              <label htmlFor="slice-name" style={{ fontWeight: 800 }}>닉네임</label>
-              <Input id="slice-name" value={name} onChange={e => setName(e.target.value)} maxLength={16} placeholder="2~16자" />
-              <label htmlFor="slice-last4" style={{ fontWeight: 800 }}>휴대폰 뒷 4자리</label>
-              <Input id="slice-last4" value={last4} onChange={e => setLast4(e.target.value.replace(/\D+/g,'').slice(0,4))} inputMode="numeric" maxLength={4} placeholder="1234" />
-              <div style={{ color: '#9ca3af', fontSize: 12 }}>서버에는 해시로만 저장되고 원문은 저장되지 않아요.</div>
+            <h2 id="slice-over-title" style={{ margin: 0 }}>
+              게임 오버
+            </h2>
+            <div>
+              최종 점수: <span style={{ color: "#ffd561" }}>{score}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
-              <button onClick={() => { setPhase('idle'); setScore(0); setMiss(0); setLevel(1) }} style={{ border:'1px solid #9ca3af', background:'transparent', color:'#e5e7eb', padding:'8px 12px', borderRadius:10, fontWeight:700 }}>닫기</button>
-              <PrimaryBtn onClick={async () => {
-                if (submitting) return
-                const nm = name.trim()
-                const l4 = last4.trim()
-                if (!(nm.length >= 2 && nm.length <= 16) || !/^\d{4}$/.test(l4)) return
-                setSubmitting(true)
-                const ok = await submitBallSliceScore({ nickname: nm, last4: l4, score })
-                setSubmitOk(ok)
-                setSubmitting(false)
-                if (ok) {
-                  try { localStorage.setItem('slice_name', nm); localStorage.setItem('slice_last4', l4) } catch {}
+            <div style={{ height: 1, background: "#334155", opacity: 0.5 }} />
+            <div style={{ display: "grid", gap: 8 }}>
+              <label htmlFor="slice-name" style={{ fontWeight: 800 }}>
+                닉네임
+              </label>
+              <Input
+                id="slice-name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                maxLength={16}
+                placeholder="2~16자"
+              />
+              <label htmlFor="slice-last4" style={{ fontWeight: 800 }}>
+                휴대폰 뒷 4자리
+              </label>
+              <Input
+                id="slice-last4"
+                value={last4}
+                onChange={e =>
+                  setLast4(e.target.value.replace(/\D+/g, "").slice(0, 4))
                 }
-              }}>{submitting ? '제출 중...' : (submitOk === true ? '제출 완료' : '점수 제출')}</PrimaryBtn>
+                inputMode="numeric"
+                maxLength={4}
+                placeholder="1234"
+              />
+              <div style={{ color: "#9ca3af", fontSize: 12 }}>
+                서버에는 해시로만 저장되고 원문은 저장되지 않아요.
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 8,
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                onClick={() => {
+                  setPhase("idle")
+                  setScore(0)
+                  setMiss(0)
+                  setLevel(1)
+                }}
+                style={{
+                  border: "1px solid #9ca3af",
+                  background: "transparent",
+                  color: "#e5e7eb",
+                  padding: "8px 12px",
+                  borderRadius: 10,
+                  fontWeight: 700,
+                }}
+              >
+                닫기
+              </button>
+              <PrimaryBtn
+                onClick={async () => {
+                  if (submitting) return
+                  const nm = name.trim()
+                  const l4 = last4.trim()
+                  if (
+                    !(nm.length >= 2 && nm.length <= 16) ||
+                    !/^\d{4}$/.test(l4)
+                  )
+                    return
+                  setSubmitting(true)
+                  const ok = await submitBallSliceScore({
+                    nickname: nm,
+                    last4: l4,
+                    score,
+                  })
+                  setSubmitOk(ok)
+                  setSubmitting(false)
+                  if (ok) {
+                    try {
+                      localStorage.setItem("slice_name", nm)
+                      localStorage.setItem("slice_last4", l4)
+                    } catch {}
+                  }
+                }}
+              >
+                {submitting
+                  ? "제출 중..."
+                  : submitOk === true
+                  ? "제출 완료"
+                  : "점수 제출"}
+              </PrimaryBtn>
             </div>
           </div>
         </div>
