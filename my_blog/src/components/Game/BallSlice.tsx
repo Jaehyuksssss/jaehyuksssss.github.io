@@ -70,6 +70,8 @@ const Canvas = styled.canvas`
   user-select: none;
 `
 
+type BallKind = "normal" | "bomb"
+
 type Ball = {
   id: number
   x: number
@@ -79,6 +81,7 @@ type Ball = {
   r: number
   sliced?: boolean
   color: string
+  kind: BallKind
 }
 
 type TrailPoint = { x: number; y: number; t: number }
@@ -154,6 +157,7 @@ const BallSlice: React.FC = () => {
   const particlesRef = React.useRef<Particle[]>([])
   const textsRef = React.useRef<FloatText[]>([])
   const pauseUntilRef = React.useRef(0)
+  const bombImgRef = React.useRef<HTMLImageElement | null>(null)
   const [stageText, setStageText] = React.useState<string | null>(null)
   const [name, setName] = React.useState<string>(
     typeof window !== "undefined"
@@ -195,6 +199,9 @@ const BallSlice: React.FC = () => {
     resizeCanvas()
     const onResize = () => resizeCanvas()
     window.addEventListener("resize", onResize)
+    const img = new Image()
+    img.src = "/bomb.png"
+    bombImgRef.current = img
     // Observe container size changes for responsive behavior
     let ro: ResizeObserver | undefined
     if (typeof ResizeObserver !== "undefined" && boxRef.current) {
@@ -235,11 +242,26 @@ const BallSlice: React.FC = () => {
     const r = rand(16, 26)
     const x = rand(r + 8, w - r - 8)
     const y = -r - 10
-    const vx = rand(-20, 20)
-    const vy = rand(50, 85) + levelRef.current * 4.5
+    const isBomb =
+      Math.random() < Math.min(0.15, 0.07 + levelRef.current * 0.015)
+    const speedBoost = isBomb ? 0.85 : 1.3
+    const vx = rand(-24, 24) * (isBomb ? 0.7 : 1)
+    const baseVy = rand(60, 90) + levelRef.current * 5.5
+    const vy = baseVy * speedBoost
     const id = ++lastIdRef.current
-    const color = `hsl(${Math.floor(rand(0, 360))} 80% 60%)`
-    ballsRef.current.push({ id, x, y, vx, vy, r, color })
+    const color = isBomb
+      ? "hsl(0 85% 55%)"
+      : `hsl(${Math.floor(rand(0, 360))} 80% 60%)`
+    ballsRef.current.push({
+      id,
+      x,
+      y,
+      vx,
+      vy,
+      r,
+      color,
+      kind: isBomb ? "bomb" : "normal",
+    })
   }, [])
 
   const sliceHitTest = React.useCallback(
@@ -251,27 +273,68 @@ const BallSlice: React.FC = () => {
     []
   )
 
-  const processTrailHits = React.useCallback(
-    (w: number, h: number) => {
-      const trail = trailRef.current
-      if (trail.length < 2) return
-      for (let i = 0; i < ballsRef.current.length; i++) {
-        const b = ballsRef.current[i]
-        if (b.sliced) continue
-        // test recent segments only
-        for (let j = trail.length - 2; j >= 0 && j >= trail.length - 6; j--) {
-          const p1 = trail[j]
-          const p2 = trail[j + 1]
-          if (sliceHitTest(b, p1.x, p1.y, p2.x, p2.y)) {
+  const processTrailHits = React.useCallback(() => {
+    const trail = trailRef.current
+    if (trail.length < 2) return
+    const handleBombSlice = (bomb: Ball) => {
+      const now = performance.now()
+      const current = ballsRef.current
+      const removedCount = current.length
+      if (removedCount === 0) return
+      for (const b of current) {
+        const count = b.kind === "bomb" ? 30 : 18
+        for (let k = 0; k < count; k++) {
+          const ang = rand(0, Math.PI * 2)
+          const spd = rand(150, 280)
+          particlesRef.current.push({
+            x: b.x,
+            y: b.y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            r: rand(2, 5),
+            life: 0,
+            max: 650,
+            color: b.kind === "bomb" ? "hsl(0 90% 60%)" : b.color,
+          })
+        }
+      }
+      const bonus = Math.max(
+        60,
+        Math.round(removedCount * 14 * Math.max(1, levelRef.current * 0.6))
+      )
+      setScore(s => s + bonus)
+      textsRef.current.push({
+        x: bomb.x,
+        y: bomb.y,
+        life: 0,
+        max: 900,
+        text: `BOMB! +${bonus}`,
+      })
+      slicedThisLevelRef.current += removedCount
+      ballsRef.current = []
+      pauseUntilRef.current = now + 200
+    }
+    let bombTriggered = false
+    for (let i = 0; i < ballsRef.current.length; i++) {
+      const b = ballsRef.current[i]
+      if (b.sliced) continue
+      // test recent segments only
+      for (let j = trail.length - 2; j >= 0 && j >= trail.length - 6; j--) {
+        const p1 = trail[j]
+        const p2 = trail[j + 1]
+        if (sliceHitTest(b, p1.x, p1.y, p2.x, p2.y)) {
+          if (b.kind === "bomb") {
+            bombTriggered = true
+            handleBombSlice(b)
+          } else {
             b.sliced = true
-            const add = 10 * levelRef.current
+            const add = 10 * levelRef.current + 5
             setScore(s => s + add)
             slicedThisLevelRef.current += 1
-            // explosion particles
             const count = 14
             for (let k = 0; k < count; k++) {
               const ang = rand(0, Math.PI * 2)
-              const spd = rand(80, 160)
+              const spd = rand(90, 180)
               particlesRef.current.push({
                 x: b.x,
                 y: b.y,
@@ -279,7 +342,7 @@ const BallSlice: React.FC = () => {
                 vy: Math.sin(ang) * spd,
                 r: rand(2, 4),
                 life: 0,
-                max: 400,
+                max: 420,
                 color: b.color,
               })
             }
@@ -290,15 +353,16 @@ const BallSlice: React.FC = () => {
               max: 600,
               text: `+${add}`,
             })
-            break
           }
+          break
         }
       }
-      // remove sliced balls
-      ballsRef.current = ballsRef.current.filter(b => !b.sliced)
-    },
-    [sliceHitTest]
-  )
+      if (bombTriggered) break
+    }
+    if (bombTriggered) return
+    // remove sliced balls
+    ballsRef.current = ballsRef.current.filter(b => !b.sliced)
+  }, [sliceHitTest, setScore])
 
   const blowAwayAllBalls = React.useCallback(() => {
     // convert current balls into particles and clear them
@@ -358,7 +422,7 @@ const BallSlice: React.FC = () => {
     }
 
     // check trail hits
-    processTrailHits(w, h)
+    processTrailHits()
 
     // level up
     if (slicedThisLevelRef.current >= requiredForLevel(lv)) {
@@ -378,10 +442,25 @@ const BallSlice: React.FC = () => {
     ctx.clearRect(0, 0, w, h)
     // draw balls
     for (const b of ballsRef.current) {
-      ctx.beginPath()
-      ctx.fillStyle = b.color
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2)
-      ctx.fill()
+      if (
+        b.kind === "bomb" &&
+        bombImgRef.current &&
+        bombImgRef.current.complete
+      ) {
+        const size = b.r * 2.2
+        ctx.drawImage(
+          bombImgRef.current,
+          b.x - size / 2,
+          b.y - size / 2,
+          size,
+          size
+        )
+      } else {
+        ctx.beginPath()
+        ctx.fillStyle = b.color
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2)
+        ctx.fill()
+      }
     }
     // particles update/draw
     {
