@@ -143,10 +143,10 @@ const FeedbackBoard: React.FC = () => {
 
   return (
     <Box>
-      <h3 style={{ margin: "0 0 8px" }}>게임 피드백</h3>
+      <h3 style={{ margin: "0 0 8px" }}>피드백</h3>
       <Muted>
-        모든 게임에 대한 의견을 환영합니다. 소중한 피드백을 남겨주신 분들 중
-        추첨을 통해 스타벅스 기프티콘을 드려요. (당첨 안내는 메일로 발송)
+        블로그 및 게임에 대한 의견을 환영합니다. 소중한 피드백을 남겨주신 분들
+        중 추첨을 통해 스타벅스 기프티콘을 드려요. (당첨 안내는 메일로 발송)
       </Muted>
 
       <div style={{ height: 10 }} />
@@ -246,42 +246,46 @@ const FeedbackBoard: React.FC = () => {
           aria-modal="true"
           aria-labelledby="fb-error-title"
           style={{
-            position: 'fixed',
+            position: "fixed",
             inset: 0,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             zIndex: 4000,
           }}
           onClick={() => setErrorMsg(null)}
         >
           <div
             style={{
-              background: '#ffffff',
-              color: '#111',
+              background: "#ffffff",
+              color: "#111",
               padding: 20,
               borderRadius: 12,
-              width: 'min(420px, 92vw)',
-              boxShadow: '0 12px 34px rgba(0,0,0,0.35)'
+              width: "min(420px, 92vw)",
+              boxShadow: "0 12px 34px rgba(0,0,0,0.35)",
             }}
             onClick={e => e.stopPropagation()}
           >
-            <h3 id="fb-error-title" style={{ margin: '0 0 8px' }}>제출할 수 없어요</h3>
+            <h3 id="fb-error-title" style={{ margin: "0 0 8px" }}>
+              제출할 수 없어요
+            </h3>
             <div style={{ marginBottom: 12 }}>{errorMsg}</div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button
                 onClick={() => setErrorMsg(null)}
                 style={{
-                  border: 'none',
-                  background: '#111827',
-                  color: '#fff',
-                  padding: '8px 14px',
+                  border: "none",
+                  background: "#111827",
+                  color: "#fff",
+                  padding: "8px 14px",
                   borderRadius: 10,
                   fontWeight: 800,
-                  cursor: 'pointer',
+                  cursor: "pointer",
                 }}
-              >확인</button>
+              >
+                확인
+              </button>
             </div>
           </div>
         </div>
