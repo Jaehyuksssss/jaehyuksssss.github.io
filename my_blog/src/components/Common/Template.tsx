@@ -327,6 +327,12 @@ const Template: FunctionComponent<TemplateProps> = function ({
           <a href="/terms" style={{ color: "#1f2937", textDecoration: "none" }}>
             Terms
           </a>
+          <a
+            href="/games/feedback"
+            style={{ color: "#1f2937", textDecoration: "none" }}
+          >
+            Feedback
+          </a>
         </DesktopLinks>
 
         {/* Mobile hamburger (left) */}
@@ -362,6 +368,12 @@ const Template: FunctionComponent<TemplateProps> = function ({
             </MobileMenuLink>
             <MobileMenuLink href="/terms" onClick={() => setNavOpen(false)}>
               Terms
+            </MobileMenuLink>
+            <MobileMenuLink
+              href="/games/feedback"
+              onClick={() => setNavOpen(false)}
+            >
+              Feedback
             </MobileMenuLink>
           </MobileMenuPanel>
         </MobileMenuOverlay>

@@ -77,8 +77,10 @@ const ActionBtn = styled(Link)`
   padding: 12px 18px;
   border-radius: 10px;
   font-weight: 800;
-  box-shadow: 0 10px 22px rgba(22,163,74,0.28), 0 2px 8px rgba(0,0,0,0.12);
-  &:active { transform: translateY(1px); }
+  box-shadow: 0 10px 22px rgba(22, 163, 74, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12);
+  &:active {
+    transform: translateY(1px);
+  }
 `
 
 const GamesPage: React.FC = () => {
@@ -89,7 +91,7 @@ const GamesPage: React.FC = () => {
       url="/games"
     >
       <HeaderRow>
-        <h1 style={{ marginTop: 0 }}>게임 리스트</h1>
+        <h1 style={{ marginTop: 0 }}>재니 게임 천국</h1>
         <ActionBtn to="/games/feedback">피드백 남기기</ActionBtn>
       </HeaderRow>
       <Grid>
