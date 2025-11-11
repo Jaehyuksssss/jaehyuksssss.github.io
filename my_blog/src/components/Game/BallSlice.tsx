@@ -227,6 +227,7 @@ const BallSlice: React.FC = () => {
     setScore(0)
     setMiss(0)
     setLevel(1)
+    setSubmitOk(null)
     resetLevelState()
     startMsRef.current = performance.now()
     if (!rafRef.current) rafRef.current = requestAnimationFrame(tick)
@@ -724,6 +725,7 @@ const BallSlice: React.FC = () => {
             >
               <button
                 onClick={() => {
+                  setSubmitOk(null)
                   setPhase("idle")
                   setScore(0)
                   setMiss(0)
@@ -756,13 +758,19 @@ const BallSlice: React.FC = () => {
                     last4: l4,
                     score,
                   })
-                  setSubmitOk(ok)
                   setSubmitting(false)
                   if (ok) {
+                    setSubmitOk(true)
                     try {
                       localStorage.setItem("slice_name", nm)
                       localStorage.setItem("slice_last4", l4)
                     } catch {}
+                    setPhase("idle")
+                    setScore(0)
+                    setMiss(0)
+                    setLevel(1)
+                  } else {
+                    setSubmitOk(false)
                   }
                 }}
               >
@@ -772,13 +780,12 @@ const BallSlice: React.FC = () => {
                   ? "제출 완료"
                   : "점수 제출"}
               </PrimaryBtn>
-              <div>go to feedback button</div>
               <button
                 onClick={() => {
                   window.location.href = "/games/feedback"
                 }}
               >
-                피드백 남겨주러가기
+                피드백 주기
               </button>
             </div>
           </div>
