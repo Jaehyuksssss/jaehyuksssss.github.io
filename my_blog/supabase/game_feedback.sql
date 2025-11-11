@@ -64,7 +64,8 @@ returns table (
   created_at timestamptz
 )
 language sql
-stable
+security definer
+set search_path = public, extensions
 as $$
   select id, display_name, content, created_at
   from public.game_feedback
@@ -73,4 +74,3 @@ as $$
   limit greatest(1, coalesce(p_limit, 10));
 $$;
 grant execute on function public.gf_recent_public(int) to anon, authenticated;
-
