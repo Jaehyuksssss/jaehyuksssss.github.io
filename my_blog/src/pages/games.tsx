@@ -8,8 +8,8 @@ import GoogleAdSense from "components/Common/GoogleAdSense"
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 12px;
+  gap: 18px;
+  margin-top: 18px;
 `
 
 const Card = styled(Link)`
@@ -59,6 +59,28 @@ const MobileAdContainer = styled.div`
   }
 `
 
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 0;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+`
+
+const ActionBtn = styled(Link)`
+  display: inline-block;
+  text-decoration: none;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px rgba(22,163,74,0.28), 0 2px 8px rgba(0,0,0,0.12);
+  &:active { transform: translateY(1px); }
+`
+
 const GamesPage: React.FC = () => {
   return (
     <Template
@@ -66,7 +88,10 @@ const GamesPage: React.FC = () => {
       description="반응속도, 경로기억 등 미니게임 리스트"
       url="/games"
     >
-      <h1 style={{ marginTop: 0 }}>게임 리스트</h1>
+      <HeaderRow>
+        <h1 style={{ marginTop: 0 }}>게임 리스트</h1>
+        <ActionBtn to="/games/feedback">피드백 남기기</ActionBtn>
+      </HeaderRow>
       <Grid>
         <Card to="/reaction">
           <Title>반응속도 테스트</Title>
@@ -98,6 +123,7 @@ const GamesPage: React.FC = () => {
           fullWidthResponsive={true}
         />
       </MobileAdContainer>
+      {/* CTA moved to header row above */}
     </Template>
   )
 }
