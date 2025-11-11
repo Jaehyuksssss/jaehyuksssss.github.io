@@ -693,6 +693,14 @@ const BallSlice: React.FC = () => {
                   ? "제출 완료"
                   : "점수 제출"}
               </PrimaryBtn>
+              <div>go to feedback button</div>
+              <button
+                onClick={() => {
+                  window.location.href = "/games/feedback"
+                }}
+              >
+                피드백 남겨주러가기
+              </button>
             </div>
           </div>
         </div>
