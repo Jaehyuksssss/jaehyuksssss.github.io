@@ -29,14 +29,6 @@ const GamesFeedbackPage: React.FC = () => {
       url="/games/feedback"
       hideGameButton
     >
-      <MobileAdContainer>
-        <GoogleAdSense
-          adClient="ca-pub-3398641306673607"
-          adSlot="2123128311"
-          adFormat="auto"
-          fullWidthResponsive={true}
-        />
-      </MobileAdContainer>
       <FeedbackBoard />
     </Template>
   )
