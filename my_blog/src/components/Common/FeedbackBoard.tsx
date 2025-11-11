@@ -1,6 +1,10 @@
-import React from 'react'
-import styled from '@emotion/styled'
-import { fetchRecentFeedback, submitFeedback, PublicFeedback } from 'lib/feedbackApi'
+import React from "react"
+import styled from "@emotion/styled"
+import {
+  fetchRecentFeedback,
+  submitFeedback,
+  PublicFeedback,
+} from "lib/feedbackApi"
 
 const Box = styled.div`
   width: min(720px, 92vw);
@@ -8,7 +12,7 @@ const Box = styled.div`
   padding: 16px 16px 18px;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 `
 
 const Row = styled.div`
@@ -61,74 +65,156 @@ const Item = styled.div`
 `
 
 const FeedbackBoard: React.FC = () => {
-  const [name, setName] = React.useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('fb_name') || '') : '')
-  const [email, setEmail] = React.useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('fb_email') || '') : '')
-  const [content, setContent] = React.useState('')
+  const [name, setName] = React.useState<string>(
+    typeof window !== "undefined" ? localStorage.getItem("fb_name") || "" : ""
+  )
+  const [email, setEmail] = React.useState<string>(
+    typeof window !== "undefined" ? localStorage.getItem("fb_email") || "" : ""
+  )
+  const [content, setContent] = React.useState("")
   const [submitting, setSubmitting] = React.useState(false)
   const [ok, setOk] = React.useState<boolean | null>(null)
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null)
   const [items, setItems] = React.useState<PublicFeedback[]>([])
 
   React.useEffect(() => {
     let alive = true
-    fetchRecentFeedback(10).then(r => { if (alive) setItems(r) })
-    return () => { alive = false }
+    fetchRecentFeedback(10).then(r => {
+      if (alive) setItems(r)
+    })
+    return () => {
+      alive = false
+    }
   }, [])
 
   const onSubmit = async () => {
     if (submitting) return
-    // Cooldown 60s
+
+    // Clear previous status
+    setOk(null)
+    setErrorMsg(null)
+
+    // Client-side validation with explicit messages
+    const nm = name.trim()
+    const em = email.trim()
+    const ct = content.trim()
+    const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)
+    if (nm.length < 2 || nm.length > 20) {
+      setErrorMsg("이름은 2~20자로 입력해 주세요.")
+      return
+    }
+    if (!emailOk || em.length > 320) {
+      setErrorMsg("메일 주소 형식을 확인해 주세요.")
+      return
+    }
+    if (ct.length < 10) {
+      setErrorMsg("내용은 최소 10자 이상 입력해 주세요.")
+      return
+    }
+
+    // Show cooldown reason clearly but do not silently fail
+    let left = 0
     try {
-      const cooldown = Number(localStorage.getItem('fb_cooldown') || '0')
-      if (Date.now() < cooldown) {
-        setOk(false)
+      const cooldown = Number(localStorage.getItem("fb_cooldown") || "0")
+      left = Math.max(0, Math.floor((cooldown - Date.now()) / 1000))
+      if (left > 0) {
+        setErrorMsg(`잠시 후 다시 시도해 주세요. (${left}s 남음)`)
         return
       }
     } catch {}
 
     setSubmitting(true)
-    const ok = await submitFeedback({ name, email, content })
+    const ok = await submitFeedback({ name: nm, email: em, content: ct })
     setOk(ok)
     setSubmitting(false)
     if (ok) {
       try {
-        localStorage.setItem('fb_name', name)
-        localStorage.setItem('fb_email', email)
-        localStorage.setItem('fb_cooldown', String(Date.now() + 60_000))
+        localStorage.setItem("fb_name", nm)
+        localStorage.setItem("fb_email", em)
+        localStorage.setItem("fb_cooldown", String(Date.now() + 60_000))
       } catch {}
-      setContent('')
+      setContent("")
       // refresh list
       fetchRecentFeedback(10).then(setItems)
+    } else {
+      setErrorMsg("제출에 실패했어요. 잠시 후 다시 시도해주세요.")
     }
   }
 
   return (
     <Box>
-      <h3 style={{ margin: '0 0 8px' }}>게임 피드백 게시판</h3>
-      <Muted>모든 게임에 대한 의견을 환영합니다. 소중한 피드백을 남겨주신 분들 중 추첨을 통해 스타벅스 기프티콘을 드려요. (당첨 안내는 메일로 발송)</Muted>
+      <h3 style={{ margin: "0 0 8px" }}>게임 피드백</h3>
+      <Muted>
+        모든 게임에 대한 의견을 환영합니다. 소중한 피드백을 남겨주신 분들 중
+        추첨을 통해 스타벅스 기프티콘을 드려요. (당첨 안내는 메일로 발송)
+      </Muted>
 
       <div style={{ height: 10 }} />
 
       <Row>
         <div>
-          <label htmlFor="fb-name" style={{ fontWeight: 800 }}>이름</label>
-          <Input id="fb-name" value={name} onChange={e => setName(e.target.value)} maxLength={20} placeholder="홍길동" />
+          <label htmlFor="fb-name" style={{ fontWeight: 800 }}>
+            이름
+          </label>
+          <Input
+            id="fb-name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            maxLength={20}
+            placeholder="홍길동"
+          />
         </div>
         <div>
-          <label htmlFor="fb-email" style={{ fontWeight: 800 }}>메일</label>
-          <Input id="fb-email" value={email} onChange={e => setEmail(e.target.value)} maxLength={320} placeholder="you@example.com" />
+          <label htmlFor="fb-email" style={{ fontWeight: 800 }}>
+            메일
+          </label>
+          <Input
+            id="fb-email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            maxLength={320}
+            placeholder="you@example.com"
+          />
         </div>
       </Row>
       <div style={{ marginTop: 10 }}>
-        <label htmlFor="fb-content" style={{ fontWeight: 800 }}>내용</label>
-        <Textarea id="fb-content" value={content} onChange={e => setContent(e.target.value)} maxLength={1000} placeholder="버그 제보, 개선 아이디어, 재미 요소 등 자유롭게 적어주세요 (10~1000자)" />
+        <label htmlFor="fb-content" style={{ fontWeight: 800 }}>
+          내용
+        </label>
+        <Textarea
+          id="fb-content"
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          maxLength={1000}
+          placeholder="버그 제보, 개선 아이디어, 재미 요소 등 자유롭게 적어주세요 (10~1000자)"
+        />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
-        <Primary onClick={onSubmit} disabled={submitting || name.trim().length < 2 || !/.+@.+\..+/.test(email) || content.trim().length < 10}>
-          {submitting ? '보내는 중...' : '피드백 제출'}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 10,
+          marginTop: 10,
+        }}
+      >
+        <Primary
+          onClick={onSubmit}
+          disabled={submitting}
+          aria-disabled={submitting}
+        >
+          {submitting ? "보내는 중..." : "피드백 제출"}
         </Primary>
       </div>
-      {ok === false ? <div style={{ color: '#ef4444', fontSize: 13, marginTop: 6 }}>제출에 실패했어요. 입력값을 확인하거나 잠시 후 다시 시도해주세요.</div> : null}
-      {ok === true ? <div style={{ color: '#059669', fontSize: 13, marginTop: 6 }}>감사합니다! 기록되었습니다.</div> : null}
+      {errorMsg ? (
+        <div style={{ color: "#ef4444", fontSize: 13, marginTop: 6 }}>
+          {errorMsg}
+        </div>
+      ) : null}
+      {ok === true ? (
+        <div style={{ color: "#059669", fontSize: 13, marginTop: 6 }}>
+          감사합니다! 기록되었습니다.
+        </div>
+      ) : null}
 
       <div style={{ height: 16 }} />
       <div style={{ fontWeight: 800, marginBottom: 6 }}>최근 피드백</div>
@@ -138,15 +224,70 @@ const FeedbackBoard: React.FC = () => {
         <div>
           {items.map(it => (
             <Item key={it.id}>
-              <div style={{ fontWeight: 700 }}>{it.display_name} <span style={{ color: '#9ca3af', fontWeight: 500, fontSize: 12 }}>· {new Date(it.created_at).toLocaleString()}</span></div>
-              <div style={{ whiteSpace: 'pre-wrap', marginTop: 4 }}>{it.content}</div>
+              <div style={{ fontWeight: 700 }}>
+                {it.display_name}{" "}
+                <span
+                  style={{ color: "#9ca3af", fontWeight: 500, fontSize: 12 }}
+                >
+                  · {new Date(it.created_at).toLocaleString()}
+                </span>
+              </div>
+              <div style={{ whiteSpace: "pre-wrap", marginTop: 4 }}>
+                {it.content}
+              </div>
             </Item>
           ))}
         </div>
       )}
+
+      {errorMsg ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="fb-error-title"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 4000,
+          }}
+          onClick={() => setErrorMsg(null)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              color: '#111',
+              padding: 20,
+              borderRadius: 12,
+              width: 'min(420px, 92vw)',
+              boxShadow: '0 12px 34px rgba(0,0,0,0.35)'
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 id="fb-error-title" style={{ margin: '0 0 8px' }}>제출할 수 없어요</h3>
+            <div style={{ marginBottom: 12 }}>{errorMsg}</div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setErrorMsg(null)}
+                style={{
+                  border: 'none',
+                  background: '#111827',
+                  color: '#fff',
+                  padding: '8px 14px',
+                  borderRadius: 10,
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                }}
+              >확인</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </Box>
   )
 }
 
 export default FeedbackBoard
-
