@@ -103,6 +103,10 @@ const GamesPage: React.FC = () => {
           <Title>시간 맞추기</Title>
           <Desc>정확한 시간에 멈추기</Desc>
         </Card>
+        <Card to="/slice">
+          <Title>떨어지는 공 베기</Title>
+          <Desc>스와이프로 공을 베어 점수 획득</Desc>
+        </Card>
         <Card to="/trace">
           <Title>경로 그리기</Title>
           <Desc>3초 미리보기 후 기억한 순서대로 점을 연결</Desc>

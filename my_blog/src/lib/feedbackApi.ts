@@ -1,11 +1,11 @@
-import { supabase } from './supabaseClient'
+import { supabase } from "./supabaseClient"
 
 function debugEnabled(): boolean {
   try {
-    if (process.env.NODE_ENV !== 'production') return true
+    if (process.env.NODE_ENV !== "production") return true
     const sp = new URLSearchParams(window.location.search)
-    if (sp.get('debugSupabase') === '1') return true
-    if (localStorage.getItem('debug_supabase') === '1') return true
+    if (sp.get("debugSupabase") === "1") return true
+    if (localStorage.getItem("debug_supabase") === "1") return true
   } catch {}
   return false
 }
@@ -22,7 +22,7 @@ export async function submitFeedback(params: {
   email: string
   content: string
 }): Promise<boolean> {
-  if (!supabase || typeof window === 'undefined') return false
+  if (!supabase || typeof window === "undefined") return false
   const name = params.name.trim()
   const email = params.email.trim()
   const content = params.content.trim()
@@ -31,7 +31,7 @@ export async function submitFeedback(params: {
   if (!/^.{1,320}$/.test(email) || !/.+@.+\..+/.test(email)) return false
   if (!(content.length >= 10 && content.length <= 1000)) return false
 
-  const { error } = await supabase.rpc('gf_submit_feedback', {
+  const { error } = await supabase.rpc("gf_submit_feedback", {
     p_name: name,
     p_email: email,
     p_content: content,
@@ -40,7 +40,7 @@ export async function submitFeedback(params: {
   if (error) {
     if (debugEnabled()) {
       // eslint-disable-next-line no-console
-      console.error('[Supabase] gf_submit_feedback error', {
+      console.error("[Supabase] gf_submit_feedback error", {
         message: error.message,
         details: (error as any).details,
         hint: (error as any).hint,
@@ -52,15 +52,17 @@ export async function submitFeedback(params: {
   return true
 }
 
-export async function fetchRecentFeedback(limit = 10): Promise<PublicFeedback[]> {
-  if (!supabase || typeof window === 'undefined') return []
-  const { data, error } = await supabase.rpc('gf_recent_public', {
+export async function fetchRecentFeedback(
+  limit = 10
+): Promise<PublicFeedback[]> {
+  if (!supabase || typeof window === "undefined") return []
+  const { data, error } = await supabase.rpc("gf_recent_public", {
     p_limit: limit,
   })
   if (error) {
     if (debugEnabled()) {
       // eslint-disable-next-line no-console
-      console.error('[Supabase] gf_recent_public error', {
+      console.error("[Supabase] gf_recent_public error", {
         message: error.message,
         details: (error as any).details,
         hint: (error as any).hint,
