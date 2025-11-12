@@ -13,7 +13,7 @@ module.exports = {
     {
       resolve: "gatsby-plugin-sitemap",
       options: {
-        output: "/sitemap.xml",
+        output: "/",
         resolveSiteUrl: () => SITE_URL,
         createLinkInHead: true,
       },
