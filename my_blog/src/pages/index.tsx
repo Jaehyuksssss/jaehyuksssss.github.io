@@ -122,14 +122,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
           categoryList={categoryList}
           posts={edges}
         />
-        {/* <MobileAdContainer>
-          <GoogleAdSense
-            adClient="ca-pub-3398641306673607"
-            adSlot="2123128311"
-            adFormat="auto"
-            fullWidthResponsive={true}
-          />
-        </MobileAdContainer> */}
+
         <div style={{ height: "20px" }}></div>
         <PostList selectedCategory={selectedCategory} posts={edges} />
       </Template>
