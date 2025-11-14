@@ -99,6 +99,10 @@ const GamesPage: React.FC = () => {
           <Title>반응속도 테스트</Title>
           <Desc>색이 다른 타일을 빠르게 찾아 클릭</Desc>
         </Card>
+        <Card to="/storm">
+          <Title>미니 태풍 피하기</Title>
+          <Desc>드래그로 피해서 오래 살아남기</Desc>
+        </Card>
         <Card to="/time">
           <Title>시간 맞추기</Title>
           <Desc>정확한 시간에 멈추기</Desc>
