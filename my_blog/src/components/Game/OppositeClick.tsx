@@ -659,7 +659,8 @@ const OppositeClick: React.FC<Props> = ({ onSubmitSuccess }) => {
               규칙 요약
             </div>
             <div style={{ color: "#374151", lineHeight: 1.6, fontWeight: 700 }}>
-              - 기본은 <strong>반대로 클릭</strong>! 가끔은 ⚡ 정말로 맞추기.
+              - 기본은 <strong>반대로 클릭</strong>! 가끔은 ⚡ 정말로 맞추는
+              게임.
               <br />- 라운드마다 제한 시간 {TIME_LIMIT_MS / 1000}초, 총 90초
               타임어택.
             </div>
