@@ -123,6 +123,10 @@ const GamesPage: React.FC = () => {
           <Title>두더지 잡기</Title>
           <Desc>라운드마다 더 빨라지는 두더지 잡아요</Desc>
         </Card>
+        <Card to="/opposite">
+          <Title>반대로 클릭하기</Title>
+          <Desc>반대말을 클릭! 가끔은 진짜로 맞추기</Desc>
+        </Card>
       </Grid>
 
       <MobileAdContainer>
