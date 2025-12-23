@@ -95,6 +95,10 @@ const GamesPage: React.FC = () => {
         <ActionBtn to="/games/feedback">피드백 남기기</ActionBtn>
       </HeaderRow>
       <Grid>
+        <Card to="/omok">
+          <Title>오목 게임</Title>
+          <Desc>컴퓨터와 대전! 2인 대전, 난이도 선택</Desc>
+        </Card>
         <Card to="/reaction">
           <Title>반응속도 테스트</Title>
           <Desc>색이 다른 타일을 빠르게 찾아 클릭</Desc>
