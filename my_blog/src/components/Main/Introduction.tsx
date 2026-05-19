@@ -12,10 +12,10 @@ const Background = styled.div`
   width: 100%;
   background: #9bb8d5;
   color: #ffffff;
-  // padding-top: 80px; /* 카테고리 메뉴 공간 확보 */
+  margin-top: 80px; /* 카테고리 메뉴 공간 확보 */
 
   @media (max-width: 768px) {
-    padding-top: 60px;
+    margin-top: 60px;
   }
 `
 

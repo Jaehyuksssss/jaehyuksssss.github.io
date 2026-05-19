@@ -13,8 +13,9 @@ module.exports = {
     {
       resolve: "gatsby-plugin-sitemap",
       options: {
-        output: "/sitemap",
+        output: "/",
         resolveSiteUrl: () => SITE_URL,
+        createLinkInHead: true,
       },
     },
     {
