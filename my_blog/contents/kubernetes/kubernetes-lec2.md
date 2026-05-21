@@ -14,7 +14,7 @@ Mac 로컬 환경에서 k3d를 이용해 Kubernetes 클러스터를 만들고, S
 
 ## 전체 아키텍처
 
-![전체 아키텍처](/images/kube-2.png)
+<img src="/images/kube-2.png" alt="전체 아키텍처" style="width: 100%; max-width: 768px;" />
 
 ```
 [브라우저 192.168.0.31:30001]
