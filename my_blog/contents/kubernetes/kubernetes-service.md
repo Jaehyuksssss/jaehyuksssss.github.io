@@ -10,6 +10,7 @@ thumbnail: "/kubernetes.png"
 
 Kubernetes에서 Pod에 접근하기 위한 네트워크 추상화 계층인 **Service**는 유형에 따라 동작이 완전히 달라진다.
 이 글에서는 `Deployment + ClusterIP Service`와 `StatefulSet + Headless Service` 두 가지 구조를 비교해 정리한다.
+<img src="/kubernetes-service.png" alt="아키텍처 다이어그램" style="max-width: 800px; width: 100%; height: auto; display: block; margin: 24px auto;" />
 
 <!-- ![아키텍처 다이어그램](/kubernetes-service.png) -->
 
@@ -132,5 +133,3 @@ spec:
 - **Headless Service + StatefulSet**: Pod 하나하나가 고정 이름과 정체성을 가진다. 클라이언트가 DNS로 특정 Pod를 직접 찾아간다.
 - Headless는 `clusterIP: None` 한 줄로 만들어지지만, 동작 방식이 완전히 달라진다.
 - DB처럼 Primary/Replica 구분이 필요하거나, 데이터가 Pod에 종속된 경우에는 StatefulSet + Headless를 써야 한다.
-
-<img src="/kubernetes-service.png" alt="아키텍처 다이어그램" style="max-width: 640px; width: 100%; height: auto; display: block; margin: 24px auto;" />
