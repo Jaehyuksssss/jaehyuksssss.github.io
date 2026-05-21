@@ -6,11 +6,13 @@ type Props = {
   to?: string
   label?: string
   boundToSelector?: string
+  bottomOffset?: number // extra px offset upward from default bottom position
+  bg?: string
 }
 
-const SIZE = 60 // px (touch target >= 44px)
+export const SIZE = 60 // px (touch target >= 44px)
 const RADIUS = 16
-const MARGIN = 16
+export const MARGIN = 16
 const STORAGE_KEY = "floating_game_btn_pos"
 const MOVE_THRESHOLD = 6 // px: treat below as click, above as drag
 
@@ -21,6 +23,7 @@ const ButtonWrap = styled.button<{
   x: number
   y: number
   dragging: boolean
+  bg?: string
 }>`
   position: fixed;
   left: ${({ x }) => `${x}px`};
@@ -29,7 +32,7 @@ const ButtonWrap = styled.button<{
   height: ${SIZE}px;
   border: none;
   border-radius: ${RADIUS}px;
-  background: #ffe471; /* subtle yellow */
+  background: ${({ bg }) => bg ?? "#ffe471"};
   color: #111;
   display: grid;
   place-items: center;
@@ -121,6 +124,8 @@ const FloatingGameButton: React.FC<Props> = ({
   to = "/reaction",
   label = "게임",
   boundToSelector,
+  bottomOffset = 0,
+  bg,
 }) => {
   const [mounted, setMounted] = useState(false)
   const [rel, setRel] = useState<Pos>(() => getInitialRel(boundToSelector))
@@ -344,10 +349,10 @@ const FloatingGameButton: React.FC<Props> = ({
     const b = getRelBounds(boundToSelector)
     // Force initial stick to bottom-right as requested
     const rx = b.maxX
-    const ry = b.maxY
+    const ry = Math.max(b.minY, b.maxY - bottomOffset)
     setRel({ x: rx, y: ry })
     setPos({ x: rect.left + rx, y: rect.top + ry })
-  }, [boundToSelector])
+  }, [boundToSelector, bottomOffset])
 
   if (!mounted) return null
 
@@ -357,12 +362,13 @@ const FloatingGameButton: React.FC<Props> = ({
       x={pos.x}
       y={pos.y}
       dragging={dragging}
+      bg={bg}
       aria-label={label}
       title={label}
       type="button"
-      onClick={() => navigate("/games")}
+      onClick={() => navigate(to)}
     >
-      <Text>GAME</Text>
+      <Text>{label}</Text>
     </ButtonWrap>
   )
 }

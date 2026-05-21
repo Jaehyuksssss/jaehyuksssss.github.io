@@ -9,7 +9,7 @@ import GoogleTagManager, {
   GoogleTagManagerBody,
 } from "components/Common/GoogleTagManager"
 import GoogleAdSense from "components/Common/GoogleAdSense"
-import FloatingGameButton from "components/Common/FloatingGameButton"
+import FloatingGameButton, { SIZE, MARGIN } from "components/Common/FloatingGameButton"
 
 type TemplateProps = {
   title?: string
@@ -425,11 +425,20 @@ const Template: FunctionComponent<TemplateProps> = function ({
           - Hidden on /reaction and when explicitly requested
           - Constrained to intro hero area only on the home page */}
       {!shouldHideGameButton && (
-        <FloatingGameButton
-          to="/games"
-          label="게임"
-          boundToSelector={isHomePage ? "#intro-hero-area" : undefined}
-        />
+        <>
+          <FloatingGameButton
+            to="/games"
+            label="GAME"
+            boundToSelector={isHomePage ? "#intro-hero-area" : undefined}
+          />
+          <FloatingGameButton
+            to="/kubernetes-study"
+            label="K8S"
+            bg="#326CE5"
+            bottomOffset={SIZE + MARGIN}
+            boundToSelector={isHomePage ? "#intro-hero-area" : undefined}
+          />
+        </>
       )}
     </Container>
   )
