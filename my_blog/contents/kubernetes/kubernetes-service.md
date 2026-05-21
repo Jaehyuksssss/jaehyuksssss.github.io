@@ -11,7 +11,7 @@ thumbnail: "/kubernetes.png"
 Kubernetes에서 Pod에 접근하기 위한 네트워크 추상화 계층인 **Service**는 유형에 따라 동작이 완전히 달라진다.
 이 글에서는 `Deployment + ClusterIP Service`와 `StatefulSet + Headless Service` 두 가지 구조를 비교해 정리한다.
 
-![아키텍처 다이어그램](/images/kubernetes-service.png)
+![아키텍처 다이어그램](/kubernetes-service.png)
 
 ---
 
