@@ -5,6 +5,26 @@ type Team = "blue" | "red"
 type Role = "keeper" | "field"
 type Phase = "idle" | "countdown" | "playing" | "goal" | "over"
 type SoundKind = "kick" | "pass" | "tackle" | "whistle" | "goal"
+type Difficulty = "neighborhood" | "pro" | "world"
+
+type DifficultySettings = {
+  label: string
+  description: string
+  opponentRunMultiplier: number
+  opponentTackleRadius: number
+  opponentTackleContact: number
+  opponentTackleCooldownMs: number
+  opponentTackleSpeed: number
+  blueControlShieldMs: number
+  playerShotMultiplier: number
+  opponentShotMultiplier: number
+  blueKeeperSpeed: number
+  redKeeperSpeed: number
+  blueKeeperCatchDistance: number
+  redKeeperCatchDistance: number
+  redKeeperPickupPadding: number
+  shotTargetInset: number
+}
 
 type Player = {
   id: number
@@ -81,6 +101,68 @@ const PITCH = { left: 50, right: 910, top: 48, bottom: 552 }
 const GOAL = { top: 228, bottom: 372 }
 const BEST_GOALS_KEY = "three_on_three_best_goals"
 const WINS_KEY = "three_on_three_wins"
+
+const DIFFICULTY_ORDER: Difficulty[] = ["neighborhood", "pro", "world"]
+
+const DIFFICULTIES: Record<Difficulty, DifficultySettings> = {
+  neighborhood: {
+    label: "동네축구",
+    description: "공을 여유 있게 지키고 시원하게 골을 넣어요.",
+    opponentRunMultiplier: 0.84,
+    opponentTackleRadius: 30,
+    opponentTackleContact: 27,
+    opponentTackleCooldownMs: 1500,
+    opponentTackleSpeed: 250,
+    blueControlShieldMs: 850,
+    playerShotMultiplier: 1.08,
+    opponentShotMultiplier: 0.88,
+    blueKeeperSpeed: 160,
+    redKeeperSpeed: 120,
+    blueKeeperCatchDistance: 39,
+    redKeeperCatchDistance: 31,
+    redKeeperPickupPadding: -1,
+    shotTargetInset: 11,
+  },
+  pro: {
+    label: "프로경기",
+    description: "공격과 수비가 균형 잡힌 정석 승부예요.",
+    opponentRunMultiplier: 1,
+    opponentTackleRadius: 34,
+    opponentTackleContact: 31,
+    opponentTackleCooldownMs: 1120,
+    opponentTackleSpeed: 300,
+    blueControlShieldMs: 620,
+    playerShotMultiplier: 1,
+    opponentShotMultiplier: 1,
+    blueKeeperSpeed: 148,
+    redKeeperSpeed: 148,
+    blueKeeperCatchDistance: 36,
+    redKeeperCatchDistance: 36,
+    redKeeperPickupPadding: 3,
+    shotTargetInset: 16,
+  },
+  world: {
+    label: "월드클래스",
+    description: "강한 압박과 빠른 선방을 뚫어야 해요.",
+    opponentRunMultiplier: 1.13,
+    opponentTackleRadius: 39,
+    opponentTackleContact: 34,
+    opponentTackleCooldownMs: 860,
+    opponentTackleSpeed: 335,
+    blueControlShieldMs: 430,
+    playerShotMultiplier: 0.97,
+    opponentShotMultiplier: 1.1,
+    blueKeeperSpeed: 138,
+    redKeeperSpeed: 170,
+    blueKeeperCatchDistance: 34,
+    redKeeperCatchDistance: 42,
+    redKeeperPickupPadding: 9,
+    shotTargetInset: 23,
+  },
+}
+
+const difficultyStorageKey = (base: string, difficulty: Difficulty) =>
+  `${base}_${difficulty}`
 
 const Wrapper = styled.section`
   width: min(1020px, 100%);
@@ -239,11 +321,15 @@ const StartOverlay = styled.div`
   padding: 18px;
   background: rgba(6, 13, 27, 0.76);
   backdrop-filter: blur(4px);
+
+  @media (max-width: 480px) {
+    padding: 6px;
+  }
 `
 
 const StartCard = styled.div`
-  width: min(440px, 94%);
-  padding: 22px;
+  width: min(580px, 96%);
+  padding: clamp(13px, 2.4vw, 22px);
   border: 1px solid rgba(255, 255, 255, 0.17);
   border-radius: 18px;
   background: rgba(17, 28, 50, 0.96);
@@ -251,19 +337,103 @@ const StartCard = styled.div`
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
 
   h2 {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     color: #ffffff;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(24px, 6vw, 36px);
+    font-size: clamp(22px, 5vw, 34px);
     font-weight: 950;
   }
 
-  p {
-    margin: 0 0 16px;
-    color: #bdc9dd;
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.7;
+  @media (max-width: 480px) {
+    padding: 9px;
+    border-radius: 12px;
+
+    h2 {
+      margin-bottom: 3px;
+      font-size: 19px;
+    }
+  }
+`
+
+const StartCopy = styled.p`
+  margin: 0 0 clamp(8px, 1.8vw, 14px);
+  color: #bdc9dd;
+  font-size: clamp(11px, 2.1vw, 13px);
+  font-weight: 700;
+  line-height: 1.55;
+
+  @media (max-width: 480px) {
+    margin-bottom: 5px;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+`
+
+const DifficultyPicker = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(5, 12, 25, 0.52);
+
+  @media (max-width: 480px) {
+    margin-bottom: 4px;
+    padding: 3px;
+  }
+`
+
+const DifficultyButton = styled.button<{ selected: boolean }>`
+  min-width: 0;
+  padding: 10px 5px 9px;
+  border: 1px solid
+    ${({ selected }) =>
+      selected ? "rgba(255, 255, 255, 0.38)" : "transparent"};
+  border-radius: 8px;
+  background: ${({ selected }) =>
+    selected ? "rgba(255, 255, 255, 0.1)" : "transparent"};
+  color: ${({ selected }) => (selected ? "#ffffff" : "#73839d")};
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(11px, 2.2vw, 14px);
+  font-weight: 900;
+  letter-spacing: -0.2px;
+  box-shadow: ${({ selected }) =>
+    selected ? "inset 0 -2px 0 rgba(255, 255, 255, 0.9)" : "none"};
+  transform: ${({ selected }) => (selected ? "translateY(-1px)" : "none")};
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease,
+    transform 140ms ease;
+
+  &:hover {
+    color: #ffffff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 2px;
+    font-size: 11px;
+  }
+`
+
+const DifficultyNote = styled.p`
+  min-height: 18px;
+  margin: 0 0 clamp(8px, 1.8vw, 13px);
+  color: #9cabc1;
+  font-size: clamp(10px, 1.9vw, 12px);
+  font-weight: 700;
+  line-height: 1.45;
+
+  @media (max-width: 480px) {
+    min-height: 13px;
+    margin-bottom: 4px;
+    font-size: 9px;
+    line-height: 1.3;
   }
 `
 
@@ -271,12 +441,12 @@ const StartButton = styled.button`
   width: 100%;
   border: 0;
   border-radius: 12px;
-  padding: 13px 18px;
+  padding: clamp(10px, 2.2vw, 13px) 18px;
   background: linear-gradient(135deg, #67e8f9 0%, #3b82f6 100%);
   color: #07152d;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 17px;
+  font-size: clamp(14px, 3vw, 17px);
   font-weight: 950;
   box-shadow: 0 9px 24px rgba(59, 130, 246, 0.3);
 
@@ -287,6 +457,11 @@ const StartButton = styled.button`
   &:focus-visible {
     outline: 3px solid #f8fafc;
     outline-offset: 3px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 14px;
+    font-size: 12px;
   }
 `
 
@@ -948,6 +1123,7 @@ const ArcadeFootball: React.FC = () => {
   const chargingRef = React.useRef(false)
   const chargeStartedAtRef = React.useRef(0)
   const mutedRef = React.useRef(false)
+  const difficultyRef = React.useRef<Difficulty>("neighborhood")
   const reducedMotionRef = React.useRef(false)
   const audioRef = React.useRef<AudioContext | null>(null)
 
@@ -962,6 +1138,7 @@ const ArcadeFootball: React.FC = () => {
   const [charging, setCharging] = React.useState(false)
   const [charge, setCharge] = React.useState(0)
   const [muted, setMuted] = React.useState(false)
+  const [difficulty, setDifficulty] = React.useState<Difficulty>("neighborhood")
   const [bestGoals, setBestGoals] = React.useState(0)
   const [wins, setWins] = React.useState(0)
 
@@ -1055,6 +1232,7 @@ const ArcadeFootball: React.FC = () => {
   }, [])
 
   const startMatch = React.useCallback(() => {
+    difficultyRef.current = difficulty
     const next = createMatchState()
     stateRef.current = next
     phaseRef.current = "countdown"
@@ -1072,7 +1250,7 @@ const ArcadeFootball: React.FC = () => {
     setPhase("countdown")
     canvasRef.current?.focus()
     playSound("whistle")
-  }, [playSound])
+  }, [difficulty, playSound])
 
   const finishMatch = React.useCallback(() => {
     const state = stateRef.current
@@ -1085,12 +1263,21 @@ const ArcadeFootball: React.FC = () => {
     playSound("whistle")
 
     try {
-      const previousBest = Number(localStorage.getItem(BEST_GOALS_KEY) || "0")
+      const activeDifficulty = difficultyRef.current
+      const bestKey = difficultyStorageKey(BEST_GOALS_KEY, activeDifficulty)
+      const winsKey = difficultyStorageKey(WINS_KEY, activeDifficulty)
+      const legacyBest =
+        activeDifficulty === "pro" ? localStorage.getItem(BEST_GOALS_KEY) : null
+      const legacyWins =
+        activeDifficulty === "pro" ? localStorage.getItem(WINS_KEY) : null
+      const previousBest = Number(
+        localStorage.getItem(bestKey) ?? legacyBest ?? "0"
+      )
       const nextBest = Math.max(previousBest, state.blueScore)
-      let nextWins = Number(localStorage.getItem(WINS_KEY) || "0")
+      let nextWins = Number(localStorage.getItem(winsKey) ?? legacyWins ?? "0")
       if (state.blueScore > state.redScore) nextWins += 1
-      localStorage.setItem(BEST_GOALS_KEY, String(nextBest))
-      localStorage.setItem(WINS_KEY, String(nextWins))
+      localStorage.setItem(bestKey, String(nextBest))
+      localStorage.setItem(winsKey, String(nextWins))
       setBestGoals(nextBest)
       setWins(nextWins)
     } catch {}
@@ -1098,9 +1285,18 @@ const ArcadeFootball: React.FC = () => {
 
   React.useEffect(() => {
     try {
-      setBestGoals(Number(localStorage.getItem(BEST_GOALS_KEY) || "0"))
-      setWins(Number(localStorage.getItem(WINS_KEY) || "0"))
+      const bestKey = difficultyStorageKey(BEST_GOALS_KEY, difficulty)
+      const winsKey = difficultyStorageKey(WINS_KEY, difficulty)
+      const legacyBest =
+        difficulty === "pro" ? localStorage.getItem(BEST_GOALS_KEY) : null
+      const legacyWins =
+        difficulty === "pro" ? localStorage.getItem(WINS_KEY) : null
+      setBestGoals(Number(localStorage.getItem(bestKey) ?? legacyBest ?? "0"))
+      setWins(Number(localStorage.getItem(winsKey) ?? legacyWins ?? "0"))
     } catch {}
+  }, [difficulty])
+
+  React.useEffect(() => {
     reducedMotionRef.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches
@@ -1123,6 +1319,14 @@ const ArcadeFootball: React.FC = () => {
       "ArrowRight",
     ])
     const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target
+      if (
+        event.code === "Space" &&
+        target instanceof HTMLElement &&
+        target.closest("button")
+      ) {
+        return
+      }
       if (movementCodes.has(event.code) || event.code === "Space")
         event.preventDefault()
       if (movementCodes.has(event.code)) keysRef.current.add(event.code)
@@ -1284,6 +1488,7 @@ const ArcadeFootball: React.FC = () => {
       request: Exclude<KickRequest, null>,
       input: { x: number; y: number }
     ) => {
+      const tuning = DIFFICULTIES[difficultyRef.current]
       const active = playerById(state, state.activeId)
       if (!active) return
       const ownsBall = state.ball.ownerId === active.id
@@ -1307,14 +1512,23 @@ const ArcadeFootball: React.FC = () => {
           kickBall(state, active, targetX, targetY, 455, "pass")
         } else {
           const farPostY =
-            active.y < FIELD_HEIGHT / 2 ? GOAL.bottom - 24 : GOAL.top + 24
+            active.y < FIELD_HEIGHT / 2
+              ? GOAL.bottom - tuning.shotTargetInset
+              : GOAL.top + tuning.shotTargetInset
           const manualAimY = clamp(
             300 + input.y * 124,
-            GOAL.top + 16,
-            GOAL.bottom - 16
+            GOAL.top + tuning.shotTargetInset,
+            GOAL.bottom - tuning.shotTargetInset
           )
           const aimY = Math.abs(input.y) > 0.25 ? manualAimY : farPostY
-          kickBall(state, active, 956, aimY, 650 + request.charge * 320, "kick")
+          kickBall(
+            state,
+            active,
+            956,
+            aimY,
+            (650 + request.charge * 320) * tuning.playerShotMultiplier,
+            "kick"
+          )
         }
       } else if (active.tackleCooldownMs <= 0) {
         const direction =
@@ -1335,6 +1549,7 @@ const ArcadeFootball: React.FC = () => {
       dtMs: number,
       input: { x: number; y: number }
     ) => {
+      const tuning = DIFFICULTIES[difficultyRef.current]
       state.players.forEach(player => {
         player.tackleMs = Math.max(0, player.tackleMs - dtMs)
         player.tackleCooldownMs = Math.max(0, player.tackleCooldownMs - dtMs)
@@ -1405,14 +1620,26 @@ const ArcadeFootball: React.FC = () => {
       )[0]
       redFields.forEach(player => {
         if (ballOwner?.team === "blue" && ballOwner.role === "keeper") {
-          setMovement(player, 285, player.homeY < 300 ? 205 : 395, 184, dt)
+          setMovement(
+            player,
+            285,
+            player.homeY < 300 ? 205 : 395,
+            184 * tuning.opponentRunMultiplier,
+            dt
+          )
         } else if (state.ball.ownerId === player.id) {
           const attackY = clamp(
             300 + Math.sin(state.runTimeMs / 850 + player.id) * 92,
             160,
             440
           )
-          setMovement(player, 82, attackY, 184, dt)
+          setMovement(
+            player,
+            82,
+            attackY,
+            184 * tuning.opponentRunMultiplier,
+            dt
+          )
 
           if (player.decisionMs <= 0) {
             const pressure = state.players.some(
@@ -1429,7 +1656,7 @@ const ArcadeFootball: React.FC = () => {
                   GOAL.top + 14,
                   GOAL.bottom - 14
                 ),
-                600 + Math.random() * 120,
+                (600 + Math.random() * 120) * tuning.opponentShotMultiplier,
                 "kick"
               )
             } else if (pressure && teammate) {
@@ -1438,12 +1665,24 @@ const ArcadeFootball: React.FC = () => {
             player.decisionMs = 500 + Math.random() * 500
           }
         } else if (player.id === redChaser?.id && ballOwner?.team !== "red") {
-          setMovement(player, state.ball.x, state.ball.y, 166, dt)
+          setMovement(
+            player,
+            state.ball.x,
+            state.ball.y,
+            166 * tuning.opponentRunMultiplier,
+            dt
+          )
         } else {
           const supportX =
             ballOwner?.team === "red" ? clamp(ballOwner.x - 125, 180, 690) : 620
           const supportY = player.homeY < 300 ? 190 : 410
-          setMovement(player, supportX, supportY, 155, dt)
+          setMovement(
+            player,
+            supportX,
+            supportY,
+            155 * tuning.opponentRunMultiplier,
+            dt
+          )
         }
       })
 
@@ -1457,7 +1696,13 @@ const ArcadeFootball: React.FC = () => {
           const ballThreatensGoal = isBlue
             ? state.ball.x < 330
             : state.ball.x > 630
-          setMovement(keeper, goalX, ballThreatensGoal ? watchY : 300, 148, dt)
+          setMovement(
+            keeper,
+            goalX,
+            ballThreatensGoal ? watchY : 300,
+            isBlue ? tuning.blueKeeperSpeed : tuning.redKeeperSpeed,
+            dt
+          )
 
           if (state.ball.ownerId === keeper.id) {
             keeper.keeperHoldMs -= dtMs
@@ -1484,7 +1729,10 @@ const ArcadeFootball: React.FC = () => {
           } else if (
             owner &&
             owner.team !== keeper.team &&
-            distance(owner, keeper) < 36
+            distance(owner, keeper) <
+              (isBlue
+                ? tuning.blueKeeperCatchDistance
+                : tuning.redKeeperCatchDistance)
           ) {
             releaseBall(state, owner, keeper)
           }
@@ -1498,14 +1746,18 @@ const ArcadeFootball: React.FC = () => {
             owner.team !== player.team &&
             owner.role !== "keeper" &&
             state.ball.controlShieldMs <= 0 &&
-            distance(owner, player) < 34 &&
+            distance(owner, player) <
+              (player.team === "red" ? tuning.opponentTackleRadius : 34) &&
             player.tackleCooldownMs <= 0
           ) {
             player.tackleMs = 140
-            player.tackleCooldownMs = 1120
+            player.tackleCooldownMs =
+              player.team === "red" ? tuning.opponentTackleCooldownMs : 1120
             const direction = normalize(owner.x - player.x, owner.y - player.y)
-            player.vx = direction.x * 300
-            player.vy = direction.y * 300
+            const tackleSpeed =
+              player.team === "red" ? tuning.opponentTackleSpeed : 300
+            player.vx = direction.x * tackleSpeed
+            player.vy = direction.y * tackleSpeed
           }
         }
       })
@@ -1568,7 +1820,8 @@ const ArcadeFootball: React.FC = () => {
             player.tackleMs > 0 &&
             ownerAfterMove.role !== "keeper" &&
             state.ball.controlShieldMs <= 0 &&
-            distance(player, ownerAfterMove) < 31
+            distance(player, ownerAfterMove) <
+              (player.team === "red" ? tuning.opponentTackleContact : 31)
           ) {
             releaseBall(state, ownerAfterMove, player)
           }
@@ -1581,6 +1834,7 @@ const ArcadeFootball: React.FC = () => {
       dt: number,
       dtMs: number
     ): Team | null => {
+      const tuning = DIFFICULTIES[difficultyRef.current]
       const owner = playerById(state, state.ball.ownerId)
       state.ball.noPickupMs = Math.max(0, state.ball.noPickupMs - dtMs)
       state.ball.controlShieldMs = Math.max(
@@ -1634,7 +1888,15 @@ const ArcadeFootball: React.FC = () => {
         if (state.ball.noPickupMs <= 0) {
           const candidates = state.players
             .map(player => ({ player, d: distance(player, state.ball) }))
-            .filter(item => item.d < item.player.radius + state.ball.radius + 3)
+            .filter(item => {
+              const pickupPadding =
+                item.player.team === "red" && item.player.role === "keeper"
+                  ? tuning.redKeeperPickupPadding
+                  : 3
+              return (
+                item.d < item.player.radius + state.ball.radius + pickupPadding
+              )
+            })
             .sort((a, b) => a.d - b.d)
           const contact = candidates[0]?.player
           if (contact) {
@@ -1642,7 +1904,11 @@ const ArcadeFootball: React.FC = () => {
               state.ball.ownerId = contact.id
               state.ball.lastTouch = contact.team
               state.ball.controlShieldMs =
-                contact.role === "keeper" ? 1250 : 520
+                contact.role === "keeper"
+                  ? 1250
+                  : contact.team === "blue"
+                  ? tuning.blueControlShieldMs
+                  : 520
               state.ball.trail = []
               if (contact.role === "keeper") contact.keeperHoldMs = 1250
             } else {
@@ -1832,6 +2098,27 @@ const ArcadeFootball: React.FC = () => {
       ? "아쉬운 패배"
       : "무승부"
 
+  const difficultySelector = (
+    <>
+      <DifficultyPicker role="group" aria-label="경기 난이도 선택">
+        {DIFFICULTY_ORDER.map(level => (
+          <DifficultyButton
+            key={level}
+            type="button"
+            selected={difficulty === level}
+            aria-pressed={difficulty === level}
+            onClick={() => setDifficulty(level)}
+          >
+            {DIFFICULTIES[level].label}
+          </DifficultyButton>
+        ))}
+      </DifficultyPicker>
+      <DifficultyNote aria-live="polite">
+        {DIFFICULTIES[difficulty].description}
+      </DifficultyNote>
+    </>
+  )
+
   return (
     <Wrapper>
       <Header>
@@ -1840,7 +2127,7 @@ const ArcadeFootball: React.FC = () => {
           <p>90초 안에 끝나는 탑다운 스트리트 풋볼</p>
         </Brand>
         <Record>
-          최고 {bestGoals}골 · 통산 {wins}승
+          {DIFFICULTIES[difficulty].label} · 최고 {bestGoals}골 · 통산 {wins}승
         </Record>
       </Header>
 
@@ -1891,11 +2178,12 @@ const ArcadeFootball: React.FC = () => {
                 {phase === "idle" ? (
                   <>
                     <h2>3대3, 90초 승부</h2>
-                    <p>
+                    <StartCopy>
                       자동으로 가장 가까운 선수를 조작해요.
                       <br />
                       짧게 누르면 패스, 길게 눌렀다 떼면 강슛!
-                    </p>
+                    </StartCopy>
+                    {difficultySelector}
                     <StartButton type="button" onClick={startMatch}>
                       MATCH START
                     </StartButton>
@@ -1903,11 +2191,12 @@ const ArcadeFootball: React.FC = () => {
                 ) : (
                   <>
                     <h2>{resultTitle}</h2>
-                    <p>
+                    <StartCopy>
                       최종 스코어 {blueScore} : {redScore}
                       <br />
                       다음 경기는 슛을 반 박자만 빨리 가져가 보세요.
-                    </p>
+                    </StartCopy>
+                    {difficultySelector}
                     <StartButton type="button" onClick={startMatch}>
                       REMATCH
                     </StartButton>
