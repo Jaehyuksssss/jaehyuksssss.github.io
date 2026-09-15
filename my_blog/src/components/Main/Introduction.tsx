@@ -75,7 +75,7 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
         {profileImage && <ProfileImage profileImage={profileImage} />}
         <div>
           <SubTitle>안녕하세요,</SubTitle>
-          <Title>개발자 임재혁입니다.</Title>
+          <Title>임재혁 기술 블로그 입니다.</Title>
           <Stats>
             {loading
               ? "전체 조회수 불러오는 중…"

@@ -95,6 +95,14 @@ const GamesPage: React.FC = () => {
         <ActionBtn to="/games/feedback">피드백 남기기</ActionBtn>
       </HeaderRow>
       <Grid>
+        <Card to="/football">
+          <Title>THREE ON THREE</Title>
+          <Desc>패스하고 강슛! 90초 3대3 스트리트 풋볼</Desc>
+        </Card>
+        <Card to="/escape">
+          <Title>퇴근 1분 전</Title>
+          <Desc>상사가 돌아보기 전에 멈춰! 몰래 칼퇴하기</Desc>
+        </Card>
         <Card to="/omok">
           <Title>오목 게임</Title>
           <Desc>컴퓨터와 대전! 2인 대전, 난이도 선택</Desc>

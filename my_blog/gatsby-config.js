@@ -5,7 +5,7 @@ const SITE_URL = "https://jaehyuksssss.github.io"
 module.exports = {
   siteMetadata: {
     title: `임재혁 기술블로그`,
-    description: `개발자 임재혁 입니다.`,
+    description: `임재혁 입니다.`,
     author: `Jaehyuksssss`,
     siteUrl: SITE_URL,
   },
