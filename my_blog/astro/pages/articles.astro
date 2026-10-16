@@ -4,4 +4,4 @@ import PostExplorer from '../components/PostExplorer.astro'
 import { allPosts } from '../lib/posts'
 const posts = await allPosts()
 ---
-<SiteLayout title="모든 글"><div class="page-container"><section class="page-intro"><div><h1 class="gradient-title">All Articles<span class="title-period">.</span></h1><p class="intro-description">지금까지 쓴 글을 모았습니다.</p></div><span class="archive-total">{posts.length}<span>POSTS</span></span></section><PostExplorer posts={posts} archive /></div></SiteLayout>
+<SiteLayout title="모든 글"><div class="page-container"><section class="page-intro"><div><h1 class="gradient-title">All Articles<span class="title-period">.</span></h1><p class="intro-description">글 보러가기.</p></div><span class="archive-total">{posts.length}<span>POSTS</span></span></section><PostExplorer posts={posts} archive /></div></SiteLayout>

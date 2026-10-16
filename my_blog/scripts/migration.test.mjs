@@ -49,3 +49,16 @@ test('every game page has its own Supabase like key', () => {
     assert.match(page, new RegExp(`<GameLike slug=["']${game.slug}["']`), `Missing game like: ${game.slug}`)
   }
 })
+test('the Astro home page renders the existing Supabase total view counter', () => {
+  const home = readFileSync(new URL('../astro/pages/index.astro', import.meta.url), 'utf8')
+  assert.match(home, /<TotalViews client:load \/>/)
+  assert.match(home, /trackSlug="__home__"/)
+})
+test('the Kubernetes operations lab is server-rendered before hydration', () => {
+  const page = readFileSync(new URL('../astro/pages/kubernetes-study.astro', import.meta.url), 'utf8')
+  const lab = readFileSync(new URL('../astro/components/KubernetesStudy.tsx', import.meta.url), 'utf8')
+  assert.match(page, /<KubernetesStudy client:load \/>/)
+  assert.doesNotMatch(page, /client:only/)
+  assert.match(lab, /CrashLoopBackOff/)
+  assert.match(lab, /kubectl rollout status/)
+})

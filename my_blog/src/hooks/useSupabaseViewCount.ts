@@ -74,7 +74,10 @@ export default function useSupabaseViewCount(
           p_slug: slug,
         })
         if (error) throw error
-        if (!cancelled) setCount(Number(data))
+        if (!cancelled) {
+          setCount(Number(data))
+          window.dispatchEvent(new CustomEvent("blog:view-count-updated"))
+        }
       } catch (e: any) {
         if (import.meta.env.DEV) {
           console.warn("[Views] inc_post_view error:", e?.message || e)

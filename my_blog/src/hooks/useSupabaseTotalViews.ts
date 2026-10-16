@@ -36,8 +36,13 @@ export default function useSupabaseTotalViews() {
         if (!cancelled) setLoading(false)
       }
     }
+    const refresh = () => { void run() }
     run()
-    return () => { cancelled = true }
+    window.addEventListener('blog:view-count-updated', refresh)
+    return () => {
+      cancelled = true
+      window.removeEventListener('blog:view-count-updated', refresh)
+    }
   }, [])
 
   return { total, loading, error }
