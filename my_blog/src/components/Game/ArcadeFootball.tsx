@@ -290,9 +290,12 @@ const Canvas = styled.canvas`
   height: auto;
   aspect-ratio: ${FIELD_WIDTH} / ${FIELD_HEIGHT};
   outline: none;
+  pointer-events: auto;
   touch-action: none;
+  overscroll-behavior: contain;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
 
   &:focus-visible {
     box-shadow: inset 0 0 0 4px #7dd3fc;
@@ -514,7 +517,8 @@ const TouchPanel = styled.div<{ $visible: boolean }>`
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   background: linear-gradient(180deg, #121d32 0%, #0d1628 100%);
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -570,7 +574,8 @@ const Joystick = styled.div`
     height: 74px;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     width: 88px;
     height: 88px;
     pointer-events: auto;
@@ -604,7 +609,8 @@ const JoystickKnob = styled.div<{ x: number; y: number }>`
   );
   pointer-events: none;
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     width: 40px;
     height: 40px;
     transform: translate(
@@ -634,7 +640,8 @@ const CenterInfo = styled.div`
     font-weight: 900;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     display: none;
   }
 `
@@ -644,7 +651,8 @@ const ActionArea = styled.div`
   justify-items: end;
   gap: 8px;
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     width: 150px;
     pointer-events: auto;
   }
@@ -656,7 +664,8 @@ const ActionButtons = styled.div`
   align-items: end;
   gap: 8px;
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     position: relative;
     display: block;
     width: 150px;
@@ -724,7 +733,8 @@ const ActionButton = styled.button<{
     transform: translateY(5px) scale(0.96);
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 560px),
+    (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
     position: absolute;
     width: ${({ action }) => (action === "shot" ? "60px" : "54px")};
     height: ${({ action }) => (action === "shot" ? "60px" : "54px")};
@@ -2237,7 +2247,12 @@ const ArcadeFootball: React.FC = () => {
     setJoystick(limited)
   }
 
-  const updateCanvasDirection = (clientX: number, clientY: number) => {
+  const stopCanvasMovement = React.useCallback(() => {
+    joystickInputRef.current = { x: 0, y: 0 }
+    setJoystick({ x: 0, y: 0 })
+  }, [])
+
+  const updateCanvasDirection = React.useCallback((clientX: number, clientY: number) => {
     const canvas = canvasRef.current
     const state = stateRef.current
     const active = state.players.find(player => player.id === state.activeId)
@@ -2248,27 +2263,79 @@ const ArcadeFootball: React.FC = () => {
     const direction = normalize(fieldX - active.x, fieldY - active.y)
     joystickInputRef.current = direction
     setJoystick(direction)
-  }
+  }, [])
 
-  const canvasTouchStart = (event: React.TouchEvent<HTMLCanvasElement>) => {
-    const touch = event.touches[0]
-    if (!touch) return
-    event.preventDefault()
-    updateCanvasDirection(touch.clientX, touch.clientY)
-  }
+  React.useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-  const canvasTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
-    const touch = event.touches[0]
-    if (!touch) return
-    event.preventDefault()
-    updateCanvasDirection(touch.clientX, touch.clientY)
-  }
+    const nonPassive: AddEventListenerOptions = { passive: false }
+    const supportsTouchEvents = "ontouchstart" in window
 
-  const canvasTouchEnd = (event: React.TouchEvent<HTMLCanvasElement>) => {
-    event.preventDefault()
-    joystickInputRef.current = { x: 0, y: 0 }
-    setJoystick({ x: 0, y: 0 })
-  }
+    const onTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0]
+      if (!touch) return
+      event.preventDefault()
+      updateCanvasDirection(touch.clientX, touch.clientY)
+    }
+    const onTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0]
+      if (!touch) return
+      event.preventDefault()
+      updateCanvasDirection(touch.clientX, touch.clientY)
+    }
+    const onTouchEnd = (event: TouchEvent) => {
+      event.preventDefault()
+      stopCanvasMovement()
+    }
+
+    let activePointerId: number | null = null
+    const onPointerDown = (event: PointerEvent) => {
+      event.preventDefault()
+      activePointerId = event.pointerId
+      try {
+        canvas.setPointerCapture(event.pointerId)
+      } catch {}
+      updateCanvasDirection(event.clientX, event.clientY)
+    }
+    const onPointerMove = (event: PointerEvent) => {
+      if (activePointerId !== event.pointerId) return
+      event.preventDefault()
+      updateCanvasDirection(event.clientX, event.clientY)
+    }
+    const onPointerEnd = (event: PointerEvent) => {
+      if (activePointerId !== event.pointerId) return
+      event.preventDefault()
+      activePointerId = null
+      stopCanvasMovement()
+      try {
+        canvas.releasePointerCapture(event.pointerId)
+      } catch {}
+    }
+
+    if (supportsTouchEvents) {
+      canvas.addEventListener("touchstart", onTouchStart, nonPassive)
+      canvas.addEventListener("touchmove", onTouchMove, nonPassive)
+      canvas.addEventListener("touchend", onTouchEnd, nonPassive)
+      canvas.addEventListener("touchcancel", onTouchEnd, nonPassive)
+    } else {
+      canvas.addEventListener("pointerdown", onPointerDown, nonPassive)
+      canvas.addEventListener("pointermove", onPointerMove, nonPassive)
+      canvas.addEventListener("pointerup", onPointerEnd, nonPassive)
+      canvas.addEventListener("pointercancel", onPointerEnd, nonPassive)
+    }
+
+    return () => {
+      canvas.removeEventListener("touchstart", onTouchStart)
+      canvas.removeEventListener("touchmove", onTouchMove)
+      canvas.removeEventListener("touchend", onTouchEnd)
+      canvas.removeEventListener("touchcancel", onTouchEnd)
+      canvas.removeEventListener("pointerdown", onPointerDown)
+      canvas.removeEventListener("pointermove", onPointerMove)
+      canvas.removeEventListener("pointerup", onPointerEnd)
+      canvas.removeEventListener("pointercancel", onPointerEnd)
+    }
+  }, [stopCanvasMovement, updateCanvasDirection])
 
   const joystickDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "touch") return
@@ -2437,10 +2504,6 @@ const ArcadeFootball: React.FC = () => {
             role="img"
             tabIndex={0}
             aria-label={`3대3 축구 경기 화면. 현재 ${blueScore}대 ${redScore}`}
-            onTouchStart={canvasTouchStart}
-            onTouchMove={canvasTouchMove}
-            onTouchEnd={canvasTouchEnd}
-            onTouchCancel={canvasTouchEnd}
           />
           <UtilityButton
             type="button"

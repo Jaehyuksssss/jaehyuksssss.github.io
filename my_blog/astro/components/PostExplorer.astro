@@ -1,5 +1,5 @@
 ---
-import type { Post } from '../lib/posts'
+import { postPath, type Post } from '../lib/posts'
 import PostCard from './PostCard.astro'
 import Arrow from './Arrow.astro'
 import AdSlot from './AdSlot.astro'
@@ -23,7 +23,10 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
       <kbd aria-hidden="true">/</kbd>
     </form>
   </div>
-  {archive && <div class="archive-filters"><label for="category-select">주제별로 보기</label><select id="category-select"><option value="All">전체 주제</option><option value="Infrastructure">Infrastructure</option>{categories.map(c => <option value={c}>{c}</option>)}</select></div>}
+  {archive && <div class="archive-filters">
+    <div class="archive-filter"><label for="category-select">주제</label><select id="category-select"><option value="All">전체 주제</option><option value="Infrastructure">Infrastructure</option>{categories.map(c => <option value={c}>{c}</option>)}</select></div>
+    <div class="archive-filter"><label for="sort-select">정렬</label><select id="sort-select"><option value="latest">최신순</option><option value="likes">좋아요순</option><option value="views">조회순</option></select></div>
+  </div>}
   {!archive && featured.length >= 3 && <section class="featured-section" aria-labelledby="featured-title" data-featured>
     <div class="section-heading"><h2 id="featured-title">Featured Articles<span class="accent-dot">.</span></h2></div>
     <div class="featured-grid"><PostCard post={featured[0]} variant="lead" /><div class="featured-side">{featured.slice(1).map(post => <PostCard post={post} variant="featured" />)}</div></div>
@@ -32,9 +35,9 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
     <div class="section-heading"><h2 id="latest-title">{archive ? 'All Articles' : 'Latest Articles'}<span class="accent-dot">.</span></h2><span class="result-count" aria-live="polite" data-result-count>{posts.length}개의 글</span></div>
     <div class="article-grid">
       {posts.map((post, index) => <>
-        <div class="article-item" data-post-item data-index={index} data-categories={JSON.stringify(post.data.categories)} data-search={[post.data.title, post.data.summary, ...post.data.categories].join(' ').toLowerCase()} hidden={!archive && index >= 8}><PostCard post={post} /></div>
-        {index === (archive ? 5 : 3) && <div class="article-item-ad" data-list-ad><AdSlot placement="card" /></div>}
-        {archive && index === 15 && <div class="article-item-ad" data-list-ad><AdSlot placement="card" /></div>}
+        <div class="article-item" data-post-item data-index={index} data-post-slug={postPath(post)} data-categories={JSON.stringify(post.data.categories)} data-search={[post.data.title, post.data.summary, ...post.data.categories].join(' ').toLowerCase()} hidden={!archive && index >= 8}><PostCard post={post} /></div>
+        {index === (archive ? 5 : 3) && <div class="article-item-ad" data-list-ad data-ad-position={archive ? 6 : 4}><AdSlot placement="card" /></div>}
+        {archive && index === 15 && <div class="article-item-ad" data-list-ad data-ad-position="16"><AdSlot placement="card" /></div>}
       </>)}
     </div>
     <div class="search-empty" data-search-empty hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3>검색 결과가 없습니다.</h3><p>다른 검색어나 주제로 다시 찾아보세요.</p><button type="button" class="text-button" data-clear-search>검색 조건 초기화 <Arrow size={16} /></button></div>
@@ -43,21 +46,41 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
 </div>
 <script>
   import { matchesCategory } from '../lib/filter'
+  import { supabase } from '../../src/lib/supabaseClient'
   const explorer = document.querySelector<HTMLElement>('[data-post-explorer]')
   if (explorer) {
     const archive = explorer.dataset.archive === 'true'
     const input = explorer.querySelector<HTMLInputElement>('#post-search')!
     const select = explorer.querySelector<HTMLSelectElement>('#category-select')
+    const sortSelect = explorer.querySelector<HTMLSelectElement>('#sort-select')
+    const grid = explorer.querySelector<HTMLElement>('.article-grid')!
     const items = Array.from(explorer.querySelectorAll<HTMLElement>('[data-post-item]'))
     const listAds = Array.from(explorer.querySelectorAll<HTMLElement>('[data-list-ad]'))
     const tabs = Array.from(explorer.querySelectorAll<HTMLAnchorElement>('[data-topic]'))
     const featured = explorer.querySelector<HTMLElement>('[data-featured]')
     const viewAll = explorer.querySelector<HTMLElement>('[data-view-all]')
     let category = 'All'
+    let sort = 'latest'
+    function sortedItems() {
+      return [...items].sort((a, b) => {
+        const fallback = Number(a.dataset.index) - Number(b.dataset.index)
+        if (sort === 'likes') return Number(b.dataset.likes || 0) - Number(a.dataset.likes || 0) || fallback
+        if (sort === 'views') return Number(b.dataset.views || 0) - Number(a.dataset.views || 0) || fallback
+        return fallback
+      })
+    }
+    function reflow() {
+      listAds.forEach(ad => ad.remove())
+      sortedItems().forEach((item, index) => {
+        grid.append(item)
+        listAds.filter(ad => Number(ad.dataset.adPosition) === index + 1).forEach(ad => grid.append(ad))
+      })
+    }
     function render(updateUrl = false) {
       const query = input.value.trim().toLowerCase()
       const filtering = query.length > 0 || category !== 'All'
       let matches = 0
+      reflow()
       items.forEach(item => {
         const tags: string[] = JSON.parse(item.dataset.categories || '[]')
         const match = matchesCategory(tags, category) && (item.dataset.search || '').includes(query)
@@ -75,20 +98,76 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
         const url = new URL(location.href)
         if (category === 'All') url.searchParams.delete('category'); else url.searchParams.set('category', category)
         if (input.value.trim()) url.searchParams.set('q', input.value.trim()); else url.searchParams.delete('q')
+        if (sort === 'latest') url.searchParams.delete('sort'); else url.searchParams.set('sort', sort)
         history.replaceState(null, '', url)
       }
     }
-    function restore() { const params = new URLSearchParams(location.search); category = params.get('category') || 'All'; input.value = params.get('q') || ''; render() }
+    function restore() {
+      const params = new URLSearchParams(location.search)
+      category = params.get('category') || 'All'
+      input.value = params.get('q') || ''
+      const requestedSort = params.get('sort')
+      sort = requestedSort === 'likes' || requestedSort === 'views' ? requestedSort : 'latest'
+      if (sortSelect) sortSelect.value = sort
+      render()
+    }
     input.addEventListener('input', () => render(true))
     input.form?.addEventListener('submit', event => { event.preventDefault(); render(true) })
     select?.addEventListener('change', () => { category = select.value; render(true) })
+    sortSelect?.addEventListener('change', () => { sort = sortSelect.value; render(true) })
     tabs.forEach(tab => tab.addEventListener('click', event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); category = tab.dataset.topic || 'All'; render(true) }))
-    explorer.querySelector('[data-clear-search]')?.addEventListener('click', () => { category = 'All'; input.value = ''; render(true); input.focus() })
+    explorer.querySelector('[data-clear-search]')?.addEventListener('click', () => { category = 'All'; sort = 'latest'; if (sortSelect) sortSelect.value = sort; input.value = ''; render(true); input.focus() })
     window.addEventListener('popstate', restore)
     document.addEventListener('keydown', event => {
       const target = event.target as HTMLElement | null
       if (event.key === '/' && !event.ctrlKey && !event.metaKey && !target?.matches('input, textarea, select, [contenteditable="true"]')) { event.preventDefault(); input.focus() }
     })
     restore()
+
+    async function loadPostMetrics() {
+      if (!sortSelect) return
+      const likesOption = sortSelect.querySelector<HTMLOptionElement>('option[value="likes"]')!
+      const viewsOption = sortSelect.querySelector<HTMLOptionElement>('option[value="views"]')!
+      if (!supabase) {
+        likesOption.disabled = true
+        viewsOption.disabled = true
+        sortSelect.title = '현재 환경에서는 좋아요와 조회수 연동이 비활성화되어 있습니다.'
+        return
+      }
+
+      const [likesResult, viewsResult] = await Promise.all([
+        supabase.from('post_likes').select('post_slug'),
+        supabase.from('post_views').select('post_slug, view_count'),
+      ])
+      const likes = new Map<string, number>()
+      const views = new Map<string, number>()
+
+      if (likesResult.error) {
+        likesOption.disabled = true
+      } else {
+        for (const row of likesResult.data || []) {
+          likes.set(row.post_slug, (likes.get(row.post_slug) || 0) + 1)
+        }
+      }
+      if (viewsResult.error) {
+        viewsOption.disabled = true
+      } else {
+        for (const row of viewsResult.data || []) {
+          views.set(row.post_slug, (views.get(row.post_slug) || 0) + Number(row.view_count || 0))
+        }
+      }
+
+      items.forEach(item => {
+        const slug = item.dataset.postSlug || ''
+        item.dataset.likes = String(likes.get(slug) || 0)
+        item.dataset.views = String(views.get(slug) || 0)
+      })
+      if (sortSelect.selectedOptions[0]?.disabled) {
+        sort = 'latest'
+        sortSelect.value = sort
+      }
+      render()
+    }
+    void loadPostMetrics()
   }
 </script>
