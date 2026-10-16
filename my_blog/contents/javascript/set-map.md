@@ -1,6 +1,6 @@
 ---
 date: '2022-06-07'
-title: 'JavaScript'
+title: 'Set && Map'
 categories: ['TIL','Deep_Dive']
 summary: '37장 set과Map'
 thumbnail: '/deep-dive.png'

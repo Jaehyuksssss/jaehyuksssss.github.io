@@ -14,7 +14,7 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
     <nav class="topic-tabs" aria-label="글 분류">
       <a href="/articles/" data-topic="All" aria-current="page">ALL POSTS</a>
       <a href="/articles/?category=Infrastructure" data-topic="Infrastructure">INFRASTRUCTURE</a>
-      <a href="/games/" class="playground-tab">PLAYGROUND <Arrow size={17} /></a>
+      <a href="/games/" class="playground-tab">GAMES <Arrow size={17} /></a>
     </nav>
     <form class="search-form" action="/articles/" role="search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg>

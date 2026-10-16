@@ -55,14 +55,15 @@ const schema = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: si
         </a>
         <nav class="desktop-nav" aria-label="주 메뉴">
           <a href="/" aria-current={['writing', 'post'].includes(section) ? 'page' : undefined}>Writing</a>
-          <a href="/games/" aria-current={section === 'games' ? 'page' : undefined}>Playground</a>
+          <a href="/kubernetes-study/" aria-current={section === 'lab' ? 'page' : undefined}>Kubernetes</a>
+          <a href="/games/" aria-current={section === 'games' ? 'page' : undefined}>Games</a>
           <a href="/about/" aria-current={section === 'about' ? 'page' : undefined}>About</a>
           <a class="nav-github" href={site.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow size={15} direction="up-right" /></a>
         </nav>
         <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
       </div>
       <nav id="mobile-nav" class="mobile-nav" aria-label="모바일 주 메뉴" hidden>
-        <a href="/">Writing</a><a href="/games/">Playground</a><a href="/about/">About</a><a href={site.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <a href="/">Writing</a><a href="/kubernetes-study/">Kubernetes</a><a href="/games/">Games</a><a href="/about/">About</a><a href={site.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
       </nav>
     </header>
     <main id="main"><slot /></main>

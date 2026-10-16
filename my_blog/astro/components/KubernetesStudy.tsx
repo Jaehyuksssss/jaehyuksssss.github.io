@@ -124,8 +124,8 @@ export default function KubernetesStudy() {
       <header className="k8s-hero">
         <div>
           <p className="k8s-kicker">KUBERNETES OPERATIONS LAB</p>
-          <h1>운영 상황으로 익히는 Kubernetes</h1>
-          <p>리소스 이름을 외우기보다 장애 신호를 보고 확인 순서를 잡는 데 초점을 맞췄습니다.</p>
+          <h1>Kubernetes</h1>
+          <p>까먹지 않기 위한 쿠버네티스 운영 노트</p>
         </div>
         <div className="k8s-status"><span></span>4개 장애 시나리오 · 8개 명령어</div>
       </header>
@@ -170,7 +170,7 @@ export default function KubernetesStudy() {
       </div>}
 
       {tab === 'runbook' && <div className="k8s-runbook">
-        <div className="k8s-runbook-head"><div><h2>자주 쓰는 진단 명령어</h2><p>명령어를 외우기보다 어떤 가설을 확인하는지 같이 봅니다.</p></div><label><span className="sr-only">런북 검색</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="예: rollout, Service, 권한" /></label></div>
+        <div className="k8s-runbook-head"><div><h2>자주 쓰는 진단 명령어</h2><p></p></div><label><span className="sr-only">런북 검색</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="예: rollout, Service, 권한" /></label></div>
         <div className="k8s-command-list">{filteredRunbook.map(([title, command, reason]) => <article key={title}><div><span>CHECK</span><h3>{title}</h3><p>{reason}</p></div><code>{command}</code></article>)}</div>
         {filteredRunbook.length === 0 && <p className="k8s-empty">일치하는 명령어가 없습니다.</p>}
       </div>}

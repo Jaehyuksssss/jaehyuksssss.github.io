@@ -141,7 +141,7 @@ html {
 .desktop-nav {
   display: flex;
   align-items: center;
-  gap: 35px;
+  gap: 27px;
   font-size: 13px;
   font-weight: 600;
 }
@@ -226,6 +226,53 @@ html {
   color: var(--muted);
   margin-bottom: 0;
   line-height: 1.7;
+}
+.home-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 48px;
+}
+.home-shortcuts > a {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  background: #f7faf8;
+  border: 1px solid #dce8e0;
+  border-radius: 7px;
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.home-shortcuts > a:hover {
+  background: #f1f7f3;
+  border-color: #a9cfb8;
+  transform: translateY(-1px);
+}
+.home-shortcuts > a > span {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+.home-shortcuts small {
+  color: #5d8e70;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+}
+.home-shortcuts strong {
+  color: #1c2b23;
+  font-size: 15px;
+}
+.home-shortcuts strong + span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.home-shortcuts > a > svg {
+  flex: 0 0 auto;
+  color: #28774d;
 }
 .intro-meta {
   display: flex;
@@ -1934,6 +1981,14 @@ html {
   .intro-meta {
     width: 100%;
     justify-content: flex-start;
+  }
+  .home-shortcuts {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 38px;
+  }
+  .home-shortcuts > a {
+    padding: 17px 18px;
   }
   .total-views {
     min-width: 154px;

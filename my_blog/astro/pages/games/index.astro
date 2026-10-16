@@ -8,6 +8,5 @@ import { games } from '../../lib/games'
   <div class="page-container"><section class="page-intro"><div><h1 class="page-title">Playground<span class="title-period">.</span></h1><p class="intro-description">플레시 게임을 해보세요. 설치 없이 바로 할 수 있습니다.</p></div><a class="button button-outline" href="/games/feedback/">피드백 남기기 <Arrow size={17} /></a></section>
     <div class="game-grid">{games.map((game, index) => <a class="game-card" href={'/' + game.slug + '/'}><div class="game-cover" style={'--game-bg:' + game.bg + ';--game-ink:' + game.ink}>{game.image ? <img src={game.image} alt="" loading="lazy" width="400" height="200" /> : <span aria-hidden="true">{game.symbol}</span>}</div><div class="game-card-copy"><h2>{game.name}</h2><p>{game.description}</p><span>PLAY {String(index + 1).padStart(2, '0')}<Arrow size={18} /></span></div></a>)}</div>
     <AdSlot placement="feed" />
-    <p class="game-footer-note"><a href="/kubernetes-study/">Kubernetes 학습 도구도 있습니다 →</a></p>
   </div>
 </SiteLayout>

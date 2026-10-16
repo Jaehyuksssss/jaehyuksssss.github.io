@@ -1,6 +1,6 @@
 ---
 date: '2022-06-08'
-title: 'JavaScript'
+title: 'Dom'
 categories: ['TIL','Deep_Dive']
 summary: '39장 Dom '
 thumbnail: '/deep-dive.png'

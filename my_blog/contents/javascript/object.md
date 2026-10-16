@@ -1,6 +1,6 @@
 ---
 date: '2022-06-04'
-title: 'JavaScript'
+title: 'Object'
 categories: ['TIL','Deep_Dive']
 summary: '10장 객체 리터럴'
 thumbnail: '/deep-dive.png'

@@ -1,6 +1,6 @@
 ---
 date: '2022-06-06'
-title: 'JavaScript'
+title: 'Built in object'
 categories: ['TIL','Deep_Dive']
 summary: '21장 빌트인 객체'
 thumbnail: '/deep-dive.png'

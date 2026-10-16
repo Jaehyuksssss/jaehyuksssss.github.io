@@ -1,6 +1,6 @@
 ---
 date: '2022-07-22'
-title: 'JavaScript'
+title: 'property attribute'
 categories: ['TIL','Deep_Dive']
 summary: '16장 프로퍼티 어트리뷰트'
 thumbnail: '/deep-dive.png'
