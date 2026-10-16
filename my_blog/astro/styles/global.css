@@ -206,20 +206,20 @@ html {
   letter-spacing: 2px;
   margin-bottom: 13px;
 }
-.gradient-title {
+.page-title {
   font-size: 48px;
   line-height: 1.15;
   letter-spacing: -2px;
   font-weight: 700;
   margin-bottom: 15px;
-  color: #155f3c;
+  color: #171b18;
   width: fit-content;
 }
-.gradient-title > span {
-  color: #4a9b6c;
+.page-title > span {
+  color: inherit;
 }
 .title-period {
-  color: #78b58f !important;
+  color: inherit !important;
 }
 .intro-description {
   font-size: 14px;
@@ -1781,7 +1781,7 @@ html {
   .footer-inner {
     max-width: 1360px;
   }
-  .gradient-title {
+  .page-title {
     font-size: 52px;
   }
   .featured-grid {
@@ -1942,7 +1942,7 @@ html {
     font-size: 8px;
     letter-spacing: 1.5px;
   }
-  .gradient-title {
+  .page-title {
     font-size: 36px;
     letter-spacing: -1.5px;
     margin-bottom: 12px;
@@ -2262,7 +2262,7 @@ html {
   }
 }
 @media (max-width: 380px) {
-  .gradient-title {
+  .page-title {
     font-size: 32px;
   }
   .page-container {
