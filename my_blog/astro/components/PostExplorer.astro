@@ -2,6 +2,7 @@
 import type { Post } from '../lib/posts'
 import PostCard from './PostCard.astro'
 import Arrow from './Arrow.astro'
+import AdSlot from './AdSlot.astro'
 interface Props { posts: Post[]; archive?: boolean }
 const { posts, archive = false } = Astro.props
 const featuredIds = ['next/jenkins-nextjs-glibc-swc', 'jenkins/jenkins-agent-pipeline', 'aws/aws-core-infra-terms']
@@ -30,7 +31,11 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
   <section class="latest-section" aria-labelledby="latest-title">
     <div class="section-heading"><h2 id="latest-title">{archive ? 'All Articles' : 'Latest Articles'}<span class="accent-dot">.</span></h2><span class="result-count" aria-live="polite" data-result-count>{posts.length}개의 글</span></div>
     <div class="article-grid">
-      {posts.map((post, index) => <div class="article-item" data-post-item data-index={index} data-categories={JSON.stringify(post.data.categories)} data-search={[post.data.title, post.data.summary, ...post.data.categories].join(' ').toLowerCase()} hidden={!archive && index >= 8}><PostCard post={post} /></div>)}
+      {posts.map((post, index) => <>
+        <div class="article-item" data-post-item data-index={index} data-categories={JSON.stringify(post.data.categories)} data-search={[post.data.title, post.data.summary, ...post.data.categories].join(' ').toLowerCase()} hidden={!archive && index >= 8}><PostCard post={post} /></div>
+        {index === (archive ? 5 : 3) && <div class="article-item-ad" data-list-ad><AdSlot placement="card" /></div>}
+        {archive && index === 15 && <div class="article-item-ad" data-list-ad><AdSlot placement="card" /></div>}
+      </>)}
     </div>
     <div class="search-empty" data-search-empty hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3>검색 결과가 없습니다.</h3><p>다른 검색어나 주제로 다시 찾아보세요.</p><button type="button" class="text-button" data-clear-search>검색 조건 초기화 <Arrow size={16} /></button></div>
     {!archive && <div class="section-action" data-view-all><a class="button button-dark" href="/articles/">모든 글 보기 <Arrow /></a></div>}
@@ -44,6 +49,7 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
     const input = explorer.querySelector<HTMLInputElement>('#post-search')!
     const select = explorer.querySelector<HTMLSelectElement>('#category-select')
     const items = Array.from(explorer.querySelectorAll<HTMLElement>('[data-post-item]'))
+    const listAds = Array.from(explorer.querySelectorAll<HTMLElement>('[data-list-ad]'))
     const tabs = Array.from(explorer.querySelectorAll<HTMLAnchorElement>('[data-topic]'))
     const featured = explorer.querySelector<HTMLElement>('[data-featured]')
     const viewAll = explorer.querySelector<HTMLElement>('[data-view-all]')
@@ -58,6 +64,7 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
         item.hidden = !match || (!archive && !filtering && Number(item.dataset.index) >= 8)
         if (match) matches++
       })
+      listAds.forEach(ad => { ad.hidden = filtering })
       tabs.forEach(tab => { if (tab.dataset.topic === category) tab.setAttribute('aria-current', 'page'); else tab.removeAttribute('aria-current') })
       if (select) select.value = category
       if (featured) featured.hidden = filtering

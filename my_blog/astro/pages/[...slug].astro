@@ -4,6 +4,7 @@ import SiteLayout from '../layouts/SiteLayout.astro'
 import PostVisual from '../components/PostVisual.astro'
 import PostActions from '../components/PostActions'
 import CommentWidget from '../../src/components/Post/CommentWidget'
+import AdSlot from '../components/AdSlot.astro'
 import { allPosts, postPath, postHref, thumbnail, dateLabel, readingTime } from '../lib/posts'
 import { site } from '../lib/site'
 
@@ -42,6 +43,7 @@ const schema = [{
     </header>
     <div class="article-reading-grid">
       <div class="article-body"><PostVisual post={post} large eager /><div class="prose"><Content /></div>
+        <AdSlot placement="article-mobile" />
         <PostActions slug={postPath(post)} client:visible />
         <section aria-labelledby="comments-heading"><h2 class="comments-heading" id="comments-heading">Comments<span class="accent-dot">.</span></h2><CommentWidget client:visible /></section>
         <nav class="post-navigation" aria-label="이전 글과 다음 글">
@@ -49,7 +51,7 @@ const schema = [{
           {older && <a href={postHref(older)}><span>이전 글 →</span>{older.data.title}</a>}
         </nav>
       </div>
-      {toc.length > 0 && <aside class="article-toc"><p>ON THIS PAGE</p><nav aria-label="목차">{toc.map(heading => <a href={'#' + heading.slug} data-depth={heading.depth}>{heading.text}</a>)}</nav></aside>}
+      <div class="article-side">{toc.length > 0 && <aside class="article-toc"><p>ON THIS PAGE</p><nav aria-label="목차">{toc.map(heading => <a href={'#' + heading.slug} data-depth={heading.depth}>{heading.text}</a>)}</nav></aside>}<AdSlot placement="article-rail" /></div>
     </div>
   </article>
 </SiteLayout>

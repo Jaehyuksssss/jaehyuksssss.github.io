@@ -40,6 +40,7 @@ const schema = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: si
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
     <meta name="google-adsense-account" content={adsClient} />
+    {import.meta.env.PROD && adsClient && <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClient}`} crossorigin="anonymous"></script>}
     {noindex && <meta name="robots" content="noindex,follow" />}
     <script type="application/ld+json" set:html={JSON.stringify(schema).replaceAll('<', '\\u003c')} />
     <slot name="head" />

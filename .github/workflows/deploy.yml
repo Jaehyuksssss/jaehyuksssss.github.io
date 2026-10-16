@@ -49,6 +49,8 @@ jobs:
           PUBLIC_SUPABASE_URL: ${{ secrets.GATSBY_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.GATSBY_SUPABASE_ANON_KEY }}
           PUBLIC_UTTERANCES_REPO: ${{ secrets.GATSBY_UTTERANCES_REPO }}
+          PUBLIC_ADSENSE_CLIENT: ${{ secrets.GATSBY_ADSENSE_CLIENT }}
+          PUBLIC_ADSENSE_SLOT: ${{ secrets.GATSBY_ADSENSE_SLOT }}
         run: |
           cd my_blog
           npm run build

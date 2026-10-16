@@ -1,0 +1,61 @@
+---
+interface Props {
+  placement: 'feed' | 'card' | 'article-rail' | 'article-mobile'
+  label?: string
+}
+
+const { placement, label = 'ADVERTISEMENT' } = Astro.props
+const client = import.meta.env.PUBLIC_ADSENSE_CLIENT || import.meta.env.GATSBY_ADSENSE_CLIENT || 'ca-pub-3398641306673607'
+const slot = import.meta.env.PUBLIC_ADSENSE_SLOT || import.meta.env.GATSBY_ADSENSE_SLOT || '2123128311'
+const enabled = import.meta.env.PROD && Boolean(client && slot)
+---
+<aside class:list={['ad-placement', `ad-placement-${placement}`]} aria-label="광고">
+  <span class="ad-label">{label}</span>
+  {enabled ? (
+    <ins
+      class="adsbygoogle"
+      data-ad-client={client}
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+  ) : (
+    <div class="ad-preview" aria-hidden="true">배포 환경에서 광고가 표시됩니다.</div>
+  )}
+</aside>
+
+<script>
+  const initializeVisibleAds = () => {
+    const ads = document.querySelectorAll<HTMLElement>('.ad-placement .adsbygoogle:not([data-ad-initialized])')
+    if (!ads.length) return
+
+    const initialize = (ad: HTMLElement) => {
+      const rect = ad.getBoundingClientRect()
+      if (ad.offsetParent === null || rect.width < 120 || rect.height < 50) return
+      ad.dataset.adInitialized = 'true'
+      try {
+        const adWindow = window as typeof window & { adsbygoogle?: Record<string, unknown>[] }
+        ;(adWindow.adsbygoogle = adWindow.adsbygoogle || []).push({})
+      } catch {
+        delete ad.dataset.adInitialized
+      }
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      ads.forEach(initialize)
+      return
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return
+        initialize(entry.target as HTMLElement)
+        if ((entry.target as HTMLElement).dataset.adInitialized) observer.unobserve(entry.target)
+      })
+    }, { rootMargin: '300px 0px' })
+    ads.forEach(ad => observer.observe(ad))
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeVisibleAds, { once: true })
+  else initializeVisibleAds()
+</script>
