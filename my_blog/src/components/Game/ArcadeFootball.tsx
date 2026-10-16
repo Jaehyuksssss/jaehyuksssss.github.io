@@ -3,7 +3,13 @@ import styled from "@emotion/styled"
 
 type Team = "blue" | "red"
 type Role = "keeper" | "field"
-type Phase = "idle" | "countdown" | "playing" | "goal" | "over"
+type Phase =
+  | "idle"
+  | "orientation"
+  | "countdown"
+  | "playing"
+  | "goal"
+  | "over"
 type SoundKind = "kick" | "pass" | "tackle" | "whistle" | "goal"
 type Difficulty = "neighborhood" | "pro" | "world"
 
@@ -218,6 +224,7 @@ const Record = styled.div`
 `
 
 const GameFrame = styled.div`
+  position: relative;
   overflow: hidden;
   border: 1px solid rgba(26, 39, 67, 0.24);
   border-radius: 22px;
@@ -313,14 +320,44 @@ const Announcement = styled.div<{ kind?: "goal" | "countdown" }>`
   }
 `
 
+const OrientationNotice = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(6, 13, 27, 0.72);
+  color: #ffffff;
+  text-align: center;
+  pointer-events: none;
+
+  strong {
+    display: block;
+    font-size: clamp(18px, 5vw, 28px);
+    font-weight: 950;
+  }
+
+  span {
+    display: block;
+    margin-top: 7px;
+    color: #c8d5e8;
+    font-size: clamp(11px, 3vw, 14px);
+    font-weight: 700;
+  }
+`
+
 const StartOverlay = styled.div`
   position: absolute;
   inset: 0;
+  z-index: 3;
   display: grid;
   place-items: center;
   padding: 18px;
   background: rgba(6, 13, 27, 0.76);
   backdrop-filter: blur(4px);
+  pointer-events: auto;
+  touch-action: manipulation;
 
   @media (max-width: 480px) {
     padding: 6px;
@@ -465,7 +502,7 @@ const StartButton = styled.button`
   }
 `
 
-const TouchPanel = styled.div`
+const TouchPanel = styled.div<{ $visible: boolean }>`
   position: relative;
   z-index: 3;
   display: grid;
@@ -478,10 +515,21 @@ const TouchPanel = styled.div`
   background: linear-gradient(180deg, #121d32 0%, #0d1628 100%);
 
   @media (max-width: 560px) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
     grid-template-columns: 1fr auto;
+    align-items: end;
     gap: 10px;
-    min-height: 122px;
-    padding: 10px 14px;
+    min-height: 150px;
+    padding: 8px 12px 12px;
+    border-top: 0;
+    background: transparent;
+    opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+    pointer-events: none;
+    visibility: ${({ $visible }) => ($visible ? "visible" : "hidden")};
+    transition: opacity 140ms ease;
   }
 `
 
@@ -521,6 +569,22 @@ const Joystick = styled.div`
     width: 1px;
     height: 74px;
   }
+
+  @media (max-width: 560px) {
+    width: 88px;
+    height: 88px;
+    pointer-events: auto;
+
+    &::before {
+      left: 13px;
+      width: 62px;
+    }
+
+    &::after {
+      top: 13px;
+      height: 62px;
+    }
+  }
 `
 
 const JoystickKnob = styled.div<{ x: number; y: number }>`
@@ -539,6 +603,15 @@ const JoystickKnob = styled.div<{ x: number; y: number }>`
     calc(-50% + ${({ y }) => y * 32}px)
   );
   pointer-events: none;
+
+  @media (max-width: 560px) {
+    width: 40px;
+    height: 40px;
+    transform: translate(
+      calc(-50% + ${({ x }) => x * 26}px),
+      calc(-50% + ${({ y }) => y * 26}px)
+    );
+  }
 `
 
 const CenterInfo = styled.div`
@@ -570,6 +643,11 @@ const ActionArea = styled.div`
   display: grid;
   justify-items: end;
   gap: 8px;
+
+  @media (max-width: 560px) {
+    width: 150px;
+    pointer-events: auto;
+  }
 `
 
 const ActionButtons = styled.div`
@@ -579,13 +657,15 @@ const ActionButtons = styled.div`
   gap: 8px;
 
   @media (max-width: 560px) {
-    grid-template-columns: repeat(3, 54px);
-    gap: 6px;
+    position: relative;
+    display: block;
+    width: 150px;
+    height: 120px;
   }
 
   @media (max-width: 380px) {
-    grid-template-columns: repeat(3, 48px);
-    gap: 5px;
+    width: 140px;
+    height: 108px;
   }
 `
 
@@ -645,15 +725,36 @@ const ActionButton = styled.button<{
   }
 
   @media (max-width: 560px) {
+    position: absolute;
     width: ${({ action }) => (action === "shot" ? "60px" : "54px")};
     height: ${({ action }) => (action === "shot" ? "60px" : "54px")};
-    margin-left: ${({ action }) => (action === "shot" ? "-3px" : "0")};
+    top: ${({ action }) => (action === "shot" ? "0" : "auto")};
+    right: ${({ action }) => (action === "pass" ? "auto" : "0")};
+    bottom: ${({ action }) => (action === "shot" ? "auto" : "0")};
+    left: ${({ action }) => (action === "pass" ? "20px" : "auto")};
+    margin-left: 0;
+    border-color: rgba(255, 255, 255, 0.58);
+    background: ${({ action, active }) =>
+      active
+        ? "rgba(255, 159, 67, 0.56)"
+        : action === "pass"
+        ? "rgba(103, 232, 249, 0.38)"
+        : action === "shot"
+        ? "rgba(251, 101, 79, 0.38)"
+        : "rgba(244, 211, 94, 0.38)"};
+    color: #ffffff;
+    box-shadow: 0 4px 0 rgba(5, 13, 28, 0.35),
+      0 6px 12px rgba(0, 0, 0, 0.14);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.72);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     font-size: 9px;
   }
 
   @media (max-width: 380px) {
     width: ${({ action }) => (action === "shot" ? "54px" : "48px")};
     height: ${({ action }) => (action === "shot" ? "54px" : "48px")};
+    left: ${({ action }) => (action === "pass" ? "16px" : "auto")};
   }
 `
 
@@ -1291,8 +1392,15 @@ const ArcadeFootball: React.FC = () => {
   const startMatch = React.useCallback(() => {
     difficultyRef.current = difficulty
     const next = createMatchState()
+    const showOrientationNotice =
+      window.matchMedia("(max-width: 900px) and (orientation: portrait)")
+        .matches
+    const nextPhase: Phase = showOrientationNotice
+      ? "orientation"
+      : "countdown"
+    next.phaseTimeMs = showOrientationNotice ? 2200 : 3000
     stateRef.current = next
-    phaseRef.current = "countdown"
+    phaseRef.current = nextPhase
     kickRequestRef.current = null
     chargingRef.current = false
     keysRef.current.clear()
@@ -1304,9 +1412,9 @@ const ArcadeFootball: React.FC = () => {
     setRedScore(0)
     setTimeLeft(90)
     setCountdown("3")
-    setPhase("countdown")
+    setPhase(nextPhase)
     canvasRef.current?.focus()
-    playSound("whistle")
+    if (!showOrientationNotice) playSound("whistle")
   }, [difficulty, playSound])
 
   const finishMatch = React.useCallback(() => {
@@ -1366,15 +1474,12 @@ const ArcadeFootball: React.FC = () => {
 
   React.useEffect(() => {
     const movementCodes = new Set([
-      "KeyW",
-      "KeyA",
-      "KeyS",
-      "KeyD",
       "ArrowUp",
       "ArrowDown",
       "ArrowLeft",
       "ArrowRight",
     ])
+    const actionCodes = new Set(["KeyA", "KeyS", "KeyD"])
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target
       if (
@@ -1384,11 +1489,13 @@ const ArcadeFootball: React.FC = () => {
       ) {
         return
       }
-      const actionCodes = new Set(["Space", "KeyJ", "KeyK", "KeyL"])
-      if (movementCodes.has(event.code) || actionCodes.has(event.code))
+      if (
+        movementCodes.has(event.code) ||
+        actionCodes.has(event.code) ||
+        event.code === "Space"
+      )
         event.preventDefault()
       if (movementCodes.has(event.code)) keysRef.current.add(event.code)
-      if (!actionCodes.has(event.code) || event.repeat) return
       if (
         (phaseRef.current === "idle" || phaseRef.current === "over") &&
         event.code === "Space"
@@ -1396,19 +1503,20 @@ const ArcadeFootball: React.FC = () => {
         startMatch()
         return
       }
-      if (event.code === "Space" || event.code === "KeyJ")
-        requestAction("pass")
-      if (event.code === "KeyK") startCharge()
-      if (event.code === "KeyL") requestAction("tackle")
+      if (!actionCodes.has(event.code) || event.repeat) return
+      if (event.code === "KeyA") requestAction("tackle")
+      if (event.code === "KeyS") requestAction("pass")
+      if (event.code === "KeyD") startCharge()
     }
     const onKeyUp = (event: KeyboardEvent) => {
       if (
         movementCodes.has(event.code) ||
-        ["Space", "KeyJ", "KeyK", "KeyL"].includes(event.code)
+        actionCodes.has(event.code) ||
+        event.code === "Space"
       )
         event.preventDefault()
       if (movementCodes.has(event.code)) keysRef.current.delete(event.code)
-      if (event.code === "KeyK") stopCharge()
+      if (event.code === "KeyD") stopCharge()
     }
     const onBlur = () => {
       keysRef.current.clear()
@@ -1433,10 +1541,10 @@ const ArcadeFootball: React.FC = () => {
       let x = joystickInputRef.current.x
       let y = joystickInputRef.current.y
       const keys = keysRef.current
-      if (keys.has("KeyA") || keys.has("ArrowLeft")) x -= 1
-      if (keys.has("KeyD") || keys.has("ArrowRight")) x += 1
-      if (keys.has("KeyW") || keys.has("ArrowUp")) y -= 1
-      if (keys.has("KeyS") || keys.has("ArrowDown")) y += 1
+      if (keys.has("ArrowLeft")) x -= 1
+      if (keys.has("ArrowRight")) x += 1
+      if (keys.has("ArrowUp")) y -= 1
+      if (keys.has("ArrowDown")) y += 1
       return normalize(x, y)
     }
 
@@ -2038,7 +2146,17 @@ const ArcadeFootball: React.FC = () => {
       state.flashMs = Math.max(0, state.flashMs - dtMs)
       updateParticles(state, dt, dtMs)
 
-      if (phaseRef.current === "countdown") {
+      if (phaseRef.current === "orientation") {
+        state.phaseTimeMs -= dtMs
+        const rotatedToLandscape = window.innerWidth > window.innerHeight
+        if (state.phaseTimeMs <= 0 || rotatedToLandscape) {
+          state.phaseTimeMs = 3000
+          phaseRef.current = "countdown"
+          setCountdown("3")
+          setPhase("countdown")
+          playSound("whistle")
+        }
+      } else if (phaseRef.current === "countdown") {
         state.phaseTimeMs -= dtMs
         const count = Math.max(1, Math.ceil(state.phaseTimeMs / 1000))
         setCountdown(state.phaseTimeMs > 1100 ? String(count) : "KICK OFF")
@@ -2117,6 +2235,39 @@ const ArcadeFootball: React.FC = () => {
     const limited = length > 1 ? { x: x / length, y: y / length } : { x, y }
     joystickInputRef.current = limited
     setJoystick(limited)
+  }
+
+  const updateCanvasDirection = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current
+    const state = stateRef.current
+    const active = state.players.find(player => player.id === state.activeId)
+    if (!canvas || !active || phaseRef.current !== "playing") return
+    const rect = canvas.getBoundingClientRect()
+    const fieldX = ((clientX - rect.left) / rect.width) * FIELD_WIDTH
+    const fieldY = ((clientY - rect.top) / rect.height) * FIELD_HEIGHT
+    const direction = normalize(fieldX - active.x, fieldY - active.y)
+    joystickInputRef.current = direction
+    setJoystick(direction)
+  }
+
+  const canvasTouchStart = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    const touch = event.touches[0]
+    if (!touch) return
+    event.preventDefault()
+    updateCanvasDirection(touch.clientX, touch.clientY)
+  }
+
+  const canvasTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    const touch = event.touches[0]
+    if (!touch) return
+    event.preventDefault()
+    updateCanvasDirection(touch.clientX, touch.clientY)
+  }
+
+  const canvasTouchEnd = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.preventDefault()
+    joystickInputRef.current = { x: 0, y: 0 }
+    setJoystick({ x: 0, y: 0 })
   }
 
   const joystickDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -2238,6 +2389,10 @@ const ArcadeFootball: React.FC = () => {
             selected={difficulty === level}
             aria-pressed={difficulty === level}
             onClick={() => setDifficulty(level)}
+            onTouchEnd={event => {
+              event.preventDefault()
+              setDifficulty(level)
+            }}
           >
             {DIFFICULTIES[level].label}
           </DifficultyButton>
@@ -2282,10 +2437,18 @@ const ArcadeFootball: React.FC = () => {
             role="img"
             tabIndex={0}
             aria-label={`3대3 축구 경기 화면. 현재 ${blueScore}대 ${redScore}`}
+            onTouchStart={canvasTouchStart}
+            onTouchMove={canvasTouchMove}
+            onTouchEnd={canvasTouchEnd}
+            onTouchCancel={canvasTouchEnd}
           />
           <UtilityButton
             type="button"
             onClick={toggleMuted}
+            onTouchEnd={event => {
+              event.preventDefault()
+              toggleMuted()
+            }}
             aria-label={muted ? "소리 켜기" : "소리 끄기"}
             title={muted ? "소리 켜기" : "소리 끄기"}
           >
@@ -2296,6 +2459,14 @@ const ArcadeFootball: React.FC = () => {
             <Announcement kind="countdown" aria-live="assertive">
               <strong>{countdown}</strong>
             </Announcement>
+          )}
+          {phase === "orientation" && (
+            <OrientationNotice aria-live="polite">
+              <div>
+                <strong>가로 모드를 권장합니다</strong>
+                <span>화면을 가로로 돌리면 조작하기 편합니다.</span>
+              </div>
+            </OrientationNotice>
           )}
           {phase === "goal" && (
             <Announcement kind="goal" aria-live="assertive">
@@ -2314,7 +2485,14 @@ const ArcadeFootball: React.FC = () => {
                       패스, 슛, 태클 버튼을 상황에 맞게 사용하세요.
                     </StartCopy>
                     {difficultySelector}
-                    <StartButton type="button" onClick={startMatch}>
+                    <StartButton
+                      type="button"
+                      onClick={startMatch}
+                      onTouchEnd={event => {
+                        event.preventDefault()
+                        startMatch()
+                      }}
+                    >
                       MATCH START
                     </StartButton>
                   </>
@@ -2327,7 +2505,14 @@ const ArcadeFootball: React.FC = () => {
                       다음 경기는 슛을 반 박자만 빨리 가져가 보세요.
                     </StartCopy>
                     {difficultySelector}
-                    <StartButton type="button" onClick={startMatch}>
+                    <StartButton
+                      type="button"
+                      onClick={startMatch}
+                      onTouchEnd={event => {
+                        event.preventDefault()
+                        startMatch()
+                      }}
+                    >
                       REMATCH
                     </StartButton>
                   </>
@@ -2337,7 +2522,11 @@ const ArcadeFootball: React.FC = () => {
           )}
         </CanvasShell>
 
-        <TouchPanel>
+        <TouchPanel
+          $visible={
+            phase === "playing" || phase === "countdown" || phase === "goal"
+          }
+        >
           <Joystick
             ref={joystickRef}
             role="application"
@@ -2367,7 +2556,7 @@ const ArcadeFootball: React.FC = () => {
                 action="pass"
                 disabled={phase !== "playing"}
                 aria-label="패스"
-                aria-keyshortcuts="J Space"
+                aria-keyshortcuts="S"
                 onPointerDown={event => actionPointerDown("pass", event)}
                 onTouchStart={event => actionTouchStart("pass", event)}
                 onClick={event => actionKeyboardClick("pass", event)}
@@ -2380,7 +2569,7 @@ const ArcadeFootball: React.FC = () => {
                 active={charging}
                 disabled={phase !== "playing"}
                 aria-label="길게 눌러 슛 파워 조절"
-                aria-keyshortcuts="K"
+                aria-keyshortcuts="D"
                 onPointerDown={shotDown}
                 onPointerUp={shotUp}
                 onPointerCancel={shotUp}
@@ -2411,7 +2600,7 @@ const ArcadeFootball: React.FC = () => {
                 action="tackle"
                 disabled={phase !== "playing"}
                 aria-label="태클"
-                aria-keyshortcuts="L"
+                aria-keyshortcuts="A"
                 onPointerDown={event => actionPointerDown("tackle", event)}
                 onTouchStart={event => actionTouchStart("tackle", event)}
                 onClick={event => actionKeyboardClick("tackle", event)}
@@ -2429,8 +2618,8 @@ const ArcadeFootball: React.FC = () => {
       </GameFrame>
 
       <Help>
-        이동: WASD·방향키 또는 조이스틱 · 패스: J·스페이스 · 슛: K를 길게
-        눌렀다 떼기 · 태클: L
+        이동: 방향키 또는 조이스틱 · 태클: A · 패스: S · 슛: D를 길게 눌렀다
+        떼기
       </Help>
     </Wrapper>
   )

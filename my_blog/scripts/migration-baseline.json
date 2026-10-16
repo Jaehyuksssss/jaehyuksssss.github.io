@@ -64,7 +64,7 @@
     "contents/webview/images/webview-thumbnail.png": "6d888b68ac4fbfb9c92595d4e59f3c82b2b1004385655950f67414d299f770c6",
     "contents/webview/webview.md": "3b9408eb3e1c097f817c38cfcd5f7153d66e7eebc60070fe8ef71bbd2eed55fa",
     "src/components/Game/.OmokGame.tsx.swp": "e38e4baad0bbde5058baf9cfe7472323c04da3d788925b310f57d45f956e8e27",
-    "src/components/Game/ArcadeFootball.tsx": "f0ef8dac4083b82ee48533ab26555a961c19006abe5a5beadcf1057dcb1a93d3",
+    "src/components/Game/ArcadeFootball.tsx": "188791a9c162893506eafa154f1bdd16f0766b7eb604cbade7023c2d591e61c3",
     "src/components/Game/BallSlice.tsx": "fee4e782a8cb543a3104023775f4856967f3c0b709e046815b9d9b4deaef76f3",
     "src/components/Game/MicroStorm.tsx": "b9457aaebb64a00364b0c7703efe3f39854ad7c571e9fec6009ca828a6680a9a",
     "src/components/Game/MinimalRunner.tsx": "9741c4655a2d31d5e1cd262dc2c08f531ee585bac04aa767b37e656ac91501c5",
