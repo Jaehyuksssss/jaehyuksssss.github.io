@@ -1,0 +1,5 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro'
+import Feedback from '../../../src/pages/games/feedback'
+---
+<SiteLayout title="게임 피드백" section="games"><div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>Feedback</span></div><Feedback client:only="react"><p slot="fallback" class="game-loading">피드백 게시판을 불러오는 중입니다…</p></Feedback></div></SiteLayout>

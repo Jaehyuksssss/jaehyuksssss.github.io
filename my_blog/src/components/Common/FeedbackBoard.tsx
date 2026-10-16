@@ -3,7 +3,7 @@ import styled from "@emotion/styled"
 import {
   fetchRecentFeedback,
   submitFeedback,
-  PublicFeedback,
+  type PublicFeedback,
 } from "lib/feedbackApi"
 
 const Box = styled.div`

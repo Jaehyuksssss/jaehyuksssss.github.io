@@ -1,0 +1,6 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import MolePage from '../../src/pages/mole'
+import GameLike from '../components/GameLike'
+---
+<SiteLayout title="두더지 잡기" description="라운드마다 더 빨라지는 두더지 잡기" section="games"><div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>두더지 잡기</span></div><MolePage client:only="react"><p slot="fallback" class="game-loading">불러오는 중입니다…</p></MolePage><GameLike slug="mole" name="두더지 잡기" client:visible /><noscript><p>이 페이지는 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 활성화해 주세요.</p></noscript></div></SiteLayout>

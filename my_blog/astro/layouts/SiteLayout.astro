@@ -1,0 +1,102 @@
+---
+import '../styles/global.css'
+import { site } from '../lib/site'
+import Arrow from '../components/Arrow.astro'
+import ViewTracker from '../components/ViewTracker'
+interface Props {
+  title?: string; description?: string; image?: string; section?: string
+  structuredData?: Record<string, unknown>[]; trackSlug?: string; noindex?: boolean
+}
+const { title, description = site.description, image = '/profile-image.png', section = 'writing', structuredData = [], trackSlug, noindex = false } = Astro.props
+const pageTitle = title ? title + ' | ' + site.name : site.name
+const canonical = new URL(Astro.url.pathname, site.url).href
+const imageUrl = new URL(image, site.url).href
+const gtmId = import.meta.env.PUBLIC_GTM_CONTAINER_ID || import.meta.env.GATSBY_GTM_CONTAINER_ID || 'GTM-TSGR8WXK'
+const adsClient = import.meta.env.PUBLIC_ADSENSE_CLIENT || import.meta.env.GATSBY_ADSENSE_CLIENT || 'ca-pub-3398641306673607'
+const schema = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url, inLanguage: 'ko-KR' }, ...structuredData]
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.author} />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:type" content={section === 'post' ? 'article' : 'website'} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="google-adsense-account" content={adsClient} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    <script type="application/ld+json" set:html={JSON.stringify(schema).replaceAll('<', '\\u003c')} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="재혁의 엔지니어링 노트 홈">
+          <img class="brand-mark" src="/favicon.svg" alt="" width="42" height="42" />
+          <span class="brand-name">jaehyuk<span>devops notes</span></span>
+        </a>
+        <nav class="desktop-nav" aria-label="주 메뉴">
+          <a href="/" aria-current={['writing', 'post'].includes(section) ? 'page' : undefined}>Writing</a>
+          <a href="/games/" aria-current={section === 'games' ? 'page' : undefined}>Playground</a>
+          <a href="/about/" aria-current={section === 'about' ? 'page' : undefined}>About</a>
+          <a class="nav-github" href={site.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow size={15} direction="up-right" /></a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="모바일 주 메뉴" hidden>
+        <a href="/">Writing</a><a href="/games/">Playground</a><a href="/about/">About</a><a href={site.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div><a class="footer-brand" href="/" aria-label="재혁의 엔지니어링 노트 홈"><img src="/favicon.svg" alt="" width="28" height="28" />jaehyuk</a><p>임재혁의 기술 블로그</p></div>
+        <div class="footer-links"><a href="/about/">소개</a><a href="/contact/">문의</a><a href="/privacy/">개인정보처리방침</a><a href="/terms/">이용약관</a></div>
+        <p class="copyright">© {new Date().getFullYear()} {site.author}<span>Built with Astro</span></p>
+      </div>
+    </footer>
+    {trackSlug && <ViewTracker client:idle slug={trackSlug} />}
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')
+      const menu = document.querySelector<HTMLElement>('#mobile-nav')
+      toggle?.addEventListener('click', () => {
+        if (!menu) return
+        const open = toggle.getAttribute('aria-expanded') !== 'true'
+        toggle.setAttribute('aria-expanded', String(open))
+        toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기')
+        menu.hidden = !open
+      })
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && menu && toggle && !menu.hidden) {
+          menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', '메뉴 열기'); toggle.focus()
+        }
+      })
+    </script>
+    <script is:inline define:vars={{ gtmId, enabled: import.meta.env.PROD }}>
+      if (enabled && !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && gtmId) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+        const script = document.createElement('script');
+        script.async = true; script.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(gtmId);
+        document.head.appendChild(script);
+      }
+    </script>
+  </body>
+</html>

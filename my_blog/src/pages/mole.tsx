@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { navigate } from "gatsby"
+import { navigate } from "lib/navigation"
 import Template from "components/Common/Template"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 import MoleGame from "components/Game/MoleGame"

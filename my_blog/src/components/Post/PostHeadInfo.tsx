@@ -1,10 +1,8 @@
-import React, { FunctionComponent } from "react"
+import { type FunctionComponent } from "react"
 import styled from "@emotion/styled"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 import useGTMViewCount from "hooks/useGTMViewCount"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
-import { navigate } from "gatsby"
+import { navigate } from "lib/navigation"
 
 export type PostHeadInfoProps = {
   title: string
@@ -122,8 +120,8 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
 
   return (
     <PostHeadInfoWrapper>
-   <PrevPageIcon onClick={() => navigate('/')}>
-        <FontAwesomeIcon icon={faArrowLeft} />
+      <PrevPageIcon onClick={() => navigate('/')} aria-label="목록으로 돌아가기">
+        <span aria-hidden="true">←</span>
       </PrevPageIcon>
       <Title>{title}</Title>
       <PostData>

@@ -1,25 +1,6 @@
 import React from "react"
-import styled from "@emotion/styled"
 import Template from "components/Common/Template"
-import GoogleAdSense from "components/Common/GoogleAdSense"
 import FeedbackBoard from "components/Common/FeedbackBoard"
-
-const MobileAdContainer = styled.div`
-  display: none;
-  padding: 8px 16px 0;
-  @media (max-width: 768px) {
-    display: block;
-    .adsbygoogle {
-      max-width: 100% !important;
-      max-height: 100px !important;
-      overflow: hidden !important;
-    }
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
-  }
-`
 
 const GamesFeedbackPage: React.FC = () => {
   return (

@@ -1,0 +1,16 @@
+---
+import { postHref, dateLabel, type Post } from '../lib/posts'
+import PostVisual from './PostVisual.astro'
+interface Props { post: Post; variant?: 'lead' | 'featured' | 'compact' }
+const { post, variant = 'compact' } = Astro.props
+const tags = post.data.categories.filter(category => category !== 'TIL').slice(0, 3)
+---
+<article class:list={['post-card', 'card-' + variant]}>
+  <a class="card-image-link" href={postHref(post)} tabindex="-1" aria-hidden="true"><PostVisual post={post} large={variant === 'lead'} eager={variant === 'lead'} /></a>
+  <div class="card-copy">
+    <div class="card-date"><time datetime={post.data.date.toISOString()}>{dateLabel(post.data.date)}</time><span>FIELD NOTES</span></div>
+    <h3><a href={postHref(post)}>{post.data.title}</a></h3>
+    {variant !== 'compact' && <p class="card-summary">{post.data.summary}</p>}
+    <div class="tag-list">{tags.map(tag => <a href={'/articles/?category=' + encodeURIComponent(tag)}>{tag}</a>)}</div>
+  </div>
+</article>

@@ -1,0 +1,5 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import { site } from '../lib/site'
+---
+<SiteLayout title="블로그 정보" section="about"><article class="simple-page"><p class="eyebrow">SITE INFORMATION</p><h1>{site.name}</h1><p>{site.description}</p><p>작성자: {site.author}</p><p><a href="/about/">더 자세한 소개 →</a></p></article></SiteLayout>

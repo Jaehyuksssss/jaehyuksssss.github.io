@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import styled from "@emotion/styled"
-import { navigate } from "gatsby"
+import { navigate } from "lib/navigation"
 
 type Props = {
   to?: string
@@ -298,7 +298,7 @@ const FloatingGameButton: React.FC<Props> = ({
       }
     }
 
-    const end = (clientX?: number, clientY?: number) => {
+    const end = () => {
       if (!draggingRef.current) return
       draggingRef.current = false
       setDragging(false)
@@ -314,7 +314,7 @@ const FloatingGameButton: React.FC<Props> = ({
 
     const onMouseDown = (e: MouseEvent) => begin(e.clientX, e.clientY)
     const onMouseMove = (e: MouseEvent) => move(e.clientX, e.clientY)
-    const onMouseUp = (e: MouseEvent) => end(e.clientX, e.clientY)
+    const onMouseUp = () => end()
     const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0]
       if (t) begin(t.clientX, t.clientY)

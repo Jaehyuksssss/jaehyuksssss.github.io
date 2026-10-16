@@ -1,14 +1,19 @@
-import React, { FunctionComponent } from "react"
+import { type FunctionComponent } from "react"
 import styled from "@emotion/styled"
-import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
 
 type ProfileImageProps = {
-  profileImage: IGatsbyImageData
+  profileImage: ProfileImageSource
 }
 
-const ProfileImageWrapper = styled(GatsbyImage)`
+export type ProfileImageSource = string | {
+  images?: { fallback?: { src?: string } }
+}
+
+const ProfileImageWrapper = styled.img`
+  display: block;
   width: 120px;
   height: 120px;
+  object-fit: cover;
   margin-bottom: 30px;
   border-radius: 50%;
 
@@ -21,10 +26,12 @@ const ProfileImageWrapper = styled(GatsbyImage)`
 const ProfileImage: FunctionComponent<ProfileImageProps> = function ({
   profileImage,
 }) {
+  const src = typeof profileImage === "string"
+    ? profileImage
+    : profileImage.images?.fallback?.src || "/profile-image.png"
+
   return (
-    <>
-      <ProfileImageWrapper image={profileImage} alt="Profile Image" />
-    </>
+    <ProfileImageWrapper src={src} alt="임재혁" />
   )
 }
 

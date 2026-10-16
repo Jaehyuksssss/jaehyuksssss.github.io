@@ -1,11 +1,10 @@
-import React, { FunctionComponent } from "react"
+import { type FunctionComponent } from "react"
 import styled from "@emotion/styled"
-import { IGatsbyImageData } from "gatsby-plugin-image"
-import ProfileImage from "components/Main/ProfileImage"
+import ProfileImage, { type ProfileImageSource } from "components/Main/ProfileImage"
 import useSupabaseTotalViews from "hooks/useSupabaseTotalViews"
 
 type IntroductionProps = {
-  profileImage?: IGatsbyImageData
+  profileImage?: ProfileImageSource
 }
 
 const Background = styled.div`

@@ -1,0 +1,11 @@
+---
+import { thumbnail, type Post } from '../lib/posts'
+interface Props { post: Post; large?: boolean; eager?: boolean }
+const { post, large = false, eager = false } = Astro.props
+const category = post.id.split('/')[0].toLowerCase()
+---
+<div class:list={['post-visual', 'visual-' + category, { 'visual-large': large }]}>
+  {large && <div class="visual-caption"><span>FROM THE FIELD</span><span>{post.data.categories.filter(c => c !== 'TIL').slice(0, 2).join(' / ')}</span></div>}
+  <img src={thumbnail(post)} alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" width="640" height="360" />
+  {large && <span class="visual-corner" aria-hidden="true">↗</span>}
+</div>

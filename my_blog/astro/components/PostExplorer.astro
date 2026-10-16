@@ -1,0 +1,87 @@
+---
+import type { Post } from '../lib/posts'
+import PostCard from './PostCard.astro'
+import Arrow from './Arrow.astro'
+interface Props { posts: Post[]; archive?: boolean }
+const { posts, archive = false } = Astro.props
+const featuredIds = ['next/jenkins-nextjs-glibc-swc', 'jenkins/jenkins-agent-pipeline', 'aws/aws-core-infra-terms']
+const featured = featuredIds.map(id => posts.find(post => post.id === id)).filter((post): post is Post => Boolean(post))
+const categories = [...new Set(posts.flatMap(post => post.data.categories))].filter(c => c !== 'TIL').sort()
+---
+<div data-post-explorer data-archive={String(archive)}>
+  <div class="explorer-toolbar">
+    <nav class="topic-tabs" aria-label="글 분류">
+      <a href="/articles/" data-topic="All" aria-current="page">ALL POSTS</a>
+      <a href="/articles/?category=Infrastructure" data-topic="Infrastructure">INFRASTRUCTURE</a>
+      <a href="/games/" class="playground-tab">PLAYGROUND <Arrow size={17} /></a>
+    </nav>
+    <form class="search-form" action="/articles/" role="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg>
+      <label class="sr-only" for="post-search">글 검색</label>
+      <input id="post-search" name="q" type="search" placeholder="제목이나 키워드로 검색" autocomplete="off" />
+      <kbd aria-hidden="true">/</kbd>
+    </form>
+  </div>
+  {archive && <div class="archive-filters"><label for="category-select">주제별로 보기</label><select id="category-select"><option value="All">전체 주제</option><option value="Infrastructure">Infrastructure</option>{categories.map(c => <option value={c}>{c}</option>)}</select></div>}
+  {!archive && featured.length >= 3 && <section class="featured-section" aria-labelledby="featured-title" data-featured>
+    <div class="section-heading"><h2 id="featured-title">Featured Articles<span class="accent-dot">.</span></h2></div>
+    <div class="featured-grid"><PostCard post={featured[0]} variant="lead" /><div class="featured-side">{featured.slice(1).map(post => <PostCard post={post} variant="featured" />)}</div></div>
+  </section>}
+  <section class="latest-section" aria-labelledby="latest-title">
+    <div class="section-heading"><h2 id="latest-title">{archive ? 'All Articles' : 'Latest Articles'}<span class="accent-dot">.</span></h2><span class="result-count" aria-live="polite" data-result-count>{posts.length}개의 글</span></div>
+    <div class="article-grid">
+      {posts.map((post, index) => <div class="article-item" data-post-item data-index={index} data-categories={JSON.stringify(post.data.categories)} data-search={[post.data.title, post.data.summary, ...post.data.categories].join(' ').toLowerCase()} hidden={!archive && index >= 8}><PostCard post={post} /></div>)}
+    </div>
+    <div class="search-empty" data-search-empty hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3>검색 결과가 없습니다.</h3><p>다른 검색어나 주제로 다시 찾아보세요.</p><button type="button" class="text-button" data-clear-search>검색 조건 초기화 <Arrow size={16} /></button></div>
+    {!archive && <div class="section-action" data-view-all><a class="button button-dark" href="/articles/">모든 글 보기 <Arrow /></a></div>}
+  </section>
+</div>
+<script>
+  import { matchesCategory } from '../lib/filter'
+  const explorer = document.querySelector<HTMLElement>('[data-post-explorer]')
+  if (explorer) {
+    const archive = explorer.dataset.archive === 'true'
+    const input = explorer.querySelector<HTMLInputElement>('#post-search')!
+    const select = explorer.querySelector<HTMLSelectElement>('#category-select')
+    const items = Array.from(explorer.querySelectorAll<HTMLElement>('[data-post-item]'))
+    const tabs = Array.from(explorer.querySelectorAll<HTMLAnchorElement>('[data-topic]'))
+    const featured = explorer.querySelector<HTMLElement>('[data-featured]')
+    const viewAll = explorer.querySelector<HTMLElement>('[data-view-all]')
+    let category = 'All'
+    function render(updateUrl = false) {
+      const query = input.value.trim().toLowerCase()
+      const filtering = query.length > 0 || category !== 'All'
+      let matches = 0
+      items.forEach(item => {
+        const tags: string[] = JSON.parse(item.dataset.categories || '[]')
+        const match = matchesCategory(tags, category) && (item.dataset.search || '').includes(query)
+        item.hidden = !match || (!archive && !filtering && Number(item.dataset.index) >= 8)
+        if (match) matches++
+      })
+      tabs.forEach(tab => { if (tab.dataset.topic === category) tab.setAttribute('aria-current', 'page'); else tab.removeAttribute('aria-current') })
+      if (select) select.value = category
+      if (featured) featured.hidden = filtering
+      if (viewAll) viewAll.hidden = filtering
+      explorer!.querySelector<HTMLElement>('[data-search-empty]')!.hidden = matches > 0
+      explorer!.querySelector<HTMLElement>('[data-result-count]')!.textContent = filtering ? matches + '개의 검색 결과' : matches + '개의 글'
+      if (updateUrl) {
+        const url = new URL(location.href)
+        if (category === 'All') url.searchParams.delete('category'); else url.searchParams.set('category', category)
+        if (input.value.trim()) url.searchParams.set('q', input.value.trim()); else url.searchParams.delete('q')
+        history.replaceState(null, '', url)
+      }
+    }
+    function restore() { const params = new URLSearchParams(location.search); category = params.get('category') || 'All'; input.value = params.get('q') || ''; render() }
+    input.addEventListener('input', () => render(true))
+    input.form?.addEventListener('submit', event => { event.preventDefault(); render(true) })
+    select?.addEventListener('change', () => { category = select.value; render(true) })
+    tabs.forEach(tab => tab.addEventListener('click', event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); category = tab.dataset.topic || 'All'; render(true) }))
+    explorer.querySelector('[data-clear-search]')?.addEventListener('click', () => { category = 'All'; input.value = ''; render(true); input.focus() })
+    window.addEventListener('popstate', restore)
+    document.addEventListener('keydown', event => {
+      const target = event.target as HTMLElement | null
+      if (event.key === '/' && !event.ctrlKey && !event.metaKey && !target?.matches('input, textarea, select, [contenteditable="true"]')) { event.preventDefault(); input.focus() }
+    })
+    restore()
+  }
+</script>

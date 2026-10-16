@@ -1,0 +1,6 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import FootballPage from '../../src/pages/football'
+import GameLike from '../components/GameLike'
+---
+<SiteLayout title="THREE ON THREE" description="90초 3대3 스트리트 풋볼" section="games"><div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>THREE ON THREE</span></div><FootballPage client:only="react"><p slot="fallback" class="game-loading">불러오는 중입니다…</p></FootballPage><GameLike slug="football" name="THREE ON THREE" client:visible /><noscript><p>이 페이지는 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 활성화해 주세요.</p></noscript></div></SiteLayout>

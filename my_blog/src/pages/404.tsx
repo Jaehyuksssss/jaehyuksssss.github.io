@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from 'react'
+import { type FunctionComponent, useEffect, useRef } from 'react'
 import GlobalStyle from 'components/Common/GlobalStyle'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'

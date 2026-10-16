@@ -60,6 +60,13 @@ typings/
 .cache/
 public
 
+# Astro build and local verification
+.astro/
+dist/
+.sites-runtime/
+.verification/
+!.env.example
+
 # Mac files
 .DS_Store
 

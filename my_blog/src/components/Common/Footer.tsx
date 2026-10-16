@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import type { FunctionComponent } from "react"
 import styled from "@emotion/styled"
 
 const FooterWrapper = styled.footer`

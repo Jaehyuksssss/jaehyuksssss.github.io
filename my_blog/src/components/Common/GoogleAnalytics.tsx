@@ -1,5 +1,4 @@
 import React from 'react'
-import { Helmet } from 'react-helmet'
 
 interface GoogleAnalyticsProps {
   trackingId: string
@@ -7,13 +6,12 @@ interface GoogleAnalyticsProps {
 
 const GoogleAnalytics: React.FC<GoogleAnalyticsProps> = ({ trackingId }) => {
   return (
-    <Helmet>
+    <>
       <script
         async
         src={`https://www.googletagmanager.com/gtag/js?id=${trackingId}`}
       />
-      <script>
-        {`
+      <script dangerouslySetInnerHTML={{ __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -21,9 +19,8 @@ const GoogleAnalytics: React.FC<GoogleAnalyticsProps> = ({ trackingId }) => {
             page_title: document.title,
             page_location: window.location.href,
           });
-        `}
-      </script>
-    </Helmet>
+        ` }} />
+    </>
   )
 }
 

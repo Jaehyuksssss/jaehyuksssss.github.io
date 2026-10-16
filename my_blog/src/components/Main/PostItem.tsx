@@ -1,12 +1,10 @@
-import React, { FunctionComponent } from 'react'
+import { type FunctionComponent } from 'react'
 import styled from '@emotion/styled'
-import { Link } from 'gatsby'
-import { GatsbyImage } from 'gatsby-plugin-image'
-import { PostFrontmatterType } from 'types/PostItem.types'
+import { type PostFrontmatterType } from '../../types/PostItem.types'
 
 type PostItemProps = PostFrontmatterType & { link: string }
 
-const PostItemWrapper = styled(Link)`
+const PostItemWrapper = styled.a`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
@@ -19,7 +17,8 @@ const PostItemWrapper = styled(Link)`
   }
 `
 
-const ThumbnailImage = styled(GatsbyImage)`
+const ThumbnailImage = styled.img`
+  display: block;
   width: 100%;
   height: 200px;
   border-radius: 10px 10px 0 0;
@@ -88,10 +87,6 @@ const PostItem: FunctionComponent<PostItemProps> = function ({
   thumbnail,
   link,
 }) {
-  // thumbnail이 문자열인 경우 처리
-  const isThumbnailString = typeof thumbnail === 'string';
-  const gatsbyImageData = !isThumbnailString ? thumbnail?.childImageSharp?.gatsbyImageData : null;
-  
   // Drop legacy /blog prefix left over from the old subdirectory deployment
   const getThumbnailSrc = (thumb: string) => {
     if (thumb?.startsWith('/blog/')) {
@@ -99,14 +94,13 @@ const PostItem: FunctionComponent<PostItemProps> = function ({
     }
     return thumb;
   };
-  
+  const thumbnailSrc = typeof thumbnail === 'string'
+    ? getThumbnailSrc(thumbnail)
+    : thumbnail?.publicURL || thumbnail?.childImageSharp?.gatsbyImageData?.images?.fallback?.src
+
   return (
-    <PostItemWrapper to={link}>
-      {gatsbyImageData ? (
-        <ThumbnailImage image={gatsbyImageData} alt="Post Item Image" />
-      ) : isThumbnailString && thumbnail ? (
-        <img src={getThumbnailSrc(thumbnail)} alt="Post Item Image" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-      ) : null}
+    <PostItemWrapper href={link}>
+      {thumbnailSrc && <ThumbnailImage src={thumbnailSrc} alt="" loading="lazy" />}
       <PostItemContent>
         <Title>{title}</Title>
         <Date>{date}</Date>

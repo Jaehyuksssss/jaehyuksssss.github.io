@@ -2,7 +2,7 @@ import React from "react"
 import styled from "@emotion/styled"
 import Template from "components/Common/Template"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
-import { fetchTopOppositeScores, OppositeScore } from "lib/oppositeClickApi"
+import { fetchTopOppositeScores, type OppositeScore } from "lib/oppositeClickApi"
 import OppositeClick from "components/Game/OppositeClick"
 
 const Board = styled.div`

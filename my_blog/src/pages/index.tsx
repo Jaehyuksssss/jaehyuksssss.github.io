@@ -1,38 +1,14 @@
-import React, { FunctionComponent, useMemo } from "react"
+import { useMemo } from "react"
+import type { FunctionComponent } from "react"
 import Introduction from "components/Main/Introduction"
-import CategoryList, { CategoryListProps } from "components/Main/CategoryList"
-import PostList, { PostType } from "components/Main/PostList"
-import GoogleAdSense from "components/Common/GoogleAdSense"
-import { graphql } from "gatsby"
-import { RecoilRoot } from "recoil"
-import { PostListItemType } from "types/PostItem.types"
-import { IGatsbyImageData } from "gatsby-plugin-image"
-import queryString, { ParsedQuery } from "query-string"
+import CategoryList from "components/Main/CategoryList"
+import type { CategoryListProps } from "components/Main/CategoryList"
+import PostList from "components/Main/PostList"
+import { graphql } from "lib/legacyGatsby"
+import type { PostListItemType } from "types/PostItem.types"
+import { type LegacyImageData } from "../types/PostItem.types"
 import Template from "components/Common/Template"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
-import styled from "@emotion/styled"
-
-const MobileAdContainer = styled.div`
-  display: none;
-  padding: 20px;
-
-  @media (max-width: 768px) {
-    display: block;
-
-    /* 모바일 광고 크기 제한 */
-    .adsbygoogle {
-      max-width: 100% !important;
-      max-height: 100px !important;
-      overflow: hidden !important;
-    }
-
-    /* Google AdSense iframe 크기 제한 */
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
-  }
-`
 
 type IndexPageProps = {
   location: {
@@ -51,7 +27,7 @@ type IndexPageProps = {
     }
     file: {
       childImageSharp?: {
-        gatsbyImageData: IGatsbyImageData
+        gatsbyImageData: LegacyImageData
       }
       publicURL: string
     }
@@ -68,11 +44,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
     file,
   },
 }) {
-  const parsed: ParsedQuery<string> = queryString.parse(search)
-  const selectedCategory: string =
-    typeof parsed.category !== "string" || !parsed.category
-      ? "All"
-      : parsed.category
+  const selectedCategory = new URLSearchParams(search).get("category") || "All"
 
   const categoryList = useMemo(
     () =>
@@ -109,7 +81,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
   })
 
   return (
-    <RecoilRoot>
+    <>
       <Template
         title={title}
         description={description}
@@ -126,7 +98,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
         <div style={{ height: "20px" }}></div>
         <PostList selectedCategory={selectedCategory} posts={edges} />
       </Template>
-    </RecoilRoot>
+    </>
   )
 }
 

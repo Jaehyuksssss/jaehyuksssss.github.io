@@ -1,4 +1,6 @@
-import { IGatsbyImageData } from 'gatsby-plugin-image'
+export type LegacyImageData = {
+  images?: { fallback?: { src?: string } }
+}
 
 export type PostFrontmatterType = {
   title: string
@@ -6,10 +8,10 @@ export type PostFrontmatterType = {
   categories: string[]
   summary: string
   thumbnail: {
-    childImageSharp: {
-      gatsbyImageData: IGatsbyImageData
+    childImageSharp?: {
+      gatsbyImageData?: LegacyImageData
     }
-    publicURL: string
+    publicURL?: string
   } | string
 }
 

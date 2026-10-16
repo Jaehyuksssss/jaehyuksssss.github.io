@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react"
+import { externalServicesEnabled } from '../../lib/externalServices'
 
 interface GoogleAdSenseProps {
   adClient: string
@@ -23,6 +24,7 @@ const GoogleAdSense: React.FC<GoogleAdSenseProps> = ({
 
   // 클라이언트 사이드 렌더링 확인
   useEffect(() => {
+    if (!externalServicesEnabled) return
     setIsClient(true)
   }, [])
 

@@ -1,36 +1,35 @@
-import React, { useEffect } from 'react'
+import { type CSSProperties, type FC, useEffect } from 'react'
 
 interface GoogleAdSlotProps {
   slot: string
   format?: string
   layout?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
   responsive?: boolean
 }
 
 // Renders a manual AdSense ad unit. Ensure the head script is loaded
 // via GoogleAdSense and pass your ad unit slot id from AdSense UI.
-const GoogleAdSlot: React.FC<GoogleAdSlotProps> = ({
+const GoogleAdSlot: FC<GoogleAdSlotProps> = ({
   slot,
   format = 'auto',
   layout,
   style,
   responsive = true,
 }) => {
-  const client = process.env.GATSBY_ADSENSE_CLIENT
-  if (!client) return null
+  const client = import.meta.env.PUBLIC_ADSENSE_CLIENT || import.meta.env.GATSBY_ADSENSE_CLIENT
 
   useEffect(() => {
+    if (!client) return
     try {
-      // @ts-ignore - adsbygoogle is injected by the AdSense script
-      ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+      const adsWindow = window as typeof window & { adsbygoogle?: Record<string, unknown>[] }
+      ;(adsWindow.adsbygoogle = adsWindow.adsbygoogle || []).push({})
     } catch (_) {
       // no-op
     }
-  }, [slot])
+  }, [client, slot])
 
-  const dataAttrs: Record<string, string> = {}
-  if (layout) dataAttrs['data-ad-layout'] = layout
+  if (!client) return null
 
   return (
     <ins
@@ -39,11 +38,10 @@ const GoogleAdSlot: React.FC<GoogleAdSlotProps> = ({
       data-ad-client={client}
       data-ad-slot={slot}
       data-ad-format={format}
+      data-ad-layout={layout}
       data-full-width-responsive={responsive ? 'true' : 'false'}
-      {...(dataAttrs as any)}
     />
   )
 }
 
 export default GoogleAdSlot
-

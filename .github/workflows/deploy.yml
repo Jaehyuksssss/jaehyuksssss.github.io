@@ -1,4 +1,4 @@
-name: Deploy Gatsby to GitHub Pages
+name: Deploy Astro to GitHub Pages
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: my_blog/.nvmrc
           cache: npm
           cache-dependency-path: my_blog/package-lock.json
 
@@ -36,26 +36,28 @@ jobs:
       - name: Install dependencies
         run: |
           cd my_blog
-          npm ci --legacy-peer-deps
+          npm ci
 
-      - name: Clean Gatsby cache
+      - name: Validate
         run: |
           cd my_blog
-          npm run clean
+          npm run check
+          npm test
 
       - name: Build
         env:
-          GATSBY_SUPABASE_URL: ${{ secrets.GATSBY_SUPABASE_URL }}
-          GATSBY_SUPABASE_ANON_KEY: ${{ secrets.GATSBY_SUPABASE_ANON_KEY }}
-          GATSBY_UTTERANCES_REPO: ${{ secrets.GATSBY_UTTERANCES_REPO }}
+          PUBLIC_SUPABASE_URL: ${{ secrets.GATSBY_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.GATSBY_SUPABASE_ANON_KEY }}
+          PUBLIC_UTTERANCES_REPO: ${{ secrets.GATSBY_UTTERANCES_REPO }}
         run: |
           cd my_blog
-          GATSBY_PATH_PREFIX=/blog npm run build
+          npm run build
+          npm run test:build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./my_blog/public
+          path: ./my_blog/dist
 
   deploy:
     environment:

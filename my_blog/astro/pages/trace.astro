@@ -1,0 +1,6 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import TracePage from '../../src/pages/trace'
+import GameLike from '../components/GameLike'
+---
+<SiteLayout title="경로 그리기" description="기억한 순서대로 점을 연결하는 게임" section="games"><div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>경로 그리기</span></div><TracePage client:only="react"><p slot="fallback" class="game-loading">불러오는 중입니다…</p></TracePage><GameLike slug="trace" name="경로 그리기" client:visible /><noscript><p>이 페이지는 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 활성화해 주세요.</p></noscript></div></SiteLayout>

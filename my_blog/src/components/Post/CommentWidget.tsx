@@ -1,9 +1,11 @@
-import React, { useRef, FunctionComponent, useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import type { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
+import { externalServicesEnabled } from '../../lib/externalServices'
 
 const src = 'https://utteranc.es/client.js'
 // Allow overriding the repo via env for flexibility
-const repo = process.env.GATSBY_UTTERANCES_REPO || 'Jaehyuksssss/my-Gatsby-blog'
+const repo = import.meta.env.PUBLIC_UTTERANCES_REPO || import.meta.env.GATSBY_UTTERANCES_REPO || 'Jaehyuksssss/my-Gatsby-blog'
 
 type UtterancesAttributesType = {
     src: string
@@ -34,6 +36,10 @@ type UtterancesAttributesType = {
     const scriptRef = useRef<HTMLScriptElement | null>(null)
 
     useEffect(() => {
+      if (!externalServicesEnabled) {
+        setMessage('로컬 미리보기에서는 댓글 서비스를 불러오지 않습니다.')
+        return
+      }
       const root = element.current
       if (!root) return
 

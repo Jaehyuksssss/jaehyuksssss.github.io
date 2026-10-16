@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from "react"
+import { type FunctionComponent } from "react"
 import styled from "@emotion/styled"
 import PostItem from "components/Main/PostItem"
-import { PostListItemType } from "types/PostItem.types"
+import { type PostListItemType } from "../../types/PostItem.types"
 import useInfiniteScroll, {
-  useInfiniteScrollType,
+  type useInfiniteScrollType,
 } from "hooks/useInfiniteScroll"
 
 export type PostType = {

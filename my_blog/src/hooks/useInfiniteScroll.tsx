@@ -1,5 +1,5 @@
-import { MutableRefObject, useState, useEffect, useRef, useMemo } from "react"
-import { PostListItemType } from "types/PostItem.types"
+import { type MutableRefObject, useState, useEffect, useRef, useMemo } from "react"
+import { type PostListItemType } from "../types/PostItem.types"
 
 export type useInfiniteScrollType = {
   containerRef: MutableRefObject<HTMLDivElement | null>
@@ -32,7 +32,7 @@ const useInfiniteScroll = function (
             ? categories.includes(selectedCategory)
             : true
       ),
-    [selectedCategory]
+    [selectedCategory, posts]
   )
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const useInfiniteScroll = function (
     observer.current.observe(
       containerRef.current.children[containerRef.current.children.length - 1]
     )
-  }, [count, selectedCategory])
+  }, [count, selectedCategory, postListByCategory.length])
 
   return {
     containerRef,

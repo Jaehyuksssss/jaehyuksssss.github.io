@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye } from '@fortawesome/free-solid-svg-icons'
 
 interface ViewCountProps {
   count: number
@@ -26,7 +24,10 @@ const ViewCountWrapper = styled.div<{ size: 'small' | 'medium' | 'large' }>`
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 `
 
-const Icon = styled(FontAwesomeIcon)`
+const Icon = styled.svg`
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
   color: #ffffff;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 `
@@ -44,7 +45,9 @@ const ViewCount: React.FC<ViewCountProps> = ({
 }) => {
   return (
     <ViewCountWrapper size={size}>
-      <Icon icon={faEye} size="sm" />
+      <Icon viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5c-5.5 0-9.5 5.2-9.7 5.4a2.5 2.5 0 0 0 0 3.2C2.5 13.8 6.5 19 12 19s9.5-5.2 9.7-5.4a2.5 2.5 0 0 0 0-3.2C21.5 10.2 17.5 5 12 5Zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+      </Icon>
       <Count loading={loading}>
         {loading ? '...' : count.toLocaleString()}
       </Count>

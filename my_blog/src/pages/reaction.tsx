@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { navigate } from "gatsby"
+import { navigate } from "lib/navigation"
 // page back button removed
 import Template from "components/Common/Template"
 import ReactionGame from "components/Game/ReactionGame"

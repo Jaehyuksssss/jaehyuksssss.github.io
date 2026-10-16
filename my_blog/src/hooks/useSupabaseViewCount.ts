@@ -36,7 +36,7 @@ export default function useSupabaseViewCount(
           const until = match ? parseInt(decodeURIComponent(match[1]), 10) : 0
           const now = Date.now()
           if (until && until > now) {
-            if (process.env.NODE_ENV !== "production") {
+            if (import.meta.env.DEV) {
               console.debug("[Views] skip inc (cooldown)", slug)
             }
             return
@@ -55,7 +55,7 @@ export default function useSupabaseViewCount(
           const flagKey = `views:session:${slug}`
           const flag = sessionStorage.getItem(flagKey)
           if (flag) {
-            if (process.env.NODE_ENV !== "production") {
+            if (import.meta.env.DEV) {
               console.debug("[Views] skip inc (session)", slug)
             }
             return
@@ -67,7 +67,7 @@ export default function useSupabaseViewCount(
       setLoading(true)
       setError(null)
       try {
-        if (process.env.NODE_ENV !== "production") {
+        if (import.meta.env.DEV) {
           console.debug("[Views] inc_post_view slug =", slug)
         }
         const { data, error } = await supabase!.rpc("inc_post_view", {
@@ -76,7 +76,7 @@ export default function useSupabaseViewCount(
         if (error) throw error
         if (!cancelled) setCount(Number(data))
       } catch (e: any) {
-        if (process.env.NODE_ENV !== "production") {
+        if (import.meta.env.DEV) {
           console.warn("[Views] inc_post_view error:", e?.message || e)
         }
         if (!cancelled) setError(e?.message || "Failed to increment views")

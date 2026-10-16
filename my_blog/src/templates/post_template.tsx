@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from "react"
-import { graphql } from "gatsby"
+import type { FunctionComponent } from "react"
+import { graphql } from "lib/legacyGatsby"
 import Template from "components/Common/Template"
 import PostHead from "components/Post/PostHead"
 import PostContent from "components/Post/PostContent"

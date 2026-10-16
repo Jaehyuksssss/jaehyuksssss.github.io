@@ -1,0 +1,17 @@
+{
+  "name": "jaehyuk-blog-workspace",
+  "private": true,
+  "engines": { "node": ">=22.19.0" },
+  "scripts": {
+    "dev": "npm --prefix my_blog run dev",
+    "dev:stop": "npm --prefix my_blog run dev:stop",
+    "build": "npm --prefix my_blog run build",
+    "preview": "npm --prefix my_blog run preview",
+    "check": "npm --prefix my_blog run check",
+    "typecheck": "npm --prefix my_blog run typecheck",
+    "test": "npm --prefix my_blog test",
+    "test:build": "npm --prefix my_blog run test:build",
+    "test:snapshot": "npm --prefix my_blog run test:snapshot",
+    "setup": "npm --prefix my_blog ci"
+  }
+}

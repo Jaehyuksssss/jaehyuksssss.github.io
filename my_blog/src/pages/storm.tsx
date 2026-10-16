@@ -3,7 +3,7 @@ import styled from "@emotion/styled"
 import Template from "components/Common/Template"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 import MicroStorm from "components/Game/MicroStorm"
-import { fetchTopStormScores, StormScore } from "lib/stormApi"
+import { fetchTopStormScores, type StormScore } from "lib/stormApi"
 
 const Board = styled.div`
   width: min(560px, 92vw);
@@ -72,4 +72,3 @@ const StormPage: React.FC = () => {
 }
 
 export default StormPage
-

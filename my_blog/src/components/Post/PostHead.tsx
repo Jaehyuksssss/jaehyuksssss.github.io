@@ -1,13 +1,13 @@
-import React, { FunctionComponent } from "react"
+import { type FunctionComponent } from "react"
 import styled from "@emotion/styled"
-import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
+import { type LegacyImageData } from "../../types/PostItem.types"
 import PostHeadInfo from "./PostHeadInfo"
 
 type PostHeadProps = {
   title: string
   date: string
   categories: string[]
-  thumbnail: IGatsbyImageData | string
+  thumbnail: LegacyImageData | string
   postSlug?: string
 }
 
@@ -15,20 +15,6 @@ const PostHeadWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 400px;
-
-  @media (max-width: 768px) {
-    height: 300px;
-  }
-`
-
-const BackgroundImage = styled((props: any) => (
-  <GatsbyImage {...props} style={{ position: 'absolute' }} />
-))`
-  z-index: -1;
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  filter: brightness(0.25);
 
   @media (max-width: 768px) {
     height: 300px;
@@ -55,8 +41,6 @@ const PostHead: FunctionComponent<PostHeadProps> = function ({
   thumbnail,
   postSlug,
 }) {
-  const isThumbnailString = typeof thumbnail === 'string';
-  
   // Drop legacy /blog prefix that was used when the site lived under a subdirectory
   const getThumbnailSrc = (thumb: string) => {
     if (thumb?.startsWith('/blog/')) {
@@ -64,14 +48,13 @@ const PostHead: FunctionComponent<PostHeadProps> = function ({
     }
     return thumb;
   };
-  
+  const thumbnailSrc = typeof thumbnail === 'string'
+    ? getThumbnailSrc(thumbnail)
+    : thumbnail.images?.fallback?.src
+
   return (
     <PostHeadWrapper>
-      {isThumbnailString && thumbnail ? (
-        <BackgroundImageString src={getThumbnailSrc(thumbnail)} alt="thumbnail" />
-      ) : !isThumbnailString && thumbnail ? (
-        <BackgroundImage image={thumbnail} alt="thumbnail" />
-      ) : null}
+      {thumbnailSrc && <BackgroundImageString src={thumbnailSrc} alt="" />}
       <PostHeadInfo 
         title={title} 
         date={date} 

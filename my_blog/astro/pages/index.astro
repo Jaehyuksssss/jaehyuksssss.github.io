@@ -1,0 +1,17 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import PostExplorer from '../components/PostExplorer.astro'
+import Arrow from '../components/Arrow.astro'
+import { allPosts } from '../lib/posts'
+const posts = await allPosts()
+---
+<SiteLayout trackSlug="__home__">
+  <div class="page-container">
+    <section class="page-intro">
+      <div><h1 class="gradient-title">Engineering<span> Notes</span><span class="title-period">.</span></h1><p class="intro-description">안녕하세요, 데브옵스 엔지니어 임재혁입니다.</p></div>
+      <a class="author-link" href="/about/"><img src="/profile-image.png" alt="" width="40" height="40" /><span>임재혁<span>DevOps Engineer</span></span><Arrow size={17} direction="up-right" /></a>
+    </section>
+    <PostExplorer posts={posts} />
+    <aside class="playground-banner"><div><h2>플레시 게임을 해보세요</h2><p>설치 없이 브라우저에서 바로 할 수 있습니다.</p></div><a class="button button-outline" href="/games/">게임 하러 가기 <Arrow /></a></aside>
+  </div>
+</SiteLayout>

@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { Link, navigate } from "gatsby"
+import { Link } from "lib/legacyGatsby"
 import Template from "components/Common/Template"
 import GoogleAdSense from "components/Common/GoogleAdSense"
 // back button removed on this page

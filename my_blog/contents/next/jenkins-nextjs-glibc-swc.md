@@ -1,14 +1,14 @@
 ---
 date: "2026-10-15"
-title: "Jenkins Next.js 빌드의 GLIBC_2.29 오류: OS 업데이트 대신 Webpack으로 우회한 이유"
+title: "Jenkins Next.js 빌드의 GLIBC_2.29 오류 트러블 슈팅"
 categories: ["TIL", "Next", "Jenkins", "CI/CD", "pnpm", "Linux"]
-summary: "폐쇄망 Jenkins에서 turbo 빌드 중 발생한 glibc·SWC 로딩 오류. OS 업데이트를 일정 안에 끝내기 어려워 Webpack으로 우회한 판단과 남은 과제, 함께 발생한 pnpm·Nexus 설치 문제를 정리한다."
+summary: ""
 thumbnail: "/next.png"
 ---
 
-# OS 호스트 버전 업데이트 vs webpack 우회 빌드
+# OS 호스트 버전 업데이트 vs webpack 우회 빌드.. 둘 다 큰일이다..
 
-사내 폐쇄망에서 Jenkins로 Next.js 프론트엔드를 빌드하는 작업이었다. pnpm 기반 모노레포였고, 패키지는 사내 Nexus를 통해 받아오는 구성이었다.
+사내 폐쇄망에서 Jenkins로 Next.js 프론트엔드를 빌드를 해야했다. pnpm 기반 모노레포였고, 패키지는 사내 Nexus를 통해 받아오는 구성이었다.
 
 당시 turbo 명령으로 빌드를 진행하려 했는데 SWC 네이티브 바이너리를 로딩하는 과정에서 glibc 오류가 발생했다. Agent의 OS 업데이트가 필요한 상황이었지만, 주어진 시간 안에 업데이트와 검증까지 끝내기는 어려웠다. 그래서 결국 Webpack으로 우회해 빌드를 진행했다.
 

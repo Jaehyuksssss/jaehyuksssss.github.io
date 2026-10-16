@@ -1,0 +1,6 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import ReactionPage from '../../src/pages/reaction'
+import GameLike from '../components/GameLike'
+---
+<SiteLayout title="반응속도 테스트" description="색이 다른 칸을 빠르게 찾아 클릭" section="games"><div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>반응속도 테스트</span></div><ReactionPage client:only="react"><p slot="fallback" class="game-loading">불러오는 중입니다…</p></ReactionPage><GameLike slug="reaction" name="반응속도 테스트" client:visible /><noscript><p>이 페이지는 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 활성화해 주세요.</p></noscript></div></SiteLayout>

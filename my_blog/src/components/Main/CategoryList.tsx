@@ -1,8 +1,7 @@
-import React, { FunctionComponent, ReactNode, useState, useRef, useEffect } from 'react'
+import React, { type AnchorHTMLAttributes, type FunctionComponent, type ReactNode, useState, useRef, useEffect } from 'react'
 import styled from '@emotion/styled'
-import { Link } from 'gatsby'
 
-export type CategoryListProps = {
+    export type CategoryListProps = {
   selectedCategory: string
   categoryList: {
     [key: string]: number
@@ -31,7 +30,11 @@ type GatsbyLinkProps = {
   children: ReactNode;
   className?: string;
   to: string;
-} & CategoryItemProps
+} & CategoryItemProps & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>
+
+const Link = ({ to, ...props }: Omit<GatsbyLinkProps, 'active'>) => (
+  <a href={to} {...props} />
+)
 
 type SearchResult = {
   title: string

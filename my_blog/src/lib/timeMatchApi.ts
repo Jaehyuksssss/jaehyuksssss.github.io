@@ -2,7 +2,7 @@ import { supabase } from './supabaseClient'
 
 function debugEnabled(): boolean {
   try {
-    if (process.env.NODE_ENV !== 'production') return true
+    if (import.meta.env.DEV) return true
     const sp = new URLSearchParams(window.location.search)
     if (sp.get('debugSupabase') === '1') return true
     if (localStorage.getItem('debug_supabase') === '1') return true
@@ -60,7 +60,7 @@ export async function fetchTopTimeMatchScores(limit = 20): Promise<PublicScore[]
     p_limit: limit,
   })
   if (error) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       // eslint-disable-next-line no-console
       console.error('[Supabase] tm_top_scores error', error)
     }

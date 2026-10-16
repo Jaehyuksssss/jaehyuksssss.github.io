@@ -1,27 +1,8 @@
 import React from "react"
-import styled from "@emotion/styled"
 import Template from "components/Common/Template"
-import GoogleAdSense from "components/Common/GoogleAdSense"
 import BallSlice from "components/Game/BallSlice"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
-import { fetchTopBallSliceScores, SliceScore } from "lib/ballSliceApi"
-
-const MobileAdContainer = styled.div`
-  display: none;
-  padding: 8px 16px 0;
-  @media (max-width: 768px) {
-    display: block;
-    .adsbygoogle {
-      max-width: 100% !important;
-      max-height: 100px !important;
-      overflow: hidden !important;
-    }
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
-  }
-`
+import { fetchTopBallSliceScores, type SliceScore } from "lib/ballSliceApi"
 
 const SlicePage: React.FC = () => {
   useSupabaseViewCount("slice", {

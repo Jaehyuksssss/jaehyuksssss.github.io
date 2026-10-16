@@ -1,0 +1,6 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import OppositePage from '../../src/pages/opposite'
+import GameLike from '../components/GameLike'
+---
+<SiteLayout title="반대로 클릭하기" description="반대말을 빠르게 선택하는 게임" section="games"><div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>반대로 클릭하기</span></div><OppositePage client:only="react"><p slot="fallback" class="game-loading">불러오는 중입니다…</p></OppositePage><GameLike slug="opposite" name="반대로 클릭하기" client:visible /><noscript><p>이 페이지는 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 활성화해 주세요.</p></noscript></div></SiteLayout>

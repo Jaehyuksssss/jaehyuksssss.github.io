@@ -3,7 +3,7 @@ import styled from "@emotion/styled"
 import Template from "components/Common/Template"
 import TimeMatch from "components/Game/TimeMatch"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
-import { fetchTopTimeMatchScores, PublicScore } from "lib/timeMatchApi"
+import { fetchTopTimeMatchScores, type PublicScore } from "lib/timeMatchApi"
 
 const Board = styled.div`
   width: min(560px, 92vw);

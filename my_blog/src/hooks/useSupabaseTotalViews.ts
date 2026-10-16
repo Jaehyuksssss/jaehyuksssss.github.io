@@ -9,6 +9,7 @@ export default function useSupabaseTotalViews() {
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (!supabase) return
+    const client = supabase
 
     let cancelled = false
     async function run() {
@@ -16,13 +17,13 @@ export default function useSupabaseTotalViews() {
       setError(null)
       try {
         // Prefer RPC if available
-        const { data, error } = await supabase.rpc('get_total_views')
+        const { data, error } = await client.rpc('get_total_views')
         if (error) throw error
         if (!cancelled) setTotal(Number(data))
       } catch (eRpc: any) {
         // Fallback: client-side sum if RLS allows select
         try {
-          const { data, error } = await supabase
+          const { data, error } = await client
             .from('post_views')
             .select('view_count')
           if (error) throw error

@@ -1,32 +1,11 @@
 import React from "react"
-import styled from "@emotion/styled"
-import { navigate } from "gatsby"
+import { navigate } from "lib/navigation"
 // page back button removed
 import Template from "components/Common/Template"
 import TraceRunner from "components/Game/TraceRunner"
-import GoogleAdSense from "components/Common/GoogleAdSense"
 import useSupabaseViewCount from "hooks/useSupabaseViewCount"
 
 /* page back button removed */
-
-const MobileAdContainer = styled.div`
-  display: none;
-  padding: 8px 16px 0;
-
-  @media (max-width: 768px) {
-    display: block;
-
-    .adsbygoogle {
-      max-width: 100% !important;
-      overflow: hidden !important;
-    }
-
-    iframe {
-      max-width: 100% !important;
-      max-height: 100px !important;
-    }
-  }
-`
 
 const TracePage: React.FC = () => {
   useSupabaseViewCount("trace", {
