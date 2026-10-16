@@ -49,6 +49,16 @@ test('every game page has its own Supabase like key', () => {
     assert.match(page, new RegExp(`<GameLike slug=["']${game.slug}["']`), `Missing game like: ${game.slug}`)
   }
 })
+test('3-on-3 football exposes separate pass, shot, and tackle controls', () => {
+  const game = readFileSync(new URL('../src/components/Game/ArcadeFootball.tsx', import.meta.url), 'utf8')
+  assert.match(game, /action="pass"/)
+  assert.match(game, /action="shot"/)
+  assert.match(game, /action="tackle"/)
+  assert.match(game, /kind: "pass" \| "shot" \| "tackle"/)
+  assert.match(game, /onTouchStart=\{event => actionTouchStart\("pass", event\)\}/)
+  assert.match(game, /onTouchStart=\{shotTouchStart\}/)
+  assert.match(game, /onTouchStart=\{event => actionTouchStart\("tackle", event\)\}/)
+})
 test('the Astro home page renders the existing Supabase total view counter', () => {
   const home = readFileSync(new URL('../astro/pages/index.astro', import.meta.url), 'utf8')
   assert.match(home, /<TotalViews client:load \/>/)

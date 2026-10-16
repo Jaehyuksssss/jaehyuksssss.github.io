@@ -89,7 +89,7 @@ type MatchState = {
 }
 
 type KickRequest = {
-  kind: "pass" | "shot"
+  kind: "pass" | "shot" | "tackle"
   charge: number
 } | null
 
@@ -466,6 +466,8 @@ const StartButton = styled.button`
 `
 
 const TouchPanel = styled.div`
+  position: relative;
+  z-index: 3;
   display: grid;
   grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
   align-items: center;
@@ -570,27 +572,58 @@ const ActionArea = styled.div`
   gap: 8px;
 `
 
-const KickButton = styled.button<{ charging: boolean }>`
-  width: 102px;
-  height: 102px;
+const ActionButtons = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  align-items: end;
+  gap: 8px;
+
+  @media (max-width: 560px) {
+    grid-template-columns: repeat(3, 54px);
+    gap: 6px;
+  }
+
+  @media (max-width: 380px) {
+    grid-template-columns: repeat(3, 48px);
+    gap: 5px;
+  }
+`
+
+const ActionButton = styled.button<{
+  action: "pass" | "shot" | "tackle"
+  active?: boolean
+}>`
+  width: ${({ action }) => (action === "shot" ? "72px" : "64px")};
+  height: ${({ action }) => (action === "shot" ? "72px" : "64px")};
+  margin-left: ${({ action }) => (action === "shot" ? "-4px" : "0")};
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  background: ${({ charging }) =>
-    charging
-      ? "linear-gradient(145deg, #ffb14a 0%, #ef4444 100%)"
-      : "linear-gradient(145deg, #67e8f9 0%, #3478f6 100%)"};
+  background: ${({ action, active }) =>
+    active
+      ? "#ff9f43"
+      : action === "pass"
+      ? "#67e8f9"
+      : action === "shot"
+      ? "#fb654f"
+      : "#f4d35e"};
   color: #071428;
   cursor: pointer;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 17px;
+  font-size: ${({ action }) => (action === "shot" ? "13px" : "11px")};
   font-weight: 950;
-  box-shadow: ${({ charging }) =>
-    charging
-      ? "inset 0 5px 12px rgba(126, 32, 24, 0.28), 0 0 24px rgba(255, 117, 65, 0.3)"
-      : "0 8px 0 #2059b7, 0 13px 24px rgba(0, 0, 0, 0.32)"};
-  transform: ${({ charging }) =>
-    charging ? "translateY(6px) scale(0.96)" : "none"};
+  letter-spacing: -0.2px;
+  box-shadow: ${({ action, active }) =>
+    active
+      ? "inset 0 5px 12px rgba(126, 32, 24, 0.28), 0 0 20px rgba(255, 117, 65, 0.28)"
+      : action === "pass"
+      ? "0 6px 0 #25879b, 0 10px 20px rgba(0, 0, 0, 0.28)"
+      : action === "shot"
+      ? "0 6px 0 #b6332a, 0 10px 20px rgba(0, 0, 0, 0.28)"
+      : "0 6px 0 #a98518, 0 10px 20px rgba(0, 0, 0, 0.28)"};
+  transform: ${({ active }) =>
+    active ? "translateY(5px) scale(0.96)" : "none"};
   transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+  pointer-events: auto;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -606,10 +639,26 @@ const KickButton = styled.button<{ charging: boolean }>`
     outline: 3px solid #ffffff;
     outline-offset: 3px;
   }
+
+  &:active:not(:disabled) {
+    transform: translateY(5px) scale(0.96);
+  }
+
+  @media (max-width: 560px) {
+    width: ${({ action }) => (action === "shot" ? "60px" : "54px")};
+    height: ${({ action }) => (action === "shot" ? "60px" : "54px")};
+    margin-left: ${({ action }) => (action === "shot" ? "-3px" : "0")};
+    font-size: 9px;
+  }
+
+  @media (max-width: 380px) {
+    width: ${({ action }) => (action === "shot" ? "54px" : "48px")};
+    height: ${({ action }) => (action === "shot" ? "54px" : "48px")};
+  }
 `
 
 const ChargeTrack = styled.div`
-  width: 102px;
+  width: 100%;
   height: 7px;
   overflow: hidden;
   border-radius: 999px;
@@ -620,7 +669,7 @@ const ChargeFill = styled.div<{ charge: number }>`
   width: ${({ charge }) => Math.max(0, Math.min(1, charge)) * 100}%;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #67e8f9 0%, #fde047 62%, #fb5b45 100%);
+  background: #fb654f;
   transition: width 40ms linear;
 `
 
@@ -1212,10 +1261,10 @@ const ArcadeFootball: React.FC = () => {
   const stopCharge = React.useCallback(() => {
     if (!chargingRef.current) return
     const duration = performance.now() - chargeStartedAtRef.current
-    const power = clamp(duration / 900, 0, 1)
+    const power = clamp(Math.max(duration / 900, 0.18), 0, 1)
     if (phaseRef.current === "playing") {
       kickRequestRef.current = {
-        kind: duration < 260 ? "pass" : "shot",
+        kind: "shot",
         charge: power,
       }
     }
@@ -1230,6 +1279,14 @@ const ArcadeFootball: React.FC = () => {
     chargeStartedAtRef.current = performance.now()
     setCharging(true)
   }, [])
+
+  const requestAction = React.useCallback(
+    (kind: "pass" | "tackle") => {
+      if (phaseRef.current !== "playing") return
+      kickRequestRef.current = { kind, charge: 0 }
+    },
+    []
+  )
 
   const startMatch = React.useCallback(() => {
     difficultyRef.current = difficulty
@@ -1327,21 +1384,31 @@ const ArcadeFootball: React.FC = () => {
       ) {
         return
       }
-      if (movementCodes.has(event.code) || event.code === "Space")
+      const actionCodes = new Set(["Space", "KeyJ", "KeyK", "KeyL"])
+      if (movementCodes.has(event.code) || actionCodes.has(event.code))
         event.preventDefault()
       if (movementCodes.has(event.code)) keysRef.current.add(event.code)
-      if (event.code !== "Space" || event.repeat) return
-      if (phaseRef.current === "idle" || phaseRef.current === "over") {
+      if (!actionCodes.has(event.code) || event.repeat) return
+      if (
+        (phaseRef.current === "idle" || phaseRef.current === "over") &&
+        event.code === "Space"
+      ) {
         startMatch()
         return
       }
-      startCharge()
+      if (event.code === "Space" || event.code === "KeyJ")
+        requestAction("pass")
+      if (event.code === "KeyK") startCharge()
+      if (event.code === "KeyL") requestAction("tackle")
     }
     const onKeyUp = (event: KeyboardEvent) => {
-      if (movementCodes.has(event.code) || event.code === "Space")
+      if (
+        movementCodes.has(event.code) ||
+        ["Space", "KeyJ", "KeyK", "KeyL"].includes(event.code)
+      )
         event.preventDefault()
       if (movementCodes.has(event.code)) keysRef.current.delete(event.code)
-      if (event.code === "Space") stopCharge()
+      if (event.code === "KeyK") stopCharge()
     }
     const onBlur = () => {
       keysRef.current.clear()
@@ -1357,7 +1424,7 @@ const ArcadeFootball: React.FC = () => {
       window.removeEventListener("keyup", onKeyUp)
       window.removeEventListener("blur", onBlur)
     }
-  }, [startCharge, startMatch, stopCharge])
+  }, [requestAction, startCharge, startMatch, stopCharge])
 
   React.useEffect(() => {
     let animationFrame = 0
@@ -1495,42 +1562,8 @@ const ArcadeFootball: React.FC = () => {
       const canReachLooseBall =
         state.ball.ownerId === null && distance(active, state.ball) < 38
 
-      if (ownsBall || canReachLooseBall) {
-        if (request.kind === "pass") {
-          const teammate = state.players
-            .filter(
-              player =>
-                player.team === "blue" &&
-                player.id !== active.id &&
-                player.role === "field"
-            )
-            .sort((a, b) => distance(a, active) - distance(b, active))[0]
-          const targetX = teammate
-            ? teammate.x + teammate.vx * 0.28
-            : PITCH.right
-          const targetY = teammate ? teammate.y + teammate.vy * 0.28 : 300
-          kickBall(state, active, targetX, targetY, 455, "pass")
-        } else {
-          const farPostY =
-            active.y < FIELD_HEIGHT / 2
-              ? GOAL.bottom - tuning.shotTargetInset
-              : GOAL.top + tuning.shotTargetInset
-          const manualAimY = clamp(
-            300 + input.y * 124,
-            GOAL.top + tuning.shotTargetInset,
-            GOAL.bottom - tuning.shotTargetInset
-          )
-          const aimY = Math.abs(input.y) > 0.25 ? manualAimY : farPostY
-          kickBall(
-            state,
-            active,
-            956,
-            aimY,
-            (650 + request.charge * 320) * tuning.playerShotMultiplier,
-            "kick"
-          )
-        }
-      } else if (active.tackleCooldownMs <= 0) {
+      if (request.kind === "tackle") {
+        if (ownsBall || active.tackleCooldownMs > 0) return
         const direction =
           Math.abs(input.x) + Math.abs(input.y) > 0.1
             ? input
@@ -1540,7 +1573,44 @@ const ArcadeFootball: React.FC = () => {
         active.vx = direction.x * 390
         active.vy = direction.y * 390
         playSound("tackle")
+        return
       }
+
+      if (!ownsBall && !canReachLooseBall) return
+
+      if (request.kind === "pass") {
+        const teammate = state.players
+          .filter(
+            player =>
+              player.team === "blue" &&
+              player.id !== active.id &&
+              player.role === "field"
+          )
+          .sort((a, b) => distance(a, active) - distance(b, active))[0]
+        const targetX = teammate ? teammate.x + teammate.vx * 0.28 : PITCH.right
+        const targetY = teammate ? teammate.y + teammate.vy * 0.28 : 300
+        kickBall(state, active, targetX, targetY, 455, "pass")
+        return
+      }
+
+      const farPostY =
+        active.y < FIELD_HEIGHT / 2
+          ? GOAL.bottom - tuning.shotTargetInset
+          : GOAL.top + tuning.shotTargetInset
+      const manualAimY = clamp(
+        300 + input.y * 124,
+        GOAL.top + tuning.shotTargetInset,
+        GOAL.bottom - tuning.shotTargetInset
+      )
+      const aimY = Math.abs(input.y) > 0.25 ? manualAimY : farPostY
+      kickBall(
+        state,
+        active,
+        956,
+        aimY,
+        (650 + request.charge * 320) * tuning.playerShotMultiplier,
+        "kick"
+      )
     }
 
     const updatePlayers = (
@@ -2050,6 +2120,7 @@ const ArcadeFootball: React.FC = () => {
   }
 
   const joystickDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return
     event.preventDefault()
     try {
       event.currentTarget.setPointerCapture(event.pointerId)
@@ -2058,12 +2129,14 @@ const ArcadeFootball: React.FC = () => {
   }
 
   const joystickMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return
     if (!event.currentTarget.hasPointerCapture(event.pointerId)) return
     event.preventDefault()
     updateJoystick(event.clientX, event.clientY)
   }
 
   const joystickUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return
     event.preventDefault()
     joystickInputRef.current = { x: 0, y: 0 }
     setJoystick({ x: 0, y: 0 })
@@ -2072,7 +2145,28 @@ const ArcadeFootball: React.FC = () => {
     } catch {}
   }
 
-  const actionDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+  const joystickTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0]
+    if (!touch) return
+    event.preventDefault()
+    updateJoystick(touch.clientX, touch.clientY)
+  }
+
+  const joystickTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0]
+    if (!touch) return
+    event.preventDefault()
+    updateJoystick(touch.clientX, touch.clientY)
+  }
+
+  const joystickTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    joystickInputRef.current = { x: 0, y: 0 }
+    setJoystick({ x: 0, y: 0 })
+  }
+
+  const shotDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === "touch") return
     event.preventDefault()
     try {
       event.currentTarget.setPointerCapture(event.pointerId)
@@ -2080,9 +2174,45 @@ const ArcadeFootball: React.FC = () => {
     startCharge()
   }
 
-  const actionUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+  const shotUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === "touch") return
     event.preventDefault()
     stopCharge()
+  }
+
+  const shotTouchStart = (event: React.TouchEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    startCharge()
+  }
+
+  const shotTouchEnd = (event: React.TouchEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    stopCharge()
+  }
+
+  const actionPointerDown = (
+    kind: "pass" | "tackle",
+    event: React.PointerEvent<HTMLButtonElement>
+  ) => {
+    if (event.pointerType === "touch") return
+    event.preventDefault()
+    requestAction(kind)
+  }
+
+  const actionTouchStart = (
+    kind: "pass" | "tackle",
+    event: React.TouchEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault()
+    requestAction(kind)
+  }
+
+  const actionKeyboardClick = (
+    kind: "pass" | "tackle",
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (event.detail !== 0) return
+    requestAction(kind)
   }
 
   const toggleMuted = () => {
@@ -2181,7 +2311,7 @@ const ArcadeFootball: React.FC = () => {
                     <StartCopy>
                       자동으로 가장 가까운 선수를 조작해요.
                       <br />
-                      짧게 누르면 패스, 길게 눌렀다 떼면 강슛!
+                      패스, 슛, 태클 버튼을 상황에 맞게 사용하세요.
                     </StartCopy>
                     {difficultySelector}
                     <StartButton type="button" onClick={startMatch}>
@@ -2216,6 +2346,10 @@ const ArcadeFootball: React.FC = () => {
             onPointerMove={joystickMove}
             onPointerUp={joystickUp}
             onPointerCancel={joystickUp}
+            onTouchStart={joystickTouchStart}
+            onTouchMove={joystickTouchMove}
+            onTouchEnd={joystickTouchEnd}
+            onTouchCancel={joystickTouchEnd}
             onContextMenu={event => event.preventDefault()}
           >
             <JoystickKnob x={joystick.x} y={joystick.y} />
@@ -2227,18 +2361,64 @@ const ArcadeFootball: React.FC = () => {
           </CenterInfo>
 
           <ActionArea>
-            <KickButton
-              type="button"
-              charging={charging}
-              disabled={phase !== "playing"}
-              aria-label="짧게 누르면 패스, 길게 누르면 슛"
-              onPointerDown={actionDown}
-              onPointerUp={actionUp}
-              onPointerCancel={actionUp}
-              onContextMenu={event => event.preventDefault()}
-            >
-              {charging ? "SHOOT!" : "PASS"}
-            </KickButton>
+            <ActionButtons role="group" aria-label="경기 동작 버튼">
+              <ActionButton
+                type="button"
+                action="pass"
+                disabled={phase !== "playing"}
+                aria-label="패스"
+                aria-keyshortcuts="J Space"
+                onPointerDown={event => actionPointerDown("pass", event)}
+                onTouchStart={event => actionTouchStart("pass", event)}
+                onClick={event => actionKeyboardClick("pass", event)}
+              >
+                PASS
+              </ActionButton>
+              <ActionButton
+                type="button"
+                action="shot"
+                active={charging}
+                disabled={phase !== "playing"}
+                aria-label="길게 눌러 슛 파워 조절"
+                aria-keyshortcuts="K"
+                onPointerDown={shotDown}
+                onPointerUp={shotUp}
+                onPointerCancel={shotUp}
+                onTouchStart={shotTouchStart}
+                onTouchEnd={shotTouchEnd}
+                onTouchCancel={shotTouchEnd}
+                onKeyDown={event => {
+                  if (
+                    (event.key === "Enter" || event.key === " ") &&
+                    !event.repeat
+                  ) {
+                    event.preventDefault()
+                    startCharge()
+                  }
+                }}
+                onKeyUp={event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    stopCharge()
+                  }
+                }}
+                onContextMenu={event => event.preventDefault()}
+              >
+                {charging ? "SHOOT!" : "SHOOT"}
+              </ActionButton>
+              <ActionButton
+                type="button"
+                action="tackle"
+                disabled={phase !== "playing"}
+                aria-label="태클"
+                aria-keyshortcuts="L"
+                onPointerDown={event => actionPointerDown("tackle", event)}
+                onTouchStart={event => actionTouchStart("tackle", event)}
+                onClick={event => actionKeyboardClick("tackle", event)}
+              >
+                TACKLE
+              </ActionButton>
+            </ActionButtons>
             <ChargeTrack
               aria-label={`슛 파워 ${Math.round(charge * 100)}퍼센트`}
             >
@@ -2249,8 +2429,8 @@ const ArcadeFootball: React.FC = () => {
       </GameFrame>
 
       <Help>
-        이동: WASD·방향키 또는 조이스틱 · 패스: 스페이스 짧게 · 슛: 스페이스를
-        길게 눌렀다 떼기 · 공이 없을 때 버튼을 누르면 태클합니다.
+        이동: WASD·방향키 또는 조이스틱 · 패스: J·스페이스 · 슛: K를 길게
+        눌렀다 떼기 · 태클: L
       </Help>
     </Wrapper>
   )
