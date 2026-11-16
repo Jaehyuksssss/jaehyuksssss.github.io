@@ -40,11 +40,12 @@ const schema = [{
       <div class="tag-list">{post.data.categories.filter(c => c !== 'TIL').map(category => <a href={'/articles/?category=' + encodeURIComponent(category)}>{category}</a>)}</div>
       <h1>{post.data.title}</h1><p class="article-deck">{post.data.summary}</p>
       <div class="article-meta"><img src="/profile-image.png" alt="" width="30" height="30"/><span>{site.author}</span><span class="separator"></span><time datetime={post.data.date.toISOString()}>{dateLabel(post.data.date)}</time><span class="separator"></span><span>약 {readingTime(post)}분</span></div>
+      <div id="post-header-like"></div>
     </header>
     <div class="article-reading-grid">
       <div class="article-body"><PostVisual post={post} large eager /><div class="prose"><Content /></div>
         <AdSlot placement="article-mobile" />
-        <PostActions slug={postPath(post)} client:visible />
+        <PostActions slug={postPath(post)} client:load />
         <section aria-labelledby="comments-heading"><h2 class="comments-heading" id="comments-heading">Comments<span class="accent-dot">.</span></h2><CommentWidget client:visible /></section>
         <nav class="post-navigation" aria-label="이전 글과 다음 글">
           {newer && <a href={postHref(newer)}><span>← 더 최근 글</span>{newer.data.title}</a>}
@@ -69,3 +70,7 @@ const schema = [{
     pre.prepend(button)
   })
 </script>
+
+<style>
+  #post-header-like { margin-top: 16px; min-height: 40px; }
+</style>
