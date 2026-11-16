@@ -1,6 +1,6 @@
 ---
 date: "2026-11-16"
-title: "운영 중인 CI/CD를 개선하고 확장한다는 것"
+title: "첫 금융권 CICD 프로젝트를 마치며"
 categories: ["Jenkins", "CI/CD", "DevOps"]
 summary: "금융권 모바일 웹뱅킹 프로젝트에서 기존 Jenkins CI/CD를 확장하며 겪은 빌드 환경, 병렬 실행, 운영 배포에 대한 회고"
 thumbnail: "/images/jenkins/jenkins-pipeline-overview.png"
