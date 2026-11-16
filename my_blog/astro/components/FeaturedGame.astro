@@ -1,0 +1,19 @@
+---
+import type { games } from '../lib/games'
+interface Props { game: (typeof games)[number] }
+const { game } = Astro.props
+const href = '/' + game.slug + '/'
+---
+<article class="post-card card-featured">
+  <a class="card-image-link" href={href} tabindex="-1" aria-hidden="true">
+    <div class="game-cover" style={'--game-bg:' + game.bg + ';--game-ink:' + game.ink}>
+      {game.image ? <img src={game.image} alt="" loading="lazy" width="400" height="200" /> : <span aria-hidden="true">{game.symbol}</span>}
+    </div>
+  </a>
+  <div class="card-copy">
+    <div class="card-date">GAME</div>
+    <h3><a href={href}>{game.name}</a></h3>
+    <p class="card-summary">{game.description}</p>
+    <a class="text-button" href={href}>게임 플레이 →</a>
+  </div>
+</article>

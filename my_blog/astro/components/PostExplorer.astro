@@ -1,12 +1,14 @@
 ---
 import { postPath, type Post } from '../lib/posts'
+import { selectFeatured, selectFeaturedGame } from '../lib/featured'
+import { games } from '../lib/games'
 import PostCard from './PostCard.astro'
+import FeaturedGame from './FeaturedGame.astro'
 import Arrow from './Arrow.astro'
 import AdSlot from './AdSlot.astro'
 interface Props { posts: Post[]; archive?: boolean }
 const { posts, archive = false } = Astro.props
-const featuredIds = ['next/jenkins-nextjs-glibc-swc', 'jenkins/jenkins-agent-pipeline', 'aws/aws-core-infra-terms']
-const featured = featuredIds.map(id => posts.find(post => post.id === id)).filter((post): post is Post => Boolean(post))
+const featured = selectFeatured(posts.map(post => ({ id: post.id, date: post.data.date.getTime(), post }))).map(entry => entry.post)
 const categories = [...new Set(posts.flatMap(post => post.data.categories))].filter(c => c !== 'TIL').sort()
 ---
 <div data-post-explorer data-archive={String(archive)}>
@@ -27,10 +29,12 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
     <div class="archive-filter"><label for="category-select">주제</label><select id="category-select"><option value="All">전체 주제</option><option value="Infrastructure">Infrastructure</option>{categories.map(c => <option value={c}>{c}</option>)}</select></div>
     <div class="archive-filter"><label for="sort-select">정렬</label><select id="sort-select"><option value="latest">최신순</option><option value="likes">좋아요순</option><option value="views">조회순</option></select></div>
   </div>}
-  {!archive && featured.length >= 3 && <section class="featured-section" aria-labelledby="featured-title" data-featured>
+  {!archive && featured.length >= 2 && <section class="featured-section" aria-labelledby="featured-title" data-featured>
     <div class="section-heading"><h2 id="featured-title">Featured Articles<span class="accent-dot">.</span></h2></div>
-    <div class="featured-grid"><PostCard post={featured[0]} variant="lead" /><div class="featured-side">{featured.slice(1).map(post => <PostCard post={post} variant="featured" />)}</div></div>
+    <div class="featured-grid"><PostCard post={featured[0]} variant="lead" /><div class="featured-side">{featured.slice(1).map(post => <PostCard post={post} variant="featured" />)}<FeaturedGame game={selectFeaturedGame(games)!} /></div></div>
   </section>}
+  {!archive && posts.map(post => <template data-featured-card data-id={post.id} data-date={post.data.date.getTime()}><PostCard post={post} variant="featured" /></template>)}
+  {!archive && games.map(game => <template data-featured-game data-slug={game.slug}><FeaturedGame game={game} /></template>)}
   <section class="latest-section" aria-labelledby="latest-title">
     <div class="section-heading"><h2 id="latest-title">{archive ? 'All Articles' : 'Latest Articles'}<span class="accent-dot">.</span></h2><span class="result-count" aria-live="polite" data-result-count>{posts.length}개의 글</span></div>
     <div class="article-grid">
@@ -46,6 +50,8 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
 </div>
 <script>
   import { matchesCategory } from '../lib/filter'
+  import { selectFeatured, selectFeaturedGame } from '../lib/featured'
+import { games } from '../lib/games'
   import { supabase } from '../../src/lib/supabaseClient'
   const explorer = document.querySelector<HTMLElement>('[data-post-explorer]')
   if (explorer) {
@@ -124,33 +130,59 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
     })
     restore()
 
+    function updateFeatured(likes: ReadonlyMap<string, number> = new Map()) {
+      const side = featured?.querySelector('.featured-side')
+      if (!side) return
+      const candidates = Array.from(explorer!.querySelectorAll<HTMLTemplateElement>('[data-featured-card]'))
+        .map(template => ({ id: template.dataset.id!, date: Number(template.dataset.date), template }))
+      const selected = selectFeatured(candidates, likes)
+      const game = selectFeaturedGame(games, likes)
+      const gameTemplate = Array.from(explorer!.querySelectorAll<HTMLTemplateElement>('[data-featured-game]'))
+        .find(template => template.dataset.slug === game?.slug)
+      const cards = selected.slice(1).map(entry => entry.template.content.cloneNode(true))
+      if (gameTemplate) cards.push(gameTemplate.content.cloneNode(true))
+      side.replaceChildren(...cards)
+    }
+    updateFeatured()
+
+    async function loadLikeCounts() {
+      const data: { post_slug: string }[] = []
+      const pageSize = 1000
+      for (let offset = 0; ; offset += pageSize) {
+        const result = await supabase!.from('post_likes').select('post_slug').order('id').range(offset, offset + pageSize - 1)
+        if (result.error) return { data: [], error: result.error }
+        data.push(...result.data)
+        if (result.data.length < pageSize) return { data, error: null }
+      }
+    }
+
     async function loadPostMetrics() {
-      if (!sortSelect) return
-      const likesOption = sortSelect.querySelector<HTMLOptionElement>('option[value="likes"]')!
-      const viewsOption = sortSelect.querySelector<HTMLOptionElement>('option[value="views"]')!
+      if (!sortSelect && !featured) return
+      const likesOption = sortSelect?.querySelector<HTMLOptionElement>('option[value="likes"]')!
+      const viewsOption = sortSelect?.querySelector<HTMLOptionElement>('option[value="views"]')!
       if (!supabase) {
-        likesOption.disabled = true
-        viewsOption.disabled = true
-        sortSelect.title = '현재 환경에서는 좋아요와 조회수 연동이 비활성화되어 있습니다.'
+        if (likesOption) likesOption.disabled = true
+        if (viewsOption) viewsOption.disabled = true
+        if (sortSelect) sortSelect.title = '현재 환경에서는 좋아요와 조회수 연동이 비활성화되어 있습니다.'
         return
       }
 
       const [likesResult, viewsResult] = await Promise.all([
-        supabase.from('post_likes').select('post_slug'),
-        supabase.from('post_views').select('post_slug, view_count'),
+        loadLikeCounts(),
+        archive ? supabase.from('post_views').select('post_slug, view_count') : Promise.resolve({ data: [], error: null }),
       ])
       const likes = new Map<string, number>()
       const views = new Map<string, number>()
 
       if (likesResult.error) {
-        likesOption.disabled = true
+        if (likesOption) likesOption.disabled = true
       } else {
         for (const row of likesResult.data || []) {
           likes.set(row.post_slug, (likes.get(row.post_slug) || 0) + 1)
         }
       }
       if (viewsResult.error) {
-        viewsOption.disabled = true
+        if (viewsOption) viewsOption.disabled = true
       } else {
         for (const row of viewsResult.data || []) {
           views.set(row.post_slug, (views.get(row.post_slug) || 0) + Number(row.view_count || 0))
@@ -162,12 +194,13 @@ const categories = [...new Set(posts.flatMap(post => post.data.categories))].fil
         item.dataset.likes = String(likes.get(slug) || 0)
         item.dataset.views = String(views.get(slug) || 0)
       })
-      if (sortSelect.selectedOptions[0]?.disabled) {
+      updateFeatured(likes)
+      if (sortSelect?.selectedOptions[0]?.disabled) {
         sort = 'latest'
         sortSelect.value = sort
       }
       render()
     }
-    void loadPostMetrics()
+    void loadPostMetrics().catch(error => console.warn('[Posts] Metrics unavailable:', error))
   }
 </script>
