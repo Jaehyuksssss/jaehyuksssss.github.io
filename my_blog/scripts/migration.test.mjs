@@ -82,7 +82,7 @@ test('the article archive can sort posts by Supabase likes and views', () => {
   assert.match(explorer, /<option value="likes">좋아요순<\/option>/)
   assert.match(explorer, /<option value="views">조회순<\/option>/)
   assert.match(explorer, /from\('post_likes'\)\.select\('post_slug'\)/)
-  assert.match(explorer, /from\('post_views'\)\.select\('post_slug, view_count'\)/)
+  assert.match(explorer, /from\('post_views'\)\.select\('slug, view_count'\)/)
   assert.match(explorer, /url\.searchParams\.set\('sort', sort\)/)
 })
 test('the Kubernetes operations lab is server-rendered before hydration', () => {

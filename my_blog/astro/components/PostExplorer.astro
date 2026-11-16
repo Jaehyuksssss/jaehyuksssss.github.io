@@ -169,7 +169,7 @@ import { games } from '../lib/games'
 
       const [likesResult, viewsResult] = await Promise.all([
         loadLikeCounts(),
-        archive ? supabase.from('post_views').select('post_slug, view_count') : Promise.resolve({ data: [], error: null }),
+        supabase.from('post_views').select('slug, view_count'),
       ])
       const likes = new Map<string, number>()
       const views = new Map<string, number>()
@@ -185,7 +185,7 @@ import { games } from '../lib/games'
         if (viewsOption) viewsOption.disabled = true
       } else {
         for (const row of viewsResult.data || []) {
-          views.set(row.post_slug, (views.get(row.post_slug) || 0) + Number(row.view_count || 0))
+          views.set(row.slug, (views.get(row.slug) || 0) + Number(row.view_count || 0))
         }
       }
 
@@ -195,6 +195,13 @@ import { games } from '../lib/games'
         item.dataset.views = String(views.get(slug) || 0)
       })
       updateFeatured(likes)
+      const format = new Intl.NumberFormat('ko-KR')
+      explorer!.querySelectorAll<HTMLElement>('[data-like-count]').forEach(element => {
+        element.textContent = likesResult.error ? '—' : format.format(likes.get(element.dataset.likeCount!) || 0)
+      })
+      explorer!.querySelectorAll<HTMLElement>('[data-view-count]').forEach(element => {
+        element.textContent = viewsResult.error ? '—' : format.format(views.get(element.dataset.viewCount!) || 0)
+      })
       if (sortSelect?.selectedOptions[0]?.disabled) {
         sort = 'latest'
         sortSelect.value = sort

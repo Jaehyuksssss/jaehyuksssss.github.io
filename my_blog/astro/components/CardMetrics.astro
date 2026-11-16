@@ -1,0 +1,11 @@
+---
+interface Props { likeKey: string; viewKey?: string }
+const { likeKey, viewKey } = Astro.props
+---
+<div class="card-metrics">
+  <span>좋아요 <span data-like-count={likeKey}>—</span></span>
+  {viewKey && <span>조회 <span data-view-count={viewKey}>—</span></span>}
+</div>
+<style>
+  .card-metrics { display: flex; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+</style>

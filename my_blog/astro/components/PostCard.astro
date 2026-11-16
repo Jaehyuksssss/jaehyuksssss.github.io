@@ -1,6 +1,7 @@
 ---
-import { postHref, dateLabel, type Post } from '../lib/posts'
+import { postHref, postPath, dateLabel, type Post } from '../lib/posts'
 import PostVisual from './PostVisual.astro'
+import CardMetrics from './CardMetrics.astro'
 interface Props { post: Post; variant?: 'lead' | 'featured' | 'compact' }
 const { post, variant = 'compact' } = Astro.props
 const tags = post.data.categories.filter(category => category !== 'TIL').slice(0, 3)
@@ -12,5 +13,6 @@ const tags = post.data.categories.filter(category => category !== 'TIL').slice(0
     <h3><a href={postHref(post)}>{post.data.title}</a></h3>
     {variant !== 'compact' && <p class="card-summary">{post.data.summary}</p>}
     <div class="tag-list">{tags.map(tag => <a href={'/articles/?category=' + encodeURIComponent(tag)}>{tag}</a>)}</div>
+    <CardMetrics likeKey={postPath(post)} viewKey={postPath(post)} />
   </div>
 </article>

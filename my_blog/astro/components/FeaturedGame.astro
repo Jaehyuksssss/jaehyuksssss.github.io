@@ -1,5 +1,6 @@
 ---
 import type { games } from '../lib/games'
+import CardMetrics from './CardMetrics.astro'
 interface Props { game: (typeof games)[number] }
 const { game } = Astro.props
 const href = '/' + game.slug + '/'
@@ -14,6 +15,7 @@ const href = '/' + game.slug + '/'
     <div class="card-date">GAME</div>
     <h3><a href={href}>{game.name}</a></h3>
     <p class="card-summary">{game.description}</p>
+    <CardMetrics likeKey={"game:" + game.slug} />
     <a class="text-button" href={href}>게임 플레이 →</a>
   </div>
 </article>
