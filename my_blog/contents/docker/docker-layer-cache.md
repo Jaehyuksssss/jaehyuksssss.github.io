@@ -43,7 +43,8 @@ COPY . .
 RUN npm run build
 ```
 
-이 구조에서는 다른 조건이 같을 때 앱 소스만 변경해도 의존성 설치 결과를 재사용할 수 있다. 뒤에 있는 소스 복사와 애플리케이션 빌드는 변경을 반영한다. [Docker 캐시 최적화 문서](https://docs.docker.com/build/cache/optimize/)
+이 구조에서는 다른 조건이 같을 때 앱 소스만 변경해도 의존성 설치 결과를 재사용할 수 있다. 
+뒤에 있는 소스 복사와 애플리케이션 빌드는 변경을 반영한다. [Docker 캐시 최적화 문서](https://docs.docker.com/build/cache/optimize/)
 
 다만 설치 단계에 필요한 입력은 프로젝트마다 다르다. 모노레포의 workspace 설정, 하위 패키지의 manifest, 설치 중 사용하는 패치 파일이나 스크립트도 고려해야 한다. `postinstall`이 소스를 읽는 구조라면 위 예시를 그대로 적용했을 때 설치부터 실패할 수 있다.
 
