@@ -2,7 +2,7 @@
 date: "2026-11-17"
 title: "Docker Layer Cache는 왜 예상대로 동작하지 않을까?"
 categories: ["Docker", "CI/CD", "DevOps"]
-summary: "소스만 바꿨는데 의존성을 다시 설치하거나, 바뀐 파일이 반영되지 않는 이유를 BuildKit의 입력과 의존 관계, 캐시 저장 위치를 따라 정리"
+summary: "docker layer cache에 대해서 아시나요?"
 thumbnail: "/images/docker-logo.png"
 ---
 
