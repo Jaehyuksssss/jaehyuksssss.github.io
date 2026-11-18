@@ -1,4 +1,4 @@
--- BLOCKFALL marathon-v1. Run once in the project's Supabase SQL editor.
+-- 테트리스 marathon-v1. Run once in the project's Supabase SQL editor.
 -- All writes and reads go through the Edge Function. No anon table access.
 begin;
 create table if not exists public.tetris_runs (

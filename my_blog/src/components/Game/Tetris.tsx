@@ -121,10 +121,11 @@ export default function Tetris() {
     }
     const up = (e: KeyboardEvent)=>{input.current.release('key:'+e.code)}
     const visibility = ()=>{if(document.hidden)pause()}
-    window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',pause)
+    const blur = ()=>{clearInput(); if(document.hidden)pause()}
+    window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur)
     document.addEventListener('visibilitychange',visibility)
-    return ()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',pause);document.removeEventListener('visibilitychange',visibility)}
-  },[pause])
+    return ()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility)}
+  },[pause,clearInput])
   useEffect(()=>{
     if(mode!=='countdown')return
     const timer=setTimeout(()=>{if(count>1)setCount(count-1);else{clearInput();changeMode('playing');stage.current?.focus({preventScroll:true})}},650)
@@ -142,7 +143,7 @@ export default function Tetris() {
     const render=(now: number)=>{
       if(modeRef.current==='playing'){
         const elapsed=last?now-last:0
-        if(elapsed>500){pause();accumulator=0}
+        if(elapsed>500){accumulator=0}
         else accumulator+=elapsed
         while(accumulator>=1000/HZ&&modeRef.current==='playing'){
           const mask=input.current.sample()
@@ -199,7 +200,14 @@ export default function Tetris() {
     finally{setSaving(false)}
   }
   const touch=(action:Action,label:string,extra='')=><button type="button" className={'tt-touch '+extra} aria-label={LABELS[action]} disabled={mode!=='playing'}
-    onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);input.current.press('pointer:'+e.pointerId,KEY[action]);inputMethod.current='touch'}}
+    onPointerDown={event=>{
+      if(modeRef.current!=='playing'||event.button!==0)return
+      event.preventDefault()
+      input.current.press('pointer:'+event.pointerId,KEY[action])
+      inputMethod.current='touch'
+      // Capture keeps held controls active if a finger slides off the button.
+      try { event.currentTarget.setPointerCapture?.(event.pointerId) } catch {}
+    }}
     onPointerUp={e=>input.current.release('pointer:'+e.pointerId)} onPointerCancel={e=>input.current.release('pointer:'+e.pointerId)} onLostPointerCapture={e=>input.current.release('pointer:'+e.pointerId)}
     onClick={e=>{if(e.detail===0&&modeRef.current==='playing')input.current.tap(KEY[action])}}>{label}</button>
 
