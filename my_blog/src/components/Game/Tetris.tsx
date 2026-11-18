@@ -86,7 +86,11 @@ export default function Tetris() {
   const [nickname,setNickname] = useState(''), [pending,setPending] = useState<PendingScore[]>([]), pendingRef = useRef<PendingScore[]>([])
   const [saving,setSaving] = useState(false), [saveStatus,setSaveStatus] = useState('')
   const changeMode = useCallback((next: Mode)=>{modeRef.current=next;setMode(next)},[])
-  const clearInput = useCallback(()=>{input.current.clear()},[])
+  const boardTap = useRef<{ id: number; x: number; y: number } | null>(null)
+  const clearInput = useCallback(()=>{
+    input.current.clear()
+    boardTap.current = null
+  },[])
   const refresh = useCallback(async()=>{
     if (!onlineAvailable) {setBoardError('온라인 리더보드가 연결되지 않았습니다. 개인 모드로 플레이할 수 있습니다.');return}
     setLoadingBoard(true);setBoardError('')
@@ -199,6 +203,7 @@ export default function Tetris() {
     }catch(e){setSaveStatus(e instanceof Error?e.message:'저장에 실패했습니다. 기록은 보관되어 있으니 다시 등록해 주세요.')}
     finally{setSaving(false)}
   }
+  const lastControlInput = useRef<Partial<Record<Action, number>>>({})
   const releaseTouches = (event: React.TouchEvent<HTMLButtonElement>) => {
     for (const contact of Array.from(event.changedTouches)) {
       input.current.release('touch:' + contact.identifier)
@@ -210,9 +215,13 @@ export default function Tetris() {
       for (const contact of Array.from(event.changedTouches)) {
         input.current.press('touch:' + contact.identifier, KEY[action])
       }
+      lastControlInput.current[action] = performance.now()
       inputMethod.current = 'touch'
     }}
-    onTouchEnd={releaseTouches}
+    onTouchEnd={event=>{
+      lastControlInput.current[action] = performance.now()
+      releaseTouches(event)
+    }}
     onTouchCancel={releaseTouches}
     onPointerDown={event=>{
       if (event.pointerType === 'touch' || modeRef.current !== 'playing' || event.button !== 0) return
@@ -222,8 +231,18 @@ export default function Tetris() {
       // Capture keeps held controls active if a finger slides off the button.
       try { event.currentTarget.setPointerCapture?.(event.pointerId) } catch {}
     }}
-    onPointerUp={e=>input.current.release('pointer:'+e.pointerId)} onPointerCancel={e=>input.current.release('pointer:'+e.pointerId)} onLostPointerCapture={e=>input.current.release('pointer:'+e.pointerId)}
-    onClick={e=>{if(e.detail===0&&modeRef.current==='playing')input.current.tap(KEY[action])}}>{label}</button>
+    onPointerUp={event=>{
+      if (event.pointerType !== 'touch') lastControlInput.current[action] = performance.now()
+      input.current.release('pointer:'+event.pointerId)
+    }} onPointerCancel={e=>input.current.release('pointer:'+e.pointerId)} onLostPointerCapture={e=>input.current.release('pointer:'+e.pointerId)}
+    onClick={event=>{
+      if (modeRef.current !== 'playing') return
+      // Some embedded browsers deliver only a click for a tap.
+      const last = lastControlInput.current[action]
+      if (event.detail !== 0 && last !== undefined && performance.now() - last < 450) return
+      if (event.detail !== 0) inputMethod.current = 'touch'
+      input.current.tap(KEY[action])
+    }}>{label}</button>
 
   return <section className="tt-app" aria-label="테트리스" data-game-ready={ready}>
     <header className="tt-heading"><div><h1>테트리스</h1><p>블록을 쌓아 빈틈없이 한 줄을 채우세요.</p></div><span className="tt-mode-tag">마라톤</span></header>
@@ -235,10 +254,31 @@ export default function Tetris() {
       </div></div>
       <div className="tt-stage" ref={stage} tabIndex={0} aria-label="게임 영역. 방향키 이동, 위쪽 회전, Space 즉시 낙하, C 보관, Escape 일시정지.">
         <aside className="tt-hold"><h2>보관 <kbd>{prettyKey(keys.hold)}</kbd></h2><Mini kind={stats.hold} muted={stats.held}/><div className="tt-stats"><span>점수</span><strong>{number(stats.score)}</strong><span>레벨</span><b>{String(stats.level).padStart(2,'0')}</b><span>지운 줄</span><b>{stats.lines}</b></div><div className="tt-level-track"><span style={{height:`${(stats.lines%10)*10}%`}}/></div></aside>
-        <div className="tt-board-wrap"><canvas ref={canvas} width="300" height="600" aria-label={`점수 ${stats.score}, 레벨 ${stats.level}, 지운 줄 ${stats.lines}`}/>
+        <div className="tt-board-wrap"><canvas ref={canvas} width="300" height="600"
+          onTouchStart={event=>{
+            const contact = event.changedTouches[0]
+            boardTap.current = modeRef.current === 'playing' && event.targetTouches.length === 1 && contact
+              ? { id: contact.identifier, x: contact.clientX, y: contact.clientY }
+              : null
+          }}
+          onTouchMove={event=>{
+            const tap = boardTap.current
+            const contact = Array.from(event.changedTouches).find(item=>item.identifier === tap?.id)
+            if (tap && contact && Math.hypot(contact.clientX - tap.x, contact.clientY - tap.y) > 12) boardTap.current = null
+          }}
+          onTouchCancel={()=>{boardTap.current = null}}
+          onTouchEnd={event=>{
+            const tap = boardTap.current
+            const contact = Array.from(event.changedTouches).find(item=>item.identifier === tap?.id)
+            if (!tap || !contact) return
+            boardTap.current = null
+            if (modeRef.current !== 'playing' || Math.hypot(contact.clientX - tap.x, contact.clientY - tap.y) > 12) return
+            inputMethod.current = 'touch'
+            input.current.tap(KEY.cw)
+          }} aria-label={`점수 ${stats.score}, 레벨 ${stats.level}, 지운 줄 ${stats.lines}`}/>
           {stats.message&&mode==='playing'&&<div className="tt-clear-message" key={stats.lines}>{stats.message}</div>}
           {mode!=='playing'&&<div className={'tt-overlay '+(mode==='countdown'?'counting':'')}>
-            {mode==='ready'&&<><span className="tt-overlay-icon">▦</span><h2>테트리스</h2><p>10줄을 지울 때마다<br/>레벨과 낙하 속도가 올라갑니다.</p><button className="tt-primary" onClick={()=>void start()} disabled={starting||!ready}>{!ready?'게임 불러오는 중…':starting?'준비 중…':'게임 시작'}</button><small className="tt-start-key-help">← → 이동 · ↑ 회전 · Space 낙하</small><small className="tt-start-touch-help">아래 버튼으로 이동하고 회전하세요.</small></>}
+            {mode==='ready'&&<><span className="tt-overlay-icon">▦</span><h2>테트리스</h2><p>10줄을 지울 때마다<br/>레벨과 낙하 속도가 올라갑니다.</p><button className="tt-primary" onClick={()=>void start()} disabled={starting||!ready}>{!ready?'게임 불러오는 중…':starting?'준비 중…':'게임 시작'}</button><small className="tt-start-key-help">← → 이동 · ↑ 회전 · Space 낙하</small><small className="tt-start-touch-help">아래 버튼으로 이동 · 보드를 탭해 회전</small></>}
             {mode==='countdown'&&<><strong className="tt-count" key={count}>{count}</strong><p>곧 시작합니다</p></>}
             {mode==='paused'&&<><h2>일시정지</h2><p>계속하기를 누르면 이어서 진행합니다.</p><button className="tt-primary" onClick={resume}>계속하기</button></>}
             {mode==='over'&&<><span className="tt-eyebrow">게임 종료</span><h2>{number(stats.score)}</h2><p>지운 줄 {stats.lines} · 레벨 {stats.level}<br/>{stats.score>=best&&stats.score>0?'최고 기록을 갱신했습니다.':`개인 최고 ${number(best)}점`}</p><button className="tt-primary" onClick={()=>void start()} disabled={starting}>{starting?'준비 중…':'다시 하기'}</button><small>{ranked?'리더보드에 기록을 등록할 수 있습니다.':'이 기기에 최고 기록을 저장했습니다.'}</small></>}
