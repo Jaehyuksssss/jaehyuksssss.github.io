@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { load } from 'cheerio'
+import { games as gameCatalog } from '../astro/lib/games.ts'
 
 const project = fileURLToPath(new URL('../', import.meta.url))
 const dist = path.join(project, 'dist')
@@ -50,5 +51,6 @@ const postCount = Object.keys(baseline.files).filter(file => file.startsWith('co
 const renderedPosts = main('[data-post-item]').length
 assert.ok(renderedPosts >= postCount, 'All original posts must be available to search')
 const games = load(readFileSync(path.join(dist, 'games/index.html'), 'utf8'))
-assert.equal(games('.game-card').length, 11, 'All 11 games must remain linked')
-console.log('Verified ' + baseline.routes.length + ' existing routes, ' + pageCount + ' HTML pages, ' + imageCount + ' image references, ' + renderedPosts + ' posts, and 11 games.')
+assert.equal(games('.game-card').length, gameCatalog.length, 'Every game must remain linked')
+for (const game of gameCatalog) assert.ok(existsSync(path.join(dist, game.slug, 'index.html')), 'Missing game route: ' + game.slug)
+console.log('Verified ' + baseline.routes.length + ' existing routes, ' + pageCount + ' HTML pages, ' + imageCount + ' image references, ' + renderedPosts + ' posts, and ' + gameCatalog.length + ' games.')

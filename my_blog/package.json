@@ -16,8 +16,8 @@
     "preview": "node scripts/astro.mjs preview --host 127.0.0.1",
     "serve": "npm run preview",
     "check": "node scripts/astro.mjs check && npm run typecheck",
-    "typecheck": "node scripts/node.mjs node_modules/typescript/bin/tsc --noEmit",
-    "test": "node scripts/node.mjs --test scripts/migration.test.mjs scripts/runtime.test.mjs",
+    "typecheck": "node scripts/node.mjs node_modules/typescript/bin/tsc --noEmit && node scripts/node.mjs node_modules/typescript/bin/tsc -p tsconfig.tetris-server.json",
+    "test": "node scripts/node.mjs --test scripts/migration.test.mjs scripts/runtime.test.mjs scripts/tetris.test.mjs",
     "test:build": "node scripts/node.mjs scripts/verify-build.mjs",
     "test:snapshot": "node scripts/node.mjs scripts/verify-migration-snapshot.mjs"
   },

@@ -1,0 +1,12 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro'
+import Tetris from '../../src/components/Game/Tetris'
+import GameLike from '../components/GameLike'
+---
+<SiteLayout title="BLOCKFALL — 테트리스" description="한 줄씩 비우고 내 기록을 넘어. HOLD, 조작 설정, 모바일 터치와 리더보드를 갖춘 테트리스." section="games">
+  <div class="game-shell"><div class="breadcrumb"><a href="/games/">Playground</a><span>/</span><span>BLOCKFALL</span></div>
+    <Tetris client:load />
+    <GameLike slug="tetris" name="BLOCKFALL" client:visible />
+    <noscript><p>게임을 플레이하려면 브라우저에서 JavaScript를 활성화해 주세요.</p></noscript>
+  </div>
+</SiteLayout>

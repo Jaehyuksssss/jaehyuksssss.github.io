@@ -1,0 +1,3 @@
+[functions.tetris]
+# Guest player tokens are verified by this function. No Supabase Auth login needed.
+verify_jwt = false
