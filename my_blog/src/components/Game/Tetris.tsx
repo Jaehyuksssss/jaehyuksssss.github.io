@@ -199,9 +199,23 @@ export default function Tetris() {
     }catch(e){setSaveStatus(e instanceof Error?e.message:'저장에 실패했습니다. 기록은 보관되어 있으니 다시 등록해 주세요.')}
     finally{setSaving(false)}
   }
+  const releaseTouches = (event: React.TouchEvent<HTMLButtonElement>) => {
+    for (const contact of Array.from(event.changedTouches)) {
+      input.current.release('touch:' + contact.identifier)
+    }
+  }
   const touch=(action:Action,label:string,extra='')=><button type="button" className={'tt-touch '+extra} aria-label={LABELS[action]} disabled={mode!=='playing'}
+    onTouchStart={event=>{
+      if (modeRef.current !== 'playing') return
+      for (const contact of Array.from(event.changedTouches)) {
+        input.current.press('touch:' + contact.identifier, KEY[action])
+      }
+      inputMethod.current = 'touch'
+    }}
+    onTouchEnd={releaseTouches}
+    onTouchCancel={releaseTouches}
     onPointerDown={event=>{
-      if(modeRef.current!=='playing'||event.button!==0)return
+      if (event.pointerType === 'touch' || modeRef.current !== 'playing' || event.button !== 0) return
       event.preventDefault()
       input.current.press('pointer:'+event.pointerId,KEY[action])
       inputMethod.current='touch'
