@@ -1,5 +1,5 @@
 export const games = [
-  { slug: 'tetris', name: 'BLOCKFALL — 테트리스', description: '한 줄씩 비우고 내 기록을 넘어. 조작 설정과 리더보드가 있는 테트리스.', symbol: '▟ ▙', bg: '#17262d', ink: '#b8efcb' },
+  { slug: 'tetris', name: '테트리스', description: '블록을 쌓아 한 줄을 채우세요. 키보드와 모바일 터치를 지원합니다.', symbol: '▟ ▙', bg: '#17262d', ink: '#b8efcb' },
   { slug: 'football', name: 'THREE ON THREE', description: '패스하고 강슛! 90초 3대3 스트리트 풋볼.', image: '/football-og.png', symbol: '3 × 3', bg: '#e8f3e9', ink: '#4e8b60' },
   { slug: 'escape', name: '퇴근 1분 전', description: '상사가 돌아보기 전에 멈춰! 몰래 칼퇴하기.', symbol: '17:59', bg: '#fff0d9', ink: '#c78b35' },
   { slug: 'omok', name: '오목 게임', description: '컴퓨터와 대전하거나 둘이 함께. 난이도와 렌주룰도 선택하세요.', symbol: '● ○ ●', bg: '#f2e8da', ink: '#877158' },

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { cells, createGame, DEFAULT_HANDLING, ghost, HIDDEN, HZ, KEY, KINDS, step, validHandling, type Handling, type Kind, type ReplayEvent, type State } from '../../../supabase/functions/_shared/tetris-engine'
 import { loadLeaderboard, onlineAvailable, startRankedRun, submitRun, type Board, type PendingScore, type Run } from '../../lib/tetrisApi'
 import './tetris.css'
+import { TetrisInput } from '../../lib/tetrisInput'
 
 type Mode = 'ready' | 'countdown' | 'playing' | 'paused' | 'over'
 type Action = keyof typeof KEY
@@ -79,19 +80,21 @@ export default function Tetris() {
   const [sound,setSound] = useState(false), soundRef = useRef(false), audio = useRef<AudioContext|null>(null)
   const [status,setStatus] = useState(''), [ranked,setRanked] = useState(false)
   const run = useRef<Run|null>(null), replay = useRef<ReplayEvent[]>([]), lastMask = useRef(0)
-  const heldKeys = useRef(new Set<string>()), pointers = useRef(new Map<number,Action>()), inputMethod = useRef('keyboard')
-  const [board,setBoard] = useState<Board|null>(null), [boardError,setBoardError] = useState(''), [loadingBoard,setLoadingBoard] = useState(false)
+  const input = useRef(new TetrisInput()), inputMethod = useRef('keyboard')
+  const [ready,setReady] = useState(false)
+  const [board,setBoard] = useState<Board|null>(null), [boardError,setBoardError] = useState(onlineAvailable ? '' : '온라인 리더보드가 연결되지 않았습니다. 개인 모드로 플레이할 수 있습니다.'), [loadingBoard,setLoadingBoard] = useState(false)
   const [nickname,setNickname] = useState(''), [pending,setPending] = useState<PendingScore[]>([]), pendingRef = useRef<PendingScore[]>([])
   const [saving,setSaving] = useState(false), [saveStatus,setSaveStatus] = useState('')
   const changeMode = useCallback((next: Mode)=>{modeRef.current=next;setMode(next)},[])
-  const clearInput = useCallback(()=>{heldKeys.current.clear();pointers.current.clear()},[])
+  const clearInput = useCallback(()=>{input.current.clear()},[])
   const refresh = useCallback(async()=>{
-    if (!onlineAvailable) {setBoardError('이 환경에서는 공개 순위를 연결하지 않았습니다. 개인 최고 기록은 이 기기에 저장됩니다.');return}
+    if (!onlineAvailable) {setBoardError('온라인 리더보드가 연결되지 않았습니다. 개인 모드로 플레이할 수 있습니다.');return}
     setLoadingBoard(true);setBoardError('')
-    try { setBoard(await loadLeaderboard()) } catch { setBoardError('순위를 불러오지 못했습니다. 게임은 계속할 수 있어요.') }
+    try { setBoard(await loadLeaderboard()) } catch (error) { setBoardError(error instanceof Error ? error.message : '순위를 불러오지 못했습니다. 개인 모드로 플레이할 수 있습니다.') }
     finally {setLoadingBoard(false)}
   },[])
   useEffect(()=>{
+    setReady(true)
     const h = read<Handling>('tetris-handling-v1',DEFAULT_HANDLING)
     if (validHandling(h)) {setHandling(h);handlingRef.current=h}
     const k = read<Record<Action,string>>('tetris-keys-v1',DEFAULT_KEYS)
@@ -112,9 +115,11 @@ export default function Tetris() {
       if ((e.target as HTMLElement)?.closest('input,select,textarea,button')) return
       if (e.code==='Escape' && modeRef.current==='playing') { e.preventDefault();pause();return }
       if (modeRef.current!=='playing'||!Object.values(keysRef.current).includes(e.code)) return
-      e.preventDefault();heldKeys.current.add(e.code)
+      e.preventDefault()
+      const action = (Object.keys(KEY) as Action[]).find(a=>keysRef.current[a]===e.code)
+      if(action)input.current.press('key:'+e.code,KEY[action])
     }
-    const up = (e: KeyboardEvent)=>{heldKeys.current.delete(e.code)}
+    const up = (e: KeyboardEvent)=>{input.current.release('key:'+e.code)}
     const visibility = ()=>{if(document.hidden)pause()}
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',pause)
     document.addEventListener('visibilitychange',visibility)
@@ -140,8 +145,7 @@ export default function Tetris() {
         if(elapsed>500){pause();accumulator=0}
         else accumulator+=elapsed
         while(accumulator>=1000/HZ&&modeRef.current==='playing'){
-          let mask=0
-          for(const action of Object.keys(KEY) as Action[]) if(heldKeys.current.has(keysRef.current[action])||[...pointers.current.values()].includes(action))mask|=KEY[action]
+          const mask=input.current.sample()
           const s=game.current
           if(mask!==lastMask.current){replay.current.push([s.tick,mask]);lastMask.current=mask}
           const pieces=s.pieces,lines=s.lines
@@ -177,6 +181,7 @@ export default function Tetris() {
     game.current=createGame(current?.seed??crypto.getRandomValues(new Uint32Array(1))[0])
     replay.current=[];lastMask.current=0;runHandling.current={...handlingRef.current};inputMethod.current='keyboard'
     setCount(3);changeMode('countdown');setStarting(false);stage.current?.focus({preventScroll:true})
+    if(window.matchMedia('(max-width: 600px)').matches)stage.current?.scrollIntoView({block:'start',behavior:'instant'})
   }
   const resume=()=>{setSettings(false);setBinding(null);setCount(3);clearInput();changeMode('countdown')}
   const updateHandling=(key:keyof Handling,value:number)=>{
@@ -194,34 +199,35 @@ export default function Tetris() {
     finally{setSaving(false)}
   }
   const touch=(action:Action,label:string,extra='')=><button type="button" className={'tt-touch '+extra} aria-label={LABELS[action]} disabled={mode!=='playing'}
-    onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);pointers.current.set(e.pointerId,action);inputMethod.current='touch';stage.current?.focus({preventScroll:true})}}
-    onPointerUp={e=>pointers.current.delete(e.pointerId)} onPointerCancel={e=>pointers.current.delete(e.pointerId)} onLostPointerCapture={e=>pointers.current.delete(e.pointerId)}>{label}</button>
+    onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);input.current.press('pointer:'+e.pointerId,KEY[action]);inputMethod.current='touch'}}
+    onPointerUp={e=>input.current.release('pointer:'+e.pointerId)} onPointerCancel={e=>input.current.release('pointer:'+e.pointerId)} onLostPointerCapture={e=>input.current.release('pointer:'+e.pointerId)}
+    onClick={e=>{if(e.detail===0&&modeRef.current==='playing')input.current.tap(KEY[action])}}>{label}</button>
 
-  return <section className="tt-app" aria-label="블록 테트리스">
-    <header className="tt-heading"><div><p className="tt-eyebrow">PLAYGROUND / 12</p><h1>BLOCK<span>FALL.</span></h1><p>한 줄씩 비우고, 내 기록을 넘어.</p></div><span className="tt-mode-tag">MARATHON</span></header>
+  return <section className="tt-app" aria-label="테트리스" data-game-ready={ready}>
+    <header className="tt-heading"><div><h1>테트리스</h1><p>블록을 쌓아 빈틈없이 한 줄을 채우세요.</p></div><span className="tt-mode-tag">마라톤</span></header>
     <div className="tt-layout"><div className="tt-play-column">
-      <div className="tt-toolbar"><span><i className={ranked?'online':''}/>{ranked?'온라인 기록':'개인 기록'} <small>· 최고 {number(best)}</small></span><div>
+      <div className="tt-toolbar"><span><i className={ranked?'online':''}/>{ranked?'온라인 모드':'개인 모드'} <small>· 최고 {number(best)}</small></span><div>
         <button type="button" aria-pressed={sound} onClick={()=>{const next=!sound;setSound(next);soundRef.current=next;write('tetris-sound-v1',next);if(next){try{audio.current??=new AudioContext();void audio.current.resume()}catch{}}}}>{sound?'소리 켜짐':'소리 꺼짐'}</button>
         <button type="button" onClick={()=>{pause();setSettings(v=>!v);setBinding(null)}} aria-expanded={settings}>설정</button>
         <button type="button" onClick={mode==='paused'?resume:pause} disabled={!['playing','paused','countdown'].includes(mode)}>{mode==='paused'?'계속':'일시정지'}</button>
       </div></div>
       <div className="tt-stage" ref={stage} tabIndex={0} aria-label="게임 영역. 방향키 이동, 위쪽 회전, Space 즉시 낙하, C 보관, Escape 일시정지.">
-        <aside className="tt-hold"><h2>HOLD <kbd>{prettyKey(keys.hold)}</kbd></h2><Mini kind={stats.hold} muted={stats.held}/><div className="tt-stats"><span>SCORE</span><strong>{number(stats.score)}</strong><span>LEVEL</span><b>{String(stats.level).padStart(2,'0')}</b><span>LINES</span><b>{stats.lines}</b></div><div className="tt-level-track"><span style={{height:`${(stats.lines%10)*10}%`}}/></div></aside>
+        <aside className="tt-hold"><h2>보관 <kbd>{prettyKey(keys.hold)}</kbd></h2><Mini kind={stats.hold} muted={stats.held}/><div className="tt-stats"><span>점수</span><strong>{number(stats.score)}</strong><span>레벨</span><b>{String(stats.level).padStart(2,'0')}</b><span>지운 줄</span><b>{stats.lines}</b></div><div className="tt-level-track"><span style={{height:`${(stats.lines%10)*10}%`}}/></div></aside>
         <div className="tt-board-wrap"><canvas ref={canvas} width="300" height="600" aria-label={`점수 ${stats.score}, 레벨 ${stats.level}, 지운 줄 ${stats.lines}`}/>
           {stats.message&&mode==='playing'&&<div className="tt-clear-message" key={stats.lines}>{stats.message}</div>}
           {mode!=='playing'&&<div className={'tt-overlay '+(mode==='countdown'?'counting':'')}>
-            {mode==='ready'&&<><span className="tt-overlay-icon">▦</span><h2>Make some space.</h2><p>쌓고, 비우고, 다시 한 줄.<br/>속도는 조금씩 빨라집니다.</p><button className="tt-primary" onClick={()=>void start()} disabled={starting}>{starting?'준비 중…':'게임 시작 ↗'}</button><small>← → 이동 · ↑ 회전 · Space 낙하</small></>}
-            {mode==='countdown'&&<><strong className="tt-count" key={count}>{count}</strong><p>준비되셨나요?</p></>}
-            {mode==='paused'&&<><span className="tt-eyebrow">TAKE A BREATH</span><h2>잠시 쉬어가요.</h2><p>돌아오면 이어서 할 수 있어요.</p><button className="tt-primary" onClick={resume}>계속하기 →</button></>}
-            {mode==='over'&&<><span className="tt-eyebrow">NICE PLAY</span><h2>{number(stats.score)}</h2><p>{stats.lines} LINES · LEVEL {stats.level}<br/>{stats.score>=best&&stats.score>0?'개인 최고 기록!':'다음엔 한 줄 더.'}</p><button className="tt-primary" onClick={()=>void start()} disabled={starting}>{starting?'준비 중…':'다시 하기 ↗'}</button><small>{ranked?'아래에서 기록을 등록할 수 있어요.':'이 기기에 최고 기록을 저장했어요.'}</small></>}
+            {mode==='ready'&&<><span className="tt-overlay-icon">▦</span><h2>테트리스</h2><p>10줄을 지울 때마다<br/>레벨과 낙하 속도가 올라갑니다.</p><button className="tt-primary" onClick={()=>void start()} disabled={starting||!ready}>{!ready?'게임 불러오는 중…':starting?'준비 중…':'게임 시작'}</button><small className="tt-start-key-help">← → 이동 · ↑ 회전 · Space 낙하</small><small className="tt-start-touch-help">아래 버튼으로 이동하고 회전하세요.</small></>}
+            {mode==='countdown'&&<><strong className="tt-count" key={count}>{count}</strong><p>곧 시작합니다</p></>}
+            {mode==='paused'&&<><h2>일시정지</h2><p>계속하기를 누르면 이어서 진행합니다.</p><button className="tt-primary" onClick={resume}>계속하기</button></>}
+            {mode==='over'&&<><span className="tt-eyebrow">게임 종료</span><h2>{number(stats.score)}</h2><p>지운 줄 {stats.lines} · 레벨 {stats.level}<br/>{stats.score>=best&&stats.score>0?'최고 기록을 갱신했습니다.':`개인 최고 ${number(best)}점`}</p><button className="tt-primary" onClick={()=>void start()} disabled={starting}>{starting?'준비 중…':'다시 하기'}</button><small>{ranked?'리더보드에 기록을 등록할 수 있습니다.':'이 기기에 최고 기록을 저장했습니다.'}</small></>}
           </div>}
         </div>
-        <aside className="tt-next"><h2>NEXT <span>05</span></h2>{(stats.next.length?stats.next:['T','I','L','S','O'] as Kind[]).map((kind,i)=><Mini key={i} kind={kind}/>)}<span className="tt-next-note">ONE<br/>MORE<br/>LINE.</span></aside>
+        <aside className="tt-next"><h2>다음 <span>5</span></h2>{(stats.next.length?stats.next:['T','I','L','S','O'] as Kind[]).map((kind,i)=><Mini key={i} kind={kind}/>)}</aside>
       </div>
-      <div className="tt-mobile-controls"><div className="tt-move-pad">{touch('left','←')}{touch('down','↓')}{touch('right','→')}</div><div className="tt-rotate-pad">{touch('ccw','↶')}{touch('cw','↷')}{touch('hold','HOLD','hold')}{touch('drop','↓ DROP','drop')}</div></div>
+      <div className="tt-mobile-controls"><div className="tt-move-pad">{touch('left','←')}{touch('down','↓')}{touch('right','→')}</div><div className="tt-rotate-pad">{touch('ccw','↶')}{touch('cw','↷')}{touch('hold','보관','hold')}{touch('drop','즉시 낙하','drop')}</div></div>
       <p className="tt-key-help"><kbd>{prettyKey(keys.left)}</kbd><kbd>{prettyKey(keys.right)}</kbd> 이동 <kbd>{prettyKey(keys.cw)}</kbd> 회전 <kbd>{prettyKey(keys.drop)}</kbd> 낙하 <kbd>{prettyKey(keys.hold)}</kbd> 보관</p>
       {status&&<p className="tt-status" role="status">{status}</p>}
-      {settings&&<section className="tt-settings" aria-label="게임 설정"><div className="tt-section-heading"><h2>나에게 맞는 조작</h2><button onClick={()=>{setSettings(false);setBinding(null)}}>닫기</button></div>
+      {settings&&<section className="tt-settings" aria-label="게임 설정"><div className="tt-section-heading"><h2>조작 설정</h2><button onClick={()=>{setSettings(false);setBinding(null)}}>닫기</button></div>
         <p>속도 변경은 다음 판부터 적용됩니다. 아래 버튼을 눌러 이동 반응을 시험해 보세요.</p>
         {(['das','arr','soft'] as const).map((key,i)=><label className="tt-range" key={key}><span>{['연속 이동 시작 시간','연속 이동 간격','빠른 낙하 간격'][i]}<b>{Math.round(handling[key]*1000/HZ)} ms</b></span><input type="range" min={key==='das'?5:1} max={key==='das'?18:6} value={handling[key]} onChange={e=>updateHandling(key,Number(e.target.value))}/></label>)}
         <HandlingPreview handling={handling}/><div className="tt-bindings">{(Object.keys(KEY) as Action[]).map(action=><button type="button" key={action} onClick={()=>setBinding(action)} onKeyDown={e=>{
@@ -235,12 +241,12 @@ export default function Tetris() {
         <button className="tt-text-button" onClick={()=>{setHandling(DEFAULT_HANDLING);handlingRef.current=DEFAULT_HANDLING;setKeys(DEFAULT_KEYS);keysRef.current=DEFAULT_KEYS;write('tetris-handling-v1',DEFAULT_HANDLING);write('tetris-keys-v1',DEFAULT_KEYS);setBinding(null)}}>기본 설정으로 복원</button>
       </section>}
     </div>
-    <aside className="tt-sidebar"><section className="tt-leaderboard"><div className="tt-section-heading"><div><p className="tt-eyebrow">THE HIGH SCORES</p><h2>한 줄 위의 기록</h2></div><button type="button" onClick={()=>void refresh()} disabled={loadingBoard} aria-label="순위 새로고침">↻</button></div><p className="tt-board-caption">전체 순위 · 플레이어별 최고 점수</p>
-      {boardError?<div className="tt-empty"><span>↗</span><p>{boardError}</p><button onClick={()=>void refresh()} disabled={loadingBoard}>다시 불러오기</button></div>:!board?<p className="tt-empty">순위를 불러오는 중…</p>:board.top.length===0?<div className="tt-empty"><span>01</span><p>아직 등록된 기록이 없어요.<br/>첫 번째 기록을 남겨보세요.</p></div>:<ol>{board.top.map(row=><li key={row.rank} className={row.own?'own':''}><span className="tt-rank">{String(row.rank).padStart(2,'0')}</span><div><b>{row.nickname}{row.own&&<small> YOU</small>}</b><span>LEVEL {row.level} · {row.lines} LINES</span></div><strong>{number(row.score)}</strong></li>)}</ol>}
+    <aside className="tt-sidebar"><section className="tt-leaderboard"><div className="tt-section-heading"><div><h2>리더보드</h2></div><button type="button" onClick={()=>void refresh()} disabled={loadingBoard} aria-label="순위 새로고침">↻</button></div><p className="tt-board-caption">전체 순위 · 플레이어별 최고 점수</p>
+      {boardError?<div className="tt-empty"><span>↗</span><p>{boardError}</p><button onClick={()=>void refresh()} disabled={loadingBoard}>다시 불러오기</button></div>:!board?<p className="tt-empty">순위를 불러오는 중…</p>:board.top.length===0?<div className="tt-empty"><span>01</span><p>아직 등록된 기록이 없습니다.</p></div>:<ol>{board.top.map(row=><li key={row.rank} className={row.own?'own':''}><span className="tt-rank">{String(row.rank).padStart(2,'0')}</span><div><b>{row.nickname}{row.own&&<small> 나</small>}</b><span>레벨 {row.level} · {row.lines}줄</span></div><strong>{number(row.score)}</strong></li>)}</ol>}
       {board?.me&&<div className="tt-my-rank"><span>내 최고 순위 <b>#{board.me.rank}</b></span><strong>{number(board.me.score)}</strong>{board.next_score!==null&&<small>한 단계 위까지 {number(board.next_score-board.me.score+1)}점</small>}</div>}
-      <p className="tt-rank-note">같은 점수는 먼저 달성한 기록이 앞섭니다.<br/>이 브라우저의 플레이어 기록으로 등록됩니다.</p>
+      <p className="tt-rank-note">같은 점수는 먼저 등록된 기록이 앞섭니다.<br/>이 브라우저의 플레이어 기록으로 등록됩니다.</p>
     </section>
-    {pending.length>0&&<section className="tt-submit"><p className="tt-eyebrow">SAVE YOUR RUN</p><h2>기록을 남겨볼까요?</h2><p>등록할 기록 {pending.length}개 · {number(pending[0].score)}점</p><label htmlFor="tt-nickname">공개 닉네임</label><input id="tt-nickname" maxLength={16} minLength={2} value={nickname} onChange={e=>setNickname(e.target.value)} placeholder="2~16자" autoComplete="nickname"/><button className="tt-primary" disabled={saving} onClick={()=>void save()}>{saving?'검증 중…':'리더보드에 등록 ↗'}</button><small>게임 종료 후 24시간 안에 등록할 수 있습니다.<br/>기록을 등록하는 동안에도 다시 플레이할 수 있어요.</small></section>}
+    {pending.length>0&&<section className="tt-submit"><h2>기록 등록</h2><p>등록할 기록 {pending.length}개 · {number(pending[0].score)}점</p><label htmlFor="tt-nickname">공개 닉네임</label><input id="tt-nickname" maxLength={16} minLength={2} value={nickname} onChange={e=>setNickname(e.target.value)} placeholder="2~16자" autoComplete="nickname"/><button className="tt-primary" disabled={saving} onClick={()=>void save()}>{saving?'검증 중…':'리더보드에 등록'}</button><small>게임 종료 후 24시간 안에 등록할 수 있습니다.<br/>기록 등록 중에도 다시 플레이할 수 있습니다.</small></section>}
     {saveStatus&&<p className="tt-status" role="status">{saveStatus}</p>}
     <details className="tt-rules"><summary>플레이 가이드 & 점수 규칙</summary><p>10줄마다 레벨이 오르고 블록이 빨라집니다. HOLD는 블록을 고정할 때마다 한 번 사용할 수 있습니다.</p><p>한 번에 1 / 2 / 3 / 4줄을 지우면 100 / 300 / 500 / 800점 × 현재 레벨. 연속 줄 삭제는 콤보 점수가 추가됩니다.</p><p>T-SPIN은 마지막 회전 후 T 블록 중심의 대각선 세 곳 이상이 막힌 경우입니다. 0 / 1 / 2 / 3줄은 400 / 800 / 1,200 / 1,600점 × 레벨. 미니 판정은 별도로 두지 않습니다.</p><p>TETRIS 또는 T-SPIN 줄 삭제를 이어가면 기본 점수 1.5배. 소프트 드롭은 한 칸 1점, 하드 드롭은 한 칸 2점입니다.</p><p>바닥에 닿은 뒤 0.5초 동안 배치를 조정할 수 있고, 이동·회전으로 고정 시간을 초기화하는 횟수는 블록당 15번입니다. 한 판의 최대 플레이 시간은 2시간입니다.</p><p>순위는 서버가 입력 기록을 재생해 확인한 점수만 반영합니다. 브라우저 저장 공간을 지우거나 다른 기기를 사용하면 별도 플레이어로 기록됩니다.</p></details>
     </aside></div>

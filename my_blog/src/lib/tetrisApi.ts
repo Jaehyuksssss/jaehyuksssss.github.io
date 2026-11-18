@@ -24,7 +24,10 @@ async function call<T>(body: Record<string, unknown>): Promise<T> {
     ])
     if (error || data?.error) {
       let message = data?.error
-      if (error?.context instanceof Response) { try { message = (await error.context.json()).error } catch {} }
+      if (error?.context instanceof Response) {
+        if(error.context.status === 404) message = '온라인 리더보드가 아직 준비되지 않았습니다. 개인 모드로 플레이할 수 있습니다.'
+        else { try { message = (await error.context.json()).error } catch {} }
+      }
       throw new Error(message || '순위 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.')
     }
     return data as T

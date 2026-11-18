@@ -5,3 +5,34 @@
 @media(pointer:coarse),(max-width:600px){.tt-mobile-controls{display:flex;justify-content:space-between;gap:14px;padding:12px 16px 18px}.tt-move-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;flex:1;align-content:end}.tt-rotate-pad{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1}.tt-touch{height:47px;min-width:0;border:1px solid #486069;border-radius:8px;background:#29414b;color:#def0e8;font-size:24px!important;box-shadow:0 3px 0 #0d1d23}.tt-touch:active{background:#4d6e70;transform:translateY(2px);box-shadow:none}.tt-touch.hold{font-size:10px!important;letter-spacing:.07em}.tt-touch.drop{font-size:11px!important;color:#173b2d;background:#b8efcb;border-color:#b8efcb;margin-top:5px}.tt-key-help{display:none}}
 @media(max-width:600px){.tt-app{margin-bottom:35px}.tt-heading{margin-bottom:18px}.tt-heading h1{font-size:32px}.tt-heading>div>p:last-child{font-size:12px}.tt-heading .tt-eyebrow{font-size:8px!important;margin-bottom:8px!important}.tt-mode-tag{font-size:8px;padding:7px 10px}.tt-play-column{border-radius:12px}.tt-stage{padding:16px 9px 5px;gap:9px}.tt-hold,.tt-next{width:46px}.tt-board-wrap{width:min(240px,calc(25svh));min-width:140px}.tt-stage h2{font-size:8px;margin-bottom:9px}.tt-stage h2 kbd{display:none}.tt-mini{margin-bottom:8px}.tt-stats{margin-top:15px;gap:3px}.tt-stats>span{font-size:8px;margin-top:13px}.tt-stats strong{font-size:14px}.tt-stats>b{font-size:18px}.tt-next-note{font-size:8px;margin-top:16px}.tt-level-track{height:40px;margin-top:16px}.tt-toolbar{font-size:10px;padding:10px}.tt-toolbar button{font-size:10px;padding:6px 5px}.tt-overlay{padding:10px}.tt-overlay h2{font-size:20px}.tt-overlay p{font-size:10px;margin-bottom:20px}.tt-overlay small{font-size:8px}.tt-overlay-icon{font-size:36px;margin-bottom:18px}.tt-app .tt-primary{font-size:12px;padding:12px 18px}.tt-sidebar{grid-template-columns:1fr}.tt-settings{padding:18px}.tt-clear-message{font-size:14px}.tt-count{font-size:65px}}
 @media(prefers-reduced-motion:reduce){.tt-app *{animation:none!important;transition:none!important}}
+
+/* Keep the board prominent; on phones, move HOLD and scores above it. */
+.tt-heading h1{letter-spacing:-.04em}
+.tt-board-wrap{width:min(360px,calc((100svh - 180px)/2));align-self:flex-start}
+.tt-start-touch-help{display:none}
+.tt-stage{touch-action:pan-y;scroll-margin-top:8px}
+.tt-mobile-controls{gap:18px}
+@media(max-width:1000px) and (min-width:801px){.tt-layout{grid-template-columns:minmax(0,1fr) 250px}.tt-stage{gap:10px}.tt-hold,.tt-next{width:50px}}
+@media(max-width:600px){
+  .tt-heading{margin:10px 0 15px}
+  .tt-heading h1{font-size:29px}
+  .tt-stage{display:grid;grid-template-columns:minmax(0,1fr) 38px;gap:12px 8px;padding:12px 10px 4px}
+  .tt-hold{grid-column:1/-1;width:100%;display:flex;align-items:center;gap:9px}
+  .tt-hold h2{margin:0;font-size:10px;letter-spacing:0}
+  .tt-hold .tt-mini{width:38px;margin:0;background:none;flex-shrink:0}
+  .tt-hold .tt-stats{margin:0 0 0 auto;display:grid;grid-template-columns:repeat(3,auto);gap:1px 15px;align-items:center;text-align:right}
+  .tt-hold .tt-stats>span{grid-row:1;margin:0;font-size:9px;letter-spacing:0}
+  .tt-hold .tt-stats>strong,.tt-hold .tt-stats>b{grid-row:2;font-size:16px}
+  .tt-level-track{display:none}
+  .tt-board-wrap{width:100%;min-width:0;max-width:340px;justify-self:center}
+  .tt-next{width:38px;align-self:start}
+  .tt-next .tt-mini{margin-bottom:13px}
+  .tt-next h2{font-size:9px;letter-spacing:0}
+  .tt-mobile-controls{padding:13px 10px 16px;position:sticky;bottom:0;background:#17262d;z-index:2}
+  .tt-overlay h2{font-size:25px}
+  .tt-overlay p{font-size:12px}
+  .tt-overlay small{font-size:10px}
+  .tt-overlay .tt-start-key-help{display:none}
+  .tt-overlay .tt-start-touch-help{display:block}
+}
+@media(pointer:coarse){.tt-overlay .tt-start-key-help{display:none}.tt-overlay .tt-start-touch-help{display:block}}

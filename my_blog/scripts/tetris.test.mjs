@@ -1,6 +1,27 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createGame, cells, fits, ghost, move, rotate, step, replay, KEY, KINDS, HEIGHT, MAX_TICKS, DEFAULT_HANDLING } from '../supabase/functions/_shared/tetris-engine.ts'
+import { TetrisInput } from '../src/lib/tetrisInput.ts'
+
+test('a tap released between frames still reaches the game exactly once',()=>{
+  const input = new TetrisInput(), s = createGame(3)
+  input.press('pointer:1', KEY.drop);input.release('pointer:1')
+  step(s,input.sample());assert.equal(s.pieces,1)
+  step(s,input.sample());assert.equal(s.pieces,1)
+})
+test('multitouch keeps movement held when the rotation finger lifts',()=>{
+  const input=new TetrisInput()
+  input.press('pointer:1',KEY.left);input.press('pointer:2',KEY.cw);input.release('pointer:2')
+  assert.equal(input.sample(),KEY.left|KEY.cw)
+  assert.equal(input.sample(),KEY.left)
+  input.clear();assert.equal(input.sample(),0)
+})
+test('holding a touch does not generate repeated hard-drop edges',()=>{
+  const input=new TetrisInput(),s=createGame(6)
+  input.press('pointer:1',KEY.drop)
+  for(let i=0;i<10;i++)step(s,input.sample())
+  assert.equal(s.pieces,1)
+})
 
 test('seeded bags include every piece once and produce reproducible sequences',()=>{
   const a=createGame(1234), b=createGame(1234)
